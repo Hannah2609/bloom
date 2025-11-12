@@ -10,7 +10,10 @@ if [ "$APP_ENV" = "production" ]; then
 else
   echo "=== Development environment detected ==="
   echo "Kører migrationer (dev)..."
-  npx prisma migrate dev
+  npx prisma migrate dev --name init
+
+  echo "Genererer Prisma Client..."
+  npx prisma generate
 
   echo "Kører seed..."
   npx prisma db seed
