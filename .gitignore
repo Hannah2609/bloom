@@ -52,3 +52,5 @@ node_modules/
 storybook-static
 
 /src/generated/prisma
+
+/src/generated/prisma

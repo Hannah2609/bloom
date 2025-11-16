@@ -1,21 +1,60 @@
-import { PrismaClient } from '@prisma/client';
+import 'dotenv/config';
+import { PrismaClient } from '../src/generated/prisma/client';
 
 const prisma = new PrismaClient();
 
-async function main() {
-  await prisma.user.createMany({
-    data: [
-      { email: 'anna@example.com', name: 'Anna Hansen' },
-      { email: 'peter@example.com', name: 'Peter Nielsen' },
-      { email: 'sara@example.com', name: 'Sara Larsen' },
-      { email: 'lars@example.com', name: 'Lars Andersen' },
-      { email: 'marie@example.com', name: 'Marie Pedersen' },
-    ],
-  });
+// Seed data
+const users = [
+  {
+    name: 'Hannah',
+    email: 'hannah@example.com',
+    password: 'hashed_password_123', 
+  },
+  {
+    name: 'Katja',
+    email: 'katja@example.com',
+    password: 'hashed_password_456', 
+  },
+   {
+    name: 'Karen',
+    email: 'karen@example.com',
+    password: 'hashed_password_789', 
+  },
+];
+
+async function seedUsers() {
+  console.log('👤 Seeding users...');
   
-  console.log('Seeded 5 users successfully!');
+  for (const userData of users) {
+    await prisma.user.upsert({
+      where: { email: userData.email },
+      update: {},
+      create: userData,
+    });
+  }
+  
+  console.log(`✅ Seeded ${users.length} users`);
 }
 
-main().finally(async () => {
-  await prisma.$disconnect();
-});
+async function main() {
+  console.log('🌱 Starting database seed...\n');
+
+  try {
+    await seedUsers();
+    
+    console.log('\n✨ Seeding completed successfully!');
+  } catch (error) {
+    console.error('\n❌ Error during seeding:', error);
+    throw error;
+  }
+}
+
+main()
+  .catch((e) => {
+    console.error('❌ Seed failed:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+    console.log('\n🔌 Disconnected from database');
+  });
