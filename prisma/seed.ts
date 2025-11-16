@@ -13,12 +13,18 @@ const users = [
   {
     name: 'Katja',
     email: 'katja@example.com',
-    password: 'hashed_password_456', 
+    password: 'hashed_password_456',
+    age: 25, 
   },
    {
     name: 'Karen',
     email: 'karen@example.com',
     password: 'hashed_password_789', 
+  },
+   {
+    name: 'Karen-test',
+    email: 'karen@example.dk',
+    password: 'hashed_password_541', 
   },
 ];
 
@@ -28,7 +34,7 @@ async function seedUsers() {
   for (const userData of users) {
     await prisma.user.upsert({
       where: { email: userData.email },
-      update: {},
+      update: userData,
       create: userData,
     });
   }
