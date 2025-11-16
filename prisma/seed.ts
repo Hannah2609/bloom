@@ -6,25 +6,28 @@ const prisma = new PrismaClient();
 // Seed data
 const users = [
   {
-    name: 'Hannah',
+    firstName: 'Hannah',
+    lastName: 'Nielsen',
     email: 'hannah@example.com',
-    password: 'hashed_password_123', 
+    password: 'hashed_password_123',
   },
   {
-    name: 'Katja',
+    firstName: 'Katja',
+    lastName: 'Jensen',
     email: 'katja@example.com',
     password: 'hashed_password_456',
-    age: 25, 
   },
-   {
-    name: 'Karen',
+  {
+    firstName: 'Karen',
+    lastName: 'Hansen',
     email: 'karen@example.com',
-    password: 'hashed_password_789', 
+    password: 'hashed_password_789',
   },
-   {
-    name: 'Karen-test',
+  {
+    firstName: 'Karen',
+    lastName: 'Andersen',
     email: 'karen@example.dk',
-    password: 'hashed_password_541', 
+    password: 'hashed_password_541',
   },
 ];
 
