@@ -42,5 +42,34 @@ export function useAuth() {
     }
   };
 
-  return { login, isLoading };
+  const logout = async () => {
+    try {
+      setIsLoading(true);
+      toast.loading('Logging out...');
+
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
+
+      toast.dismiss();
+      toast.success('You are logged out', {
+        duration: 2000,
+      });
+
+      setTimeout(() => {
+        router.push('/login');
+      }, 1000);
+    } catch (error) {
+      toast.dismiss();
+      toast.error(error instanceof Error ? error.message : 'Failed to log out', { duration: 4000 });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { login, logout, isLoading };
 }

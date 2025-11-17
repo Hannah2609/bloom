@@ -33,11 +33,11 @@ const LoginForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <section>
-          <h1>Login</h1>
-          <p>Log in to your account</p>
-        </section>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Login</h1>
+          <p className="text-muted-foreground text-sm">Log in to your account</p>
+        </div>
 
         <FormField
           control={form.control}
@@ -69,11 +69,16 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
+        
+        <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
+          Login
+        </Button>
 
-        <div className="pt-4 flex flex-col gap-4">
-          <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
-            Login
-          </Button>
+        <div className="text-center text-sm flex gap-2 justify-center">
+          <p>Dont have an account?</p>
+          <a href="/signup" className="underline underline-offset-4">
+            Signup
+          </a>
         </div>
       </form>
     </Form>

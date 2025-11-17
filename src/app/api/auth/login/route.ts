@@ -19,7 +19,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    // TODO: Check om der kan bruges fejlkode fra prisma
     // check if user is deleted
     if (user.deletedAt) {
       return NextResponse.json(
