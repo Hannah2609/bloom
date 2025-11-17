@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,30 +16,35 @@ datasource db {
 
 model User {
   id          String       @id @default(uuid())
+  firstName   String
+  lastName    String
   email       String       @unique
+  avatar      String?
   password    String
+  role        Role         @default(EMPLOYEE)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?
-  avatar      String?
-  companyId   String?
-  firstName   String
-  lastName    String
-  role        Role         @default(EMPLOYEE)
-  memberships TeamMember[]
   company     Company?     @relation(fields: [companyId], references: [id])
+  companyId   String?
+  memberships TeamMember[]
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
 }
 
 model Company {
   id        String    @id @default(uuid())
   name      String
-
+  domain    String    @unique
+  users     User[]
+  teams     Team[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  domain    String    @unique
-  teams     Team[]
-  users     User[]
 }
 
 model Team {
@@ -42,26 +53,20 @@ model Team {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   deletedAt DateTime?
-  companyId String
   company   Company      @relation(fields: [companyId], references: [id])
+  companyId String
   members   TeamMember[]
 }
 
 model TeamMember {
   id       String    @id @default(uuid())
-  role     Role      @default(EMPLOYEE)
-  teamId   String
-  userId   String
+  role     Role      @default(EMPLOYEE) // Users role in team
   joinedAt DateTime  @default(now())
   leftAt   DateTime?
   team     Team      @relation(fields: [teamId], references: [id])
+  teamId   String
   user     User      @relation(fields: [userId], references: [id])
+  userId   String
 
-  @@unique([teamId, userId])
-}
-
-enum Role {
-  ADMIN
-  MANAGER
-  EMPLOYEE
+  @@unique([teamId, userId]) // A user can only be member of a team once
 }
