@@ -1,9 +1,12 @@
-import React from 'react'
+'use client';
 
-const page = () => {
-  return (
-    <div>page</div>
-  )
-}
+import React from 'react';
+import { useSession } from '@/hooks/useSession';
 
-export default page
+const Page = () => {
+  const { user } = useSession();
+
+  return <div>Hi, {user?.firstName}</div>;
+};
+
+export default Page;
