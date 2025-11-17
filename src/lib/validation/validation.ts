@@ -17,5 +17,13 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+export const companySignupSchema = z.object({
+  companyName: z.string()
+  .min(2, "Company name must be at least 2 characters")
+  .regex(/^[A-Za-zÆØÅæøå\s]+$/, "Company name can only contain letters and spaces"),
+  companyDomain: z.string().min(1, "Company domain is required"),
+});
+
 export type SignupSchema = z.infer<typeof signupSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
+export type CompanySignupSchema = z.infer<typeof companySignupSchema>;
