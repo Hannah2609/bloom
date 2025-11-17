@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { PrismaClient } from '../src/generated/prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -9,39 +10,41 @@ const users = [
     firstName: 'Hannah',
     lastName: 'Nielsen',
     email: 'hannah@example.com',
-    password: 'hashed_password_123',
+    password: 'password123',
   },
   {
     firstName: 'Katja',
     lastName: 'Jensen',
     email: 'katja@example.com',
-    password: 'hashed_password_456',
+    password: 'password123',
   },
   {
     firstName: 'Karen',
     lastName: 'Hansen',
     email: 'karen@example.com',
-    password: 'hashed_password_789',
+    password: 'password123',
   },
   {
     firstName: 'Karen',
     lastName: 'Andersen',
     email: 'karen@example.dk',
-    password: 'hashed_password_541',
+    password: 'password123',
   },
 ];
 
 async function seedUsers() {
   console.log('👤 Seeding users...');
-  
+
   for (const userData of users) {
+    const hashedPassword = await bcrypt.hash(userData.password, 12);
+
     await prisma.user.upsert({
       where: { email: userData.email },
-      update: userData,
-      create: userData,
+      update: { ...userData, password: hashedPassword },
+      create: { ...userData, password: hashedPassword },
     });
   }
-  
+
   console.log(`✅ Seeded ${users.length} users`);
 }
 
@@ -50,7 +53,7 @@ async function main() {
 
   try {
     await seedUsers();
-    
+
     console.log('\n✨ Seeding completed successfully!');
   } catch (error) {
     console.error('\n❌ Error during seeding:', error);

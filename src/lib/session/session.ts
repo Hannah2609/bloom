@@ -11,9 +11,9 @@ export interface SessionData {
     firstName: string;
     lastName: string;
     email: string;
-    avatar?: string;
+    avatar?: string | null;
     role: Role;
-    companyId?: string;
+    companyId?: string | null;
   };
   isLoggedIn?: boolean;
 }
@@ -34,9 +34,9 @@ declare module 'iron-session' {
       firstName: string;
       lastName: string;
       email: string;
-      avatar?: string;
+      avatar?: string | null;
       role: Role;
-      companyId?: string;
+      companyId?: string | null;
     };
     isLoggedIn?: boolean;
   }
