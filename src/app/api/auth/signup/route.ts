@@ -38,32 +38,32 @@ export async function POST(req: Request) {
         );
 
     } catch (error) {
-      console.error("Signup error:", error);
+        console.error("Signup error:", error);
 
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          {
-            error: "Validation error",
-            details: error.issues,
-          },
-          { status: 400 }
-        );
-      }
-
-      // Error handling for catching existing user 
-       if (error instanceof PrismaError.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          return NextResponse.json(
-            { error: "An account with this email already exists" },
+        if (error instanceof z.ZodError) {
+            return NextResponse.json(
+            {
+                error: "Validation error",
+                details: error.issues,
+            },
             { status: 400 }
-          );
+            );
         }
-      }
+
+        // Error handling for catching existing user
+        if (error instanceof PrismaError.PrismaClientKnownRequestError) {
+            if (error.code === 'P2002') {
+            return NextResponse.json(
+                { error: "An account with this email already exists" },
+                { status: 400 }
+            );
+            }
+        }
 
 
-      return NextResponse.json(
-        { error: "Something went wrong" },
-        { status: 500 }
-      );
+        return NextResponse.json(
+            { error: "Something went wrong" },
+            { status: 500 }
+        );
     }
 }
