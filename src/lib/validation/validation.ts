@@ -18,10 +18,23 @@ export const loginSchema = z.object({
 });
 
 export const companySignupSchema = z.object({
-  companyName: z.string()
-  .min(2, "Company name must be at least 2 characters")
-  .regex(/^[A-Za-zÆØÅæøå\s]+$/, "Company name can only contain letters and spaces"),
-  companyDomain: z.string().min(1, "Company domain is required"),
+  companyName: z
+    .string()
+    .min(2, "Company name must be at least 2 characters")
+    .regex(
+    /^[A-Za-zÆØÅæøå0-9&().,/ -]+$/,
+    "Company name can only contain letters, numbers, and basic punctuation"
+  ),  
+  companyDomain: z.string()
+  .min(1, "Company domain is required")
+  .regex(
+    /^[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}$/,
+    "Company domain must be a valid domain"
+  ),
+  logo: z
+    .string()
+    .url("Logo must be a valid URL")
+    .optional(),
 });
 
 export type SignupSchema = z.infer<typeof signupSchema>;

@@ -40,6 +40,7 @@ model Company {
   id        String    @id @default(uuid())
   name      String
   domain    String    @unique
+  logo      String?
   users     User[]
   teams     Team[]
   createdAt DateTime  @default(now())

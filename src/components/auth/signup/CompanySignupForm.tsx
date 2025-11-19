@@ -1,4 +1,10 @@
 "use client";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { ImageIcon } from "lucide-react";
 import {
   Form,
   FormField,
@@ -8,47 +14,76 @@ import {
   FormMessage,
 } from "@/components/ui/forms/form";
 import { Input } from "@/components/ui/forms/input";
-// import { PasswordInput } from "@/components/ui/forms/password-input";
-import { Button } from "../../ui/button/button";
-import { useForm } from "react-hook-form";
+import { UploadDropzone, useUploadThing } from "@/lib/uploadthing";
 import { companySignupSchema } from "@/lib/validation/validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "sonner";
-import { useState } from "react";
+import { Button } from "../../ui/button/button";
 
 export default function CompanySignupForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStep, setSubmitStep] = useState<
+    "idle" | "uploading-logo" | "creating-company"
+  >("idle");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoFileName, setLogoFileName] = useState<string | null>(null);
+  const { startUpload, isUploading: isLogoUploading } =
+    useUploadThing("imageUploader");
   const form = useForm<z.infer<typeof companySignupSchema>>({
     resolver: zodResolver(companySignupSchema),
     defaultValues: {
       companyName: "",
       companyDomain: "",
+      logo: undefined,
     },
   });
 
   const onSubmit = async (formData: z.infer<typeof companySignupSchema>) => {
-    setIsSubmitting(true);
+    setSubmitStep("creating-company");
 
-    const response = await fetch("/api/auth/company-signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json();
+    try {
+      let logoUrl = formData.logo;
 
-    if (response.ok) {
-      console.log("Company created:", data);
-      // router.push("/signup/profile"); TODO
-      toast.success("Company created successfully!");
-      form.reset();
-    } else {
-      toast.error(data.error || "Failed to create company");
+      if (logoFile) {
+        setSubmitStep("uploading-logo");
+        const uploaded = await startUpload([logoFile]);
+        if (!uploaded || uploaded.length === 0 || !uploaded[0]?.url) {
+          throw new Error("Logo upload failed. Please try again.");
+        }
+
+        logoUrl = uploaded[0].url;
+        setLogoFile(null);
+        setLogoFileName(uploaded[0].name ?? uploaded[0].key ?? null);
+        setSubmitStep("creating-company");
+      }
+
+      const response = await fetch("/api/auth/company-signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          logo: logoUrl,
+        }),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Company created:", data);
+        // router.push("/signup/profile"); TODO
+        toast.success("Company created successfully!");
+        form.reset();
+        setLogoFile(null);
+        setLogoFileName(null);
+      } else {
+        toast.error(data.error || "Failed to create company");
+      }
+    } catch (error) {
+      console.error("Company signup error:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create company"
+      );
+    } finally {
+      setSubmitStep("idle");
     }
-
-    setIsSubmitting(false);
   };
 
   return (
@@ -99,14 +134,104 @@ export default function CompanySignupForm() {
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="logo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company logo (optional)</FormLabel>
+              <FormControl>
+                <div className="space-y-2">
+                  {field.value ? (
+                    <div className="rounded-lg border border-dashed border-border bg-muted/50 p-4">
+                      <p className="text-sm font-normal">Logo uploaded</p>
+                      <p className="text-xs text-muted-foreground break-all">
+                        {logoFileName ?? field.value}
+                      </p>
+                      <div className="mt-3 flex gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            field.onChange(undefined);
+                            setLogoFile(null);
+                            setLogoFileName(null);
+                          }}
+                        >
+                          Remove logo
+                        </Button>
+                      </div>
+                    </div>
+                  ) : logoFile ? (
+                    <div className="rounded-lg border border-dashed border-border bg-muted/50 p-4">
+                      <p className="text-sm font-normal">
+                        Logo ready to upload
+                      </p>
+                      <p className="text-xs text-muted-foreground break-all">
+                        {logoFileName ?? logoFile.name}
+                      </p>
+                      <div className="mt-3 flex gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setLogoFile(null);
+                            setLogoFileName(null);
+                          }}
+                        >
+                          Choose another
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <UploadDropzone
+                      endpoint="imageUploader"
+                      appearance={{
+                        container: ({ isDragActive }) =>
+                          `ut-dropzone border border-dashed rounded-lg transition-colors duration-200 ${
+                            isDragActive
+                              ? "border-primary bg-primary/10"
+                              : "border-border bg-muted/50"
+                          }`,
+                        label: "text-sm font-medium",
+                        allowedContent: "text-xs text-muted-foreground mt-2",
+                        button: "hidden",
+                        uploadIcon: "text-muted-foreground",
+                      }}
+                      config={{ mode: "manual" }}
+                      onChange={(files) => {
+                        const file = files?.[0];
+                        setLogoFile(file ?? null);
+                        setLogoFileName(file?.name ?? null);
+                        field.onChange(undefined);
+                      }}
+                    />
+                  )}
+                  <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <ImageIcon className="h-4 w-4" />
+                    Upload your logo image (PNG, JPG, SVG or WEBP up to 4MB)
+                  </p>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="pt-4">
           <Button
             type="submit"
             size="lg"
             className="w-full"
-            disabled={isSubmitting}
+            disabled={submitStep !== "idle" || isLogoUploading}
           >
-            {isSubmitting ? "Creating company..." : "Create company"}
+            {submitStep === "uploading-logo"
+              ? "Uploading logo..."
+              : submitStep === "creating-company"
+              ? "Creating company..."
+              : "Create company"}
           </Button>
         </div>
 

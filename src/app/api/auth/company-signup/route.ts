@@ -16,6 +16,7 @@ export async function POST(req: Request) {
             data: {
                 name: validatedData.companyName,
                 domain: validatedData.companyDomain,
+                logo: validatedData.logo,
             },
         });
 
