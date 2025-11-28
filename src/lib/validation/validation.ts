@@ -38,10 +38,6 @@ export const companySignupSchema = z.object({
     .optional(),
 });
 
-export const emailOnlySchema = z.object({
-  email: z.email("Invalid email address"),
-});
-
 export const setPendingCompanySchema = z.object({
   companyId: z.uuid(),
   role: z.enum(Role),
@@ -55,6 +51,5 @@ export const emailSchema = z.object({
 export type SignupSchema = z.infer<typeof signupSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type CompanySignupSchema = z.infer<typeof companySignupSchema>;
-export type EmailOnlySchema = z.infer<typeof emailOnlySchema>;
 export type SetPendingCompanySchema = z.infer<typeof setPendingCompanySchema>;
 export type EmailSchema = z.infer<typeof emailSchema>;

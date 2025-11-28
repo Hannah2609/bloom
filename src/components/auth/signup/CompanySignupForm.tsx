@@ -183,6 +183,7 @@ export default function CompanySignupForm() {
                         </p>
                       </div>
                       <Button
+                        type="button"
                         size="icon-sm"
                         onClick={() => {
                           setLogoFile(null);
