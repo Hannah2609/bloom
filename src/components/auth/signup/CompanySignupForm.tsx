@@ -79,10 +79,7 @@ export default function CompanySignupForm() {
           data.redirectUrl || `/signup/company/${data.company?.id}`;
 
         if (redirectUrl) {
-          // Wait a moment for toast to show and session to be saved
-          setTimeout(() => {
-            router.push(redirectUrl);
-          }, 1000);
+          router.push(redirectUrl);
         }
       } else {
         toast.error(data.error || "Failed to create company");
