@@ -5,6 +5,12 @@ import { cookies } from 'next/headers';
 // henter secret session key fra .env
 const secretKey = process.env.SESSION_SECRET;
 
+export interface PendingCompanySetup {
+  companyId: string;
+  role: Role;
+  email?: string; 
+}
+
 export interface SessionData {
   user?: {
     id: string;
@@ -16,6 +22,7 @@ export interface SessionData {
     companyId?: string | null;
   };
   isLoggedIn?: boolean;
+  pendingCompany?: PendingCompanySetup;
 }
 
 export const sessionOptions: SessionOptions = {
@@ -39,6 +46,7 @@ declare module 'iron-session' {
       companyId?: string | null;
     };
     isLoggedIn?: boolean;
+    pendingCompany?: PendingCompanySetup;
   }
 }
 

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Role } from "@/generated/prisma/enums";
 
 export const signupSchema = z.object({
     firstName: z.string()    
@@ -37,6 +38,23 @@ export const companySignupSchema = z.object({
     .optional(),
 });
 
+export const emailOnlySchema = z.object({
+  email: z.email("Invalid email address"),
+});
+
+export const setPendingCompanySchema = z.object({
+  companyId: z.uuid(),
+  role: z.enum(Role),
+  email: z.email().optional(),
+});
+
+export const emailSchema = z.object({
+  email: z.email("Invalid email address"),
+});
+
 export type SignupSchema = z.infer<typeof signupSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type CompanySignupSchema = z.infer<typeof companySignupSchema>;
+export type EmailOnlySchema = z.infer<typeof emailOnlySchema>;
+export type SetPendingCompanySchema = z.infer<typeof setPendingCompanySchema>;
+export type EmailSchema = z.infer<typeof emailSchema>;

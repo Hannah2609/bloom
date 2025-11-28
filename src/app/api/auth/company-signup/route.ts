@@ -3,6 +3,8 @@ import { prisma as prismaClient } from "@/lib/prisma";
 import { companySignupSchema } from "@/lib/validation/validation";
 import { z } from "zod";
 import { Prisma as PrismaError } from "@/generated/prisma/client";
+import { getSession } from "@/lib/session/session";
+import { Role } from "@/generated/prisma/enums";
 
 export async function POST(req: Request) {
     try {
@@ -20,10 +22,18 @@ export async function POST(req: Request) {
             },
         });
 
+        const session = await getSession();
+        session.pendingCompany = {
+            companyId: company.id,
+            role: Role.ADMIN,
+        };
+        await session.save();
+
         return NextResponse.json(
             { 
                 company,
-                message: "Company created successfully"
+                message: "Company created successfully",
+                redirectUrl: `/signup/company/${company.id}`
             },
             { status: 201 }
         );
