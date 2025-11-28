@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, XIcon } from "lucide-react";
 import {
   Form,
   FormField,
@@ -17,8 +17,10 @@ import { Input } from "@/components/ui/forms/input";
 import { UploadDropzone, useUploadThing } from "@/lib/uploadthing";
 import { companySignupSchema } from "@/lib/validation/validation";
 import { Button } from "../../ui/button/button";
+import { useRouter } from "next/navigation";
 
 export default function CompanySignupForm() {
+  const router = useRouter();
   const [submitStep, setSubmitStep] = useState<
     "idle" | "uploading-logo" | "creating-company"
   >("idle");
@@ -67,12 +69,21 @@ export default function CompanySignupForm() {
       const data = await response.json();
 
       if (response.ok) {
-        console.log("Company created:", data);
-        // router.push("/signup/profile"); TODO
         toast.success("Company created successfully!");
         form.reset();
         setLogoFile(null);
         setLogoFileName(null);
+
+        // Always redirect to admin signup after company creation
+        const redirectUrl =
+          data.redirectUrl || `/signup/company/${data.company?.id}`;
+
+        if (redirectUrl) {
+          // Wait a moment for toast to show and session to be saved
+          setTimeout(() => {
+            router.push(redirectUrl);
+          }, 1000);
+        }
       } else {
         toast.error(data.error || "Failed to create company");
       }
@@ -164,33 +175,32 @@ export default function CompanySignupForm() {
                       </div>
                     </div>
                   ) : logoFile ? (
-                    <div className="rounded-lg border border-dashed border-border bg-muted/50 p-4">
-                      <p className="text-sm font-normal">
-                        Logo ready to upload
-                      </p>
-                      <p className="text-xs text-muted-foreground break-all">
-                        {logoFileName ?? logoFile.name}
-                      </p>
-                      <div className="mt-3 flex gap-2">
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setLogoFile(null);
-                            setLogoFileName(null);
-                          }}
-                        >
-                          Choose another
-                        </Button>
+                    <div
+                      className="rounded-lg border border-black/50 p-5
+                    flex items-center justify-between"
+                    >
+                      <div>
+                        <p className="text-sm font-normal">Logo chosen</p>
+                        <p className="text-xs text-muted-foreground break-all">
+                          {logoFileName ?? logoFile.name}
+                        </p>
                       </div>
+                      <Button
+                        size="icon-sm"
+                        onClick={() => {
+                          setLogoFile(null);
+                          setLogoFileName(null);
+                        }}
+                      >
+                        <XIcon className="h-4 w-4" />
+                      </Button>
                     </div>
                   ) : (
                     <UploadDropzone
                       endpoint="imageUploader"
                       appearance={{
                         container: ({ isDragActive }) =>
-                          `ut-dropzone border border-dashed rounded-lg transition-colors duration-200 ${
+                          ` border border-dashed rounded-lg  transition-colors duration-200 bg-transparent ${
                             isDragActive
                               ? "border-primary bg-primary/10"
                               : "border-border bg-muted/50"
