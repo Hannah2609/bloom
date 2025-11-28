@@ -28,7 +28,6 @@ export function useAuth() {
       toast.success(`Welcome back, ${result.user.firstName}!`, {
         duration: 3000,
       });
-
       setTimeout(() => {
         router.push('/home');
       }, 1000);
@@ -59,7 +58,6 @@ export function useAuth() {
       toast.success('You are logged out', {
         duration: 2000,
       });
-
       setTimeout(() => {
         router.push('/login');
       }, 1000);

@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function POST() {
   try {
     const session = await getSession();
-    // Rydder session data
+    // Clears the session data
     session.destroy();
 
     return NextResponse.json({
