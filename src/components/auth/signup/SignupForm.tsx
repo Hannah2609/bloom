@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/forms/input";
 import { Button } from "../../ui/button/button";
 import { PasswordInput } from "../../ui/forms/passwordInput";
 import { useSignup } from "@/hooks/useSignup";
-import { SignupSchema, emailOnlySchema } from "@/lib/validation/validation";
+import { SignupSchema, emailSchema } from "@/lib/validation/validation";
 import { Role } from "@/generated/prisma/enums";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -42,7 +42,7 @@ export default function SignupProfileForm({
   const [checkingEmail, setCheckingEmail] = useState(false);
 
   const emailForm = useForm<{ email: string }>({
-    resolver: zodResolver(emailOnlySchema),
+    resolver: zodResolver(emailSchema),
     defaultValues: {
       email: "",
     },

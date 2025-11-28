@@ -44,8 +44,16 @@ export async function POST(req: Request) {
           },
         });
 
-        const { password: _password, ...sanitizedUser } = user;
-        void _password;
+        const sanitizedUser = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            avatar: user.avatar,
+            role: user.role,
+            companyId: user.companyId,
+            createdAt: user.createdAt,
+        };
 
         if (pendingCompany) {
             delete session.pendingCompany;
@@ -82,7 +90,6 @@ export async function POST(req: Request) {
             );
             }
         }
-
 
         return NextResponse.json(
             { error: "Something went wrong" },
