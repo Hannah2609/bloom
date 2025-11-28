@@ -4,6 +4,8 @@ import { prisma as prismaClient } from "@/lib/prisma";
 import { signupSchema } from "@/lib/validation/validation";
 import { z } from "zod";
 import { Prisma as PrismaError} from "@/generated/prisma/client";
+import { getSession } from "@/lib/session/session";
+import { Role } from "@/generated/prisma/enums";
 
 
 export async function POST(req: Request) {
@@ -16,6 +18,20 @@ export async function POST(req: Request) {
         // Hash the password
         const hashedPassword = await hash(validatedData.password, 12);
 
+        const session = await getSession();
+        const pendingCompany = session.pendingCompany;
+
+        const userRole = pendingCompany?.role ?? Role.EMPLOYEE;
+        const userCompanyId = pendingCompany?.companyId;
+
+        // Employees must always have a company
+        if (userRole === Role.EMPLOYEE && !userCompanyId) {
+          return NextResponse.json(
+            { error: "Employees must be associated with a company" },
+            { status: 400 }
+          );
+        }
+
         // Create the user
         const user = await prismaClient.user.create({
           data: {
@@ -23,15 +39,22 @@ export async function POST(req: Request) {
             lastName: validatedData.lastName,
             email: validatedData.email,
             password: hashedPassword,
-          },
-          omit: {
-            password: true, // Remove the password from the response
+            role: userRole,
+            companyId: userCompanyId,
           },
         });
 
+        const { password: _password, ...sanitizedUser } = user;
+        void _password;
+
+        if (pendingCompany) {
+            delete session.pendingCompany;
+            await session.save();
+        }
+
         return NextResponse.json(
             { 
-                user,
+                user: sanitizedUser,
                 message: "User created successfully"
             },
             { status: 201 }
