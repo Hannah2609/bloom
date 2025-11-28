@@ -23,7 +23,7 @@ export function AppSidebar() {
       <SidebarHeader className='pt-4'>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg">
+            <SidebarMenuButton size="lg" className='disabled:text-white disabled:pointer-events-none disabled:opacity-100 hover:bg-transparent' disabled>
               <Avatar className="h-8 w-8">
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               </Avatar>
