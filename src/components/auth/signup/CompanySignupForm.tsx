@@ -197,7 +197,7 @@ export default function CompanySignupForm() {
                       endpoint="imageUploader"
                       appearance={{
                         container: ({ isDragActive }) =>
-                          ` border border-dashed rounded-lg  transition-colors duration-200 bg-transparent ${
+                          `border border-dashed rounded-lg  transition-colors duration-200 bg-transparent ${
                             isDragActive
                               ? "border-primary bg-primary/10"
                               : "border-border bg-muted/50"
