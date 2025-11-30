@@ -47,11 +47,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#FDFAE0]`}
-        suppressHydrationWarning
-      >
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#FDFAE0] dark:bg-black`}>
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <ThemeProvider
           attribute="class"
