@@ -8,7 +8,7 @@ const secretKey = process.env.SESSION_SECRET;
 export interface PendingCompanySetup {
   companyId: string;
   role: Role;
-  email?: string; 
+  email?: string;
 }
 
 export interface SessionData {
@@ -19,7 +19,12 @@ export interface SessionData {
     email: string;
     avatar?: string | null;
     role: Role;
-    companyId?: string | null;
+    companyId: string | null;
+    company: {
+      id: string;
+      name: string;
+      logo?: string | null;
+    };
   };
   isLoggedIn?: boolean;
   pendingCompany?: PendingCompanySetup;
@@ -43,7 +48,12 @@ declare module 'iron-session' {
       email: string;
       avatar?: string | null;
       role: Role;
-      companyId?: string | null;
+      companyId: string | null;
+      company: {
+        id: string;
+        name: string;
+        logo?: string | null;
+      }
     };
     isLoggedIn?: boolean;
     pendingCompany?: PendingCompanySetup;

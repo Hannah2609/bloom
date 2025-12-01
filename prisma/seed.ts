@@ -8,31 +8,31 @@ const prisma = new PrismaClient();
 const company = {
   name: 'Dwarf A/S',
   domain: 'dwarf.dk',
-  logo: 'https://github.com/shadcn.png',
+  logo: '/dwarf-logo.webp',
 };
 
 // Seed data
 const users = [
   {
     firstName: 'Hannah',
-    lastName: 'Nielsen',
+    lastName: 'Grenade',
     email: 'hannah@dwarf.dk',
     password: 'password123',
     role: 'ADMIN' as const,
   },
   {
     firstName: 'Katja',
-    lastName: 'Jensen',
+    lastName: 'Krogh',
     email: 'katja@dwarf.dk',
     password: 'password123',
-    role: 'MANAGER' as const,
+    role: 'ADMIN' as const,
   },
   {
     firstName: 'Karen',
     lastName: 'Hansen',
     email: 'karen@dwarf.dk',
     password: 'password123',
-    role: 'EMPLOYEE' as const,
+    role: 'MANAGER' as const,
   },
   {
     firstName: 'Mads',

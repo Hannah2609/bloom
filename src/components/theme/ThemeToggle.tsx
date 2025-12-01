@@ -4,7 +4,7 @@ import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Switch } from '@/components/ui/switch/switch';
 
-export function ModeToggle() {
+export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   const isDark = theme === 'dark';

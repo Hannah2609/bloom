@@ -1,11 +1,11 @@
-import { ModeToggle } from '../theme/ModeToggle';
+import { ThemeToggle } from '../theme/ThemeToggle';
 import { SidebarTrigger } from '../ui/sidebar';
 
 const Header = () => {
   return (
     <header className="flex justify-between py-6 px-3">
       <SidebarTrigger />
-      <ModeToggle />
+      <ThemeToggle />
     </header>
   );
 };

@@ -2,12 +2,11 @@ import { getSession } from '@/lib/session/session';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// API endpoint der returnerer den aktuelle session status
 export async function GET() {
   try {
     const session = await getSession();
 
-    // Tjek om session har user data
+    // Check if session has user data
     if (!session.user) {
       return NextResponse.json({
         isLoggedIn: false,
@@ -15,35 +14,30 @@ export async function GET() {
       });
     }
 
-    // Fetch fresh user data from the database
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+    // Fetch minimal user data to verify user still exists and is not deleted
+    const userExists = await prisma.user.findFirst({
+      where: { 
+        id: session.user.id,
+        deletedAt: null,
+      },
       select: {
         id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        avatar: true,
-        role: true,
-        companyId: true,
       },
     });
 
-    // Tjek om user stadig eksisterer i db
-    if (!user) {
+    // If user does not exist or is deleted, clear session
+    if (!userExists) {
+      session.destroy();
       return NextResponse.json({
         isLoggedIn: false,
         user: null,
       });
     }
 
-    // Update session with fresh data
-    session.user = user;
-    await session.save();
-
+    // Return session data (company comes from session set at login)
     return NextResponse.json({
       isLoggedIn: true,
-      user,
+      user: session.user,
     });
   } catch (error) {
     console.error('Session error:', error);
