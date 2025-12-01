@@ -20,6 +20,7 @@ import { ChevronsUpDown, House, LogOut, UserRound, MessageCircleHeart } from 'lu
 import { Avatar, AvatarImage } from '../ui/avatar/avatar';
 import { useSession } from '@/hooks/useSession';
 import { useAuth } from '@/hooks/useAuth';
+import Link from 'next/link';
 
 export function AppSidebar() {
   const { user } = useSession();
@@ -65,10 +66,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon className="size-5!" />
                       <span className="text-base font-medium pl-1">{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
