@@ -14,27 +14,37 @@ export async function GET() {
       });
     }
 
-    // Fetch minimal user data to verify user still exists and is not deleted
-    const userExists = await prisma.user.findFirst({
-      where: { 
-        id: session.user.id,
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-      },
-    });
+    // Rate limit DB checks (only check every 5 minutes)
+    const shouldVerify = !session.lastVerified || 
+      Date.now() - session.lastVerified > 5 * 60 * 1000;
 
-    // If user does not exist or is deleted, clear session
-    if (!userExists) {
-      session.destroy();
-      return NextResponse.json({
-        isLoggedIn: false,
-        user: null,
+    if (shouldVerify) {
+      // Verify user still exists and is not deleted
+      const userExists = await prisma.user.findUnique({
+        where: { 
+          id: session.user.id,
+        },
+        select: {
+          id: true,
+          deletedAt: true,
+        },
       });
+
+      // If user does not exist or is deleted, clear session
+      if (!userExists || userExists.deletedAt) {
+        session.destroy();
+        return NextResponse.json({
+          isLoggedIn: false,
+          user: null,
+        });
+      }
+
+      // Update verification timestamp
+      session.lastVerified = Date.now();
+      await session.save();
     }
 
-    // Return session data (company comes from session set at login)
+    // Return session data
     return NextResponse.json({
       isLoggedIn: true,
       user: session.user,

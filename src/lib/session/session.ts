@@ -19,7 +19,7 @@ export interface SessionData {
     email: string;
     avatar?: string | null;
     role: Role;
-    companyId: string | null;
+    companyId: string;
     company: {
       id: string;
       name: string;
@@ -27,6 +27,7 @@ export interface SessionData {
     };
   };
   isLoggedIn?: boolean;
+  lastVerified?: number;
   pendingCompany?: PendingCompanySetup;
 }
 
@@ -48,14 +49,15 @@ declare module 'iron-session' {
       email: string;
       avatar?: string | null;
       role: Role;
-      companyId: string | null;
+      companyId: string;
       company: {
         id: string;
         name: string;
         logo?: string | null;
-      }
+      };
     };
     isLoggedIn?: boolean;
+    lastVerified?: number;
     pendingCompany?: PendingCompanySetup;
   }
 }

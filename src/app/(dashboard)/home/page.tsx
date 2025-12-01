@@ -17,7 +17,7 @@ const Page = () => {
 
   return (
     <section className="px-24 pt-6 flex flex-col gap-10">
-      <div className='space-y-6'>
+      <div className="space-y-6">
         <span className="text-xl font-medium text-muted-foreground">{getGreeting()}</span>
         <h1 className="text-3xl">{user?.firstName}</h1>
       </div>
