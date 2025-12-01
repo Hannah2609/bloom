@@ -2,12 +2,11 @@ import { getSession } from '@/lib/session/session';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// API endpoint der returnerer den aktuelle session status
 export async function GET() {
   try {
     const session = await getSession();
 
-    // Tjek om session har user data
+    // Check if session has user data
     if (!session.user) {
       return NextResponse.json({
         isLoggedIn: false,
@@ -15,35 +14,40 @@ export async function GET() {
       });
     }
 
-    // Fetch fresh user data from the database
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        avatar: true,
-        role: true,
-        companyId: true,
-      },
-    });
+    // Rate limit DB checks (only check every 5 minutes)
+    const shouldVerify = !session.lastVerified || 
+      Date.now() - session.lastVerified > 5 * 60 * 1000;
 
-    // Tjek om user stadig eksisterer i db
-    if (!user) {
-      return NextResponse.json({
-        isLoggedIn: false,
-        user: null,
+    if (shouldVerify) {
+      // Verify user still exists and is not deleted
+      const userExists = await prisma.user.findUnique({
+        where: { 
+          id: session.user.id,
+        },
+        select: {
+          id: true,
+          deletedAt: true,
+        },
       });
+
+      // If user does not exist or is deleted, clear session
+      if (!userExists || userExists.deletedAt) {
+        session.destroy();
+        return NextResponse.json({
+          isLoggedIn: false,
+          user: null,
+        });
+      }
+
+      // Update verification timestamp
+      session.lastVerified = Date.now();
+      await session.save();
     }
 
-    // Update session with fresh data
-    session.user = user;
-    await session.save();
-
+    // Return session data
     return NextResponse.json({
       isLoggedIn: true,
-      user,
+      user: session.user,
     });
   } catch (error) {
     console.error('Session error:', error);

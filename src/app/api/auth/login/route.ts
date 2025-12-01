@@ -12,6 +12,15 @@ export async function POST(req: Request) {
     // Find user by email
     const user = await prisma.user.findUnique({
       where: { email: validatedData.email },
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
+          },
+        },
+      },
     });
 
     // Check if user exist
@@ -42,6 +51,7 @@ export async function POST(req: Request) {
       avatar: user.avatar,
       role: user.role,
       companyId: user.companyId,
+      company: user.company,
     };
     session.isLoggedIn = true;
     await session.save();
@@ -56,6 +66,7 @@ export async function POST(req: Request) {
         avatar: user.avatar,
         role: user.role,
         companyId: user.companyId,
+        company: user.company,
       },
     });
   } catch (error) {
