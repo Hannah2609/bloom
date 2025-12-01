@@ -5,6 +5,7 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -46,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${nunito.variable} font-sans antialiased bg-[#FDFAE0]`}
+        className={`${nunito.variable} font-sans antialiased bg-[#FDFAE0] dark:bg-black`}
         suppressHydrationWarning
       >
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />

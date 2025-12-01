@@ -76,6 +76,13 @@ export default function SignupProfileForm({
 
       const data = await response.json();
 
+      // Check if user already exists
+      if (data.userExists) {
+        toast.info("You are already a Bloom member, please log in");
+        router.push("/login");
+        return;
+      }
+
       if (data.hasCompany && data.company) {
         // Set session with EMPLOYEE role and redirect
         const sessionResponse = await fetch("/api/auth/set-pending-company", {
@@ -92,11 +99,13 @@ export default function SignupProfileForm({
           router.push(data.redirectUrl);
           return;
         }
+      } else {
+        // No company found - show error and don't proceed
+        toast.info(
+          "No company found with this email domain. Contact your company to be added."
+        );
+        return;
       }
-
-      // No company found, show full form
-      setEmailChecked(true);
-      form.setValue("email", email);
     } catch (error) {
       console.error("Error checking email domain:", error);
       toast.error("Failed to check email. Please try again.");
