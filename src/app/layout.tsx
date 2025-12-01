@@ -1,43 +1,40 @@
-import type { Metadata } from 'next';
-import { Toaster } from '@/components/ui/toast/sonner';
-import { Geist, Geist_Mono } from 'next/font/google';
-import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
-import { extractRouterConfig } from 'uploadthing/server';
-import { ourFileRouter } from '@/app/api/uploadthing/core';
-import './globals.css';
-import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import type { Metadata } from "next";
+import { Toaster } from "@/components/ui/toast/sonner";
+import { Nunito } from "next/font/google";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+import "./globals.css";
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900", "1000"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Bloom',
-    template: '%s | Bloom',
+    default: "Bloom",
+    template: "%s | Bloom",
   },
   description:
-    'Bloom is an employee engagement platform that helps organizations measure and improve employee satisfaction, wellbeing, and workplace culture',
+    "Bloom is an employee engagement platform that helps organizations measure and improve employee satisfaction, wellbeing, and workplace culture",
   keywords: [
-    'employee engagement',
-    'employee analytics',
-    'workplace culture',
-    'wellbeing',
-    'feedback',
-    'surveys',
+    "employee engagement",
+    "employee analytics",
+    "workplace culture",
+    "wellbeing",
+    "feedback",
+    "surveys",
   ],
-  authors: [{ name: 'Hannah Grenade' }, { name: 'Katja Krogh' }],
+  authors: [{ name: "Hannah Grenade" }, { name: "Katja Krogh" }],
   // OpenGraph metadata for sharing links
   openGraph: {
-    title: 'Bloom - Employee Engagement Platform',
-    description: 'Measure and improve employee satisfaction, wellbeing, and workplace culture',
-    type: 'website',
+    title: "Bloom - Employee Engagement Platform",
+    description:
+      "Measure and improve employee satisfaction, wellbeing, and workplace culture",
+    type: "website",
   },
 };
 
@@ -49,13 +46,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#FDFAE0] dark:bg-black`}>
+        className={`${nunito.variable} font-sans antialiased bg-[#FDFAE0]`}
+        suppressHydrationWarning
+      >
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
-          disableTransitionOnChange>
+          disableTransitionOnChange
+        >
           {children}
           <Toaster richColors position="top-right" />
         </ThemeProvider>
