@@ -47,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${nunito.variable} font-sans antialiased bg-[#FDFAE0] dark:bg-black`}
+        className={`${nunito.variable} font-sans antialiased bg-sidebar`}
         suppressHydrationWarning
       >
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
