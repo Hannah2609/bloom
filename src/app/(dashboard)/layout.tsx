@@ -20,7 +20,7 @@ export default function ProtectedLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <section className="my-3 mr-3 rounded-lg bg-background h-full border border-border">
+        <section className="my-3 mr-3 rounded-lg bg-background h-full border dark:border-0">
           <Header />
           {children}
         </section>

@@ -4,13 +4,11 @@
 @source "../../node_modules/@uploadthing/react/dist";
 @custom-variant dark (&:is(.dark *));
 
-
 :root {
   --display-family: var(--font-sans);
   --display-weight: 500;
   --text-family: var(--font-sans);
   --text-weight: 500;
-
 
   --base-50: oklch(0.9825 0.0032 146.74);
   --base-100: oklch(0.9676 0.0062 147.76);
@@ -118,13 +116,13 @@
   --sidebar-border: var(--base-800);
   --sidebar-ring: var(--primary-300);
 }
-
+/* Theme variables */
 @theme inline {
   --font-sans: var(--font-nunito);
   --font-display: var(--display-family);
   --font-text: var(--text-family);
 
-  --color-off-white: #ECE9E3;
+  --color-off-white: #ece9e3;
 
   --color-base-50: var(--base-50);
   --color-base-100: var(--base-100);
@@ -202,20 +200,16 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* 
+/* Global styles */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
-} */
 
-@layer base {
   body {
     @apply bg-background text-foreground;
   }
+
   .font-display {
     font-weight: var(--display-weight);
   }
