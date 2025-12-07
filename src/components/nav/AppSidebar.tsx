@@ -22,6 +22,8 @@ import {
   LogOut,
   UserRound,
   MessageCircleHeart,
+  Settings,
+  LucideEdit,
 } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar/avatar";
 import { useSession } from "@/hooks/useSession";
@@ -42,6 +44,19 @@ export function AppSidebar() {
       title: "Survey",
       url: "/survey",
       icon: MessageCircleHeart,
+    },
+  ];
+
+  const adminItems = [
+    {
+      title: "Manage users",
+      url: "/admin",
+      icon: Settings,
+    },
+    {
+      title: "Create surveys",
+      url: "#",
+      icon: LucideEdit,
     },
   ];
 
@@ -84,6 +99,19 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {user?.role === "ADMIN" &&
+                adminItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link href={item.url}>
+                        <item.icon className="size-5!" />
+                        <span className="text-base font-medium pl-1">
+                          {item.title}
+                        </span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
