@@ -1,4 +1,5 @@
 import { Role } from '@/generated/prisma/enums';
+import { UserWithCompany } from '@/types/user';
 import { SessionOptions, getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
 
@@ -12,20 +13,7 @@ export interface PendingCompanySetup {
 }
 
 export interface SessionData {
-  user?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    avatar?: string | null;
-    role: Role;
-    companyId: string;
-    company: {
-      id: string;
-      name: string;
-      logo?: string | null;
-    };
-  };
+  user?: UserWithCompany;
   isLoggedIn?: boolean;
   lastVerified?: number;
   pendingCompany?: PendingCompanySetup;
@@ -42,20 +30,7 @@ export const sessionOptions: SessionOptions = {
 // Udvid IronSessionData med vores brugerdata interface
 declare module 'iron-session' {
   interface IronSessionData {
-    user?: {
-      id: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-      avatar?: string | null;
-      role: Role;
-      companyId: string;
-      company: {
-        id: string;
-        name: string;
-        logo?: string | null;
-      };
-    };
+    user?: UserWithCompany;
     isLoggedIn?: boolean;
     lastVerified?: number;
     pendingCompany?: PendingCompanySetup;
