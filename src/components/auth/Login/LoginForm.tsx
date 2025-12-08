@@ -13,6 +13,9 @@ import { PasswordInput } from "@/components/ui/forms/passwordInput";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button/button";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { ArrowRight, Loader2Icon } from "lucide-react";
+import { Heading } from "@/components/ui/heading/heading";
 
 const LoginForm = () => {
   const { login, isLoading } = useAuth();
@@ -34,11 +37,17 @@ const LoginForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold">Login</h1>
-          <p className="text-muted-foreground text-sm">
-            Log in to your account
-          </p>
+        <div className="space-y-2">
+          <Heading level="h2" className="text-2xl font-bold">
+            Log in
+          </Heading>
+          <Heading
+            level="h3"
+            variant="muted"
+            className="mb-6 text-lg! font-normal!"
+          >
+            Welcome back Bloomer!
+          </Heading>
         </div>
 
         <FormField
@@ -82,14 +91,24 @@ const LoginForm = () => {
         />
 
         <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
-          Login
+          {isLoading ? (
+            <>
+              Logging in...
+              <Loader2Icon className="size-4 animate-spin" />
+            </>
+          ) : (
+            <>
+              Login
+              <ArrowRight className="size-4" />
+            </>
+          )}
         </Button>
 
-        <div className="flex justify-center gap-2 text-center text-sm">
-          <p>Dont have an account?</p>
-          <a href="/signup" className="underline underline-offset-4">
+        <div className="text-muted-foreground flex justify-center gap-2 text-center text-sm">
+          <p>Don&apos;t have an account?</p>
+          <Link href="/signup" className="underline underline-offset-4">
             Signup
-          </a>
+          </Link>
         </div>
       </form>
     </Form>

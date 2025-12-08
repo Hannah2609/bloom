@@ -23,20 +23,8 @@ export async function POST(req: Request) {
     const userRole = pendingCompany?.role ?? Role.EMPLOYEE;
     const userCompanyId = pendingCompany?.companyId;
 
-    // Employees must always have a company
-    if (userRole === Role.EMPLOYEE && !userCompanyId) {
-      return NextResponse.json(
-        { error: "Employees must be associated with a company" },
-        { status: 400 }
-      );
-    }
-
-    // All users must have a company (based on schema)
     if (!userCompanyId) {
-      return NextResponse.json(
-        { error: "Company ID is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Company not found" }, { status: 400 });
     }
 
     // Create the user

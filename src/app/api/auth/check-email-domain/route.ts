@@ -8,6 +8,18 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email } = emailSchema.parse(body);
 
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+
+    if (existingUser) {
+      return NextResponse.json({
+        userExists: true,
+      });
+    }
+
     // Extract domain from email
     const domain = email.split("@")[1]?.toLowerCase();
     if (!domain) {

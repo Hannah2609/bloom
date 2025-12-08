@@ -32,7 +32,7 @@ export default async function SignupCompanyPage({
   }
 
   return (
-    <div className="flex flex-row items-center justify-center gap-20 pt-20">
+    <div className="flex flex-row items-center justify-center gap-20 px-8 pt-20">
       <SignupForm
         pendingCompany={{
           id: company.id,
