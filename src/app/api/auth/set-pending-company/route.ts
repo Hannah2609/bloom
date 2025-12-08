@@ -16,10 +16,7 @@ export async function POST(req: Request) {
     });
 
     if (!company) {
-      return NextResponse.json(
-        { error: "Company not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Company not found" }, { status: 404 });
     }
 
     const session = await getSession();
@@ -52,4 +49,3 @@ export async function POST(req: Request) {
     );
   }
 }
-

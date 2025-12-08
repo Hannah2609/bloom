@@ -1,6 +1,6 @@
-import { getSession } from '@/lib/session/session';
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getSession } from "@/lib/session/session";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -15,13 +15,14 @@ export async function GET() {
     }
 
     // Rate limit DB checks (only check every 5 minutes)
-    const shouldVerify = !session.lastVerified || 
+    const shouldVerify =
+      !session.lastVerified ||
       Date.now() - session.lastVerified > 5 * 60 * 1000;
 
     if (shouldVerify) {
       // Verify user still exists and is not deleted
       const userExists = await prisma.user.findUnique({
-        where: { 
+        where: {
           id: session.user.id,
         },
         select: {
@@ -50,7 +51,10 @@ export async function GET() {
       user: session.user,
     });
   } catch (error) {
-    console.error('Session error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Session error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

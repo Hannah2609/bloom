@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   motion,
   useMotionValue,
   useSpring,
   type SpringOptions,
-} from 'motion/react';
+} from "motion/react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 type BubbleColors = {
   first: string;
@@ -19,7 +19,7 @@ type BubbleColors = {
   sixth: string;
 };
 
-type BubbleBackgroundProps = React.ComponentProps<'div'> & {
+type BubbleBackgroundProps = React.ComponentProps<"div"> & {
   interactive?: boolean;
   transition?: SpringOptions;
   colors?: BubbleColors;
@@ -32,12 +32,12 @@ function BubbleBackground({
   interactive = false,
   transition = { stiffness: 100, damping: 20 },
   colors = {
-    first: '18,113,255',
-    second: '221,74,255',
-    third: '0,220,255',
-    fourth: '200,50,50',
-    fifth: '180,180,50',
-    sixth: '140,100,255',
+    first: "18,113,255",
+    second: "221,74,255",
+    third: "0,220,255",
+    fourth: "200,50,50",
+    fifth: "180,180,50",
+    sixth: "140,100,255",
   },
   ...props
 }: BubbleBackgroundProps) {
@@ -65,13 +65,13 @@ function BubbleBackground({
     const ro = new ResizeObserver(updateRect);
     if (el) ro.observe(el);
 
-    window.addEventListener('resize', updateRect);
-    window.addEventListener('scroll', updateRect, { passive: true });
+    window.addEventListener("resize", updateRect);
+    window.addEventListener("scroll", updateRect, { passive: true });
 
     return () => {
       ro.disconnect();
-      window.removeEventListener('resize', updateRect);
-      window.removeEventListener('scroll', updateRect);
+      window.removeEventListener("resize", updateRect);
+      window.removeEventListener("scroll", updateRect);
     };
   }, []);
 
@@ -94,11 +94,11 @@ function BubbleBackground({
       });
     };
 
-    el.addEventListener('mousemove', handleMouseMove as EventListener, {
+    el.addEventListener("mousemove", handleMouseMove as EventListener, {
       passive: true,
     });
     return () => {
-      el.removeEventListener('mousemove', handleMouseMove as EventListener);
+      el.removeEventListener("mousemove", handleMouseMove as EventListener);
       if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current);
     };
   }, [interactive, mouseX, mouseY]);
@@ -108,8 +108,8 @@ function BubbleBackground({
       ref={containerRef}
       data-slot="bubble-background"
       className={cn(
-        'relative size-full overflow-hidden bg-gradient-to-br from-violet-900 to-blue-900',
-        className,
+        "relative size-full overflow-hidden bg-gradient-to-br from-violet-900 to-blue-900",
+        className
       )}
       {...props}
     >
@@ -128,7 +128,7 @@ function BubbleBackground({
 
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="absolute top-0 left-0 w-0 h-0"
+        className="absolute top-0 left-0 h-0 w-0"
       >
         <defs>
           <filter id="goo">
@@ -150,62 +150,62 @@ function BubbleBackground({
 
       <div
         className="absolute inset-0"
-        style={{ filter: 'url(#goo) blur(40px)' }}
+        style={{ filter: "url(#goo) blur(40px)" }}
       >
         <motion.div
-          className="absolute rounded-full size-[80%] top-[10%] left-[10%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--first-color),0.8)_0%,rgba(var(--first-color),0)_50%)]"
+          className="absolute top-[10%] left-[10%] size-[80%] rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--first-color),0.8)_0%,rgba(var(--first-color),0)_50%)] mix-blend-hard-light"
           animate={{ y: [-50, 50, -50] }}
-          transition={{ duration: 30, ease: 'easeInOut', repeat: Infinity }}
-          style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+          transition={{ duration: 30, ease: "easeInOut", repeat: Infinity }}
+          style={{ transform: "translateZ(0)", willChange: "transform" }}
         />
 
         <motion.div
-          className="absolute inset-0 flex justify-center items-center origin-[calc(50%-400px)]"
+          className="absolute inset-0 flex origin-[calc(50%-400px)] items-center justify-center"
           animate={{ rotate: 360 }}
           transition={{
             duration: 20,
-            ease: 'linear',
+            ease: "linear",
             repeat: Infinity,
-            repeatType: 'loop',
+            repeatType: "loop",
           }}
-          style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+          style={{ transform: "translateZ(0)", willChange: "transform" }}
         >
-          <div className="rounded-full size-[80%] top-[10%] left-[10%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--second-color),0.8)_0%,rgba(var(--second-color),0)_50%)]" />
+          <div className="top-[10%] left-[10%] size-[80%] rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--second-color),0.8)_0%,rgba(var(--second-color),0)_50%)] mix-blend-hard-light" />
         </motion.div>
 
         <motion.div
-          className="absolute inset-0 flex justify-center items-center origin-[calc(50%+400px)]"
+          className="absolute inset-0 flex origin-[calc(50%+400px)] items-center justify-center"
           animate={{ rotate: 360 }}
-          transition={{ duration: 40, ease: 'linear', repeat: Infinity }}
-          style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+          transition={{ duration: 40, ease: "linear", repeat: Infinity }}
+          style={{ transform: "translateZ(0)", willChange: "transform" }}
         >
-          <div className="absolute rounded-full size-[80%] bg-[radial-gradient(circle_at_center,rgba(var(--third-color),0.8)_0%,rgba(var(--third-color),0)_50%)] mix-blend-hard-light top-[calc(50%+200px)] left-[calc(50%-500px)]" />
+          <div className="absolute top-[calc(50%+200px)] left-[calc(50%-500px)] size-[80%] rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--third-color),0.8)_0%,rgba(var(--third-color),0)_50%)] mix-blend-hard-light" />
         </motion.div>
 
         <motion.div
-          className="absolute rounded-full size-[80%] top-[10%] left-[10%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--fourth-color),0.8)_0%,rgba(var(--fourth-color),0)_50%)] opacity-70"
+          className="absolute top-[10%] left-[10%] size-[80%] rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--fourth-color),0.8)_0%,rgba(var(--fourth-color),0)_50%)] opacity-70 mix-blend-hard-light"
           animate={{ x: [-50, 50, -50] }}
-          transition={{ duration: 40, ease: 'easeInOut', repeat: Infinity }}
-          style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+          transition={{ duration: 40, ease: "easeInOut", repeat: Infinity }}
+          style={{ transform: "translateZ(0)", willChange: "transform" }}
         />
 
         <motion.div
-          className="absolute inset-0 flex justify-center items-center origin-[calc(50%_-_800px)_calc(50%_+_200px)]"
+          className="absolute inset-0 flex origin-[calc(50%_-_800px)_calc(50%_+_200px)] items-center justify-center"
           animate={{ rotate: 360 }}
-          transition={{ duration: 20, ease: 'linear', repeat: Infinity }}
-          style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+          transition={{ duration: 20, ease: "linear", repeat: Infinity }}
+          style={{ transform: "translateZ(0)", willChange: "transform" }}
         >
-          <div className="absolute rounded-full size-[160%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--fifth-color),0.8)_0%,rgba(var(--fifth-color),0)_50%)] top-[calc(50%-80%)] left-[calc(50%-80%)]" />
+          <div className="absolute top-[calc(50%-80%)] left-[calc(50%-80%)] size-[160%] rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--fifth-color),0.8)_0%,rgba(var(--fifth-color),0)_50%)] mix-blend-hard-light" />
         </motion.div>
 
         {interactive && (
           <motion.div
-            className="absolute rounded-full size-full mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--sixth-color),0.8)_0%,rgba(var(--sixth-color),0)_50%)] opacity-70"
+            className="absolute size-full rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--sixth-color),0.8)_0%,rgba(var(--sixth-color),0)_50%)] opacity-70 mix-blend-hard-light"
             style={{
               x: springX,
               y: springY,
-              transform: 'translateZ(0)',
-              willChange: 'transform',
+              transform: "translateZ(0)",
+              willChange: "transform",
             }}
           />
         )}

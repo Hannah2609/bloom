@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useTransition } from 'react';
 import {
@@ -13,8 +13,8 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 
-import { Button } from '@/components/ui/button/button';
-import { Input } from '@/components/ui/forms/input';
+import { Button } from "@/components/ui/button/button";
+import { Input } from "@/components/ui/forms/input";
 import {
   Table,
   TableBody,
@@ -22,7 +22,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -83,10 +83,13 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading 
         />
 
         <Select
-          value={(table.getColumn('role')?.getFilterValue() as string) ?? 'all'}
+          value={(table.getColumn("role")?.getFilterValue() as string) ?? "all"}
           onValueChange={(value) =>
-            table.getColumn('role')?.setFilterValue(value === 'all' ? '' : value)
-          }>
+            table
+              .getColumn("role")
+              ?.setFilterValue(value === "all" ? "" : value)
+          }
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by role" />
           </SelectTrigger>
@@ -109,7 +112,10 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading 
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   );
                 })}
@@ -122,14 +128,20 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading 
                 <TableRow key={row.id} className="even:bg-muted/50">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -142,7 +154,8 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading 
         <div className="flex items-center gap-2">
           <Select
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => table.setPageSize(Number(value))}>
+            onValueChange={(value) => table.setPageSize(Number(value))}
+          >
             <SelectTrigger className="w-[70px]">
               <SelectValue />
             </SelectTrigger>
@@ -159,14 +172,16 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading 
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}>
+            disabled={!table.getCanPreviousPage()}
+          >
             Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}>
+            disabled={!table.getCanNextPage()}
+          >
             Next
           </Button>
         </div>
@@ -174,3 +189,4 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading 
     </section>
   );
 }
+

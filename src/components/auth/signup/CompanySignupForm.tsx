@@ -97,7 +97,7 @@ export default function CompanySignupForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="text-center space-y-2">
+        <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold">Company signup</h1>
           <p className="text-muted-foreground text-sm">
             Enter your company info to get started
@@ -151,9 +151,9 @@ export default function CompanySignupForm() {
               <FormControl>
                 <div className="space-y-2">
                   {field.value ? (
-                    <div className="rounded-lg border border-dashed border-border bg-muted/50 p-4">
+                    <div className="border-border bg-muted/50 rounded-lg border border-dashed p-4">
                       <p className="text-sm font-normal">Logo uploaded</p>
-                      <p className="text-xs text-muted-foreground break-all">
+                      <p className="text-muted-foreground text-xs break-all">
                         {logoFileName ?? field.value}
                       </p>
                       <div className="mt-3 flex gap-2">
@@ -172,13 +172,10 @@ export default function CompanySignupForm() {
                       </div>
                     </div>
                   ) : logoFile ? (
-                    <div
-                      className="rounded-lg border border-black/50 p-5
-                    flex items-center justify-between"
-                    >
+                    <div className="flex items-center justify-between rounded-lg border border-black/50 p-5">
                       <div>
                         <p className="text-sm font-normal">Logo chosen</p>
-                        <p className="text-xs text-muted-foreground break-all">
+                        <p className="text-muted-foreground text-xs break-all">
                           {logoFileName ?? logoFile.name}
                         </p>
                       </div>
@@ -217,7 +214,7 @@ export default function CompanySignupForm() {
                       }}
                     />
                   )}
-                  <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <p className="text-muted-foreground flex items-center gap-1 text-xs">
                     <ImageIcon className="h-4 w-4" />
                     Upload your logo image (PNG, JPG, SVG or WEBP up to 4MB)
                   </p>
@@ -238,12 +235,12 @@ export default function CompanySignupForm() {
             {submitStep === "uploading-logo"
               ? "Uploading logo..."
               : submitStep === "creating-company"
-              ? "Creating company..."
-              : "Create company"}
+                ? "Creating company..."
+                : "Create company"}
           </Button>
         </div>
 
-        <div className="text-center text-sm flex gap-2 justify-center">
+        <div className="flex justify-center gap-2 text-center text-sm">
           <p>Already have an accaount?</p>
           <a href="/login" className="underline underline-offset-4">
             Login
