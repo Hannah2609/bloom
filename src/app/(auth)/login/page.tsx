@@ -4,7 +4,7 @@ import LoginForm from "@/components/auth/Login/LoginForm";
 
 function Page() {
   return (
-    <section className="grid min-h-svh lg:grid-cols-2 lg:p-5">
+    <section className="grid min-h-svh px-8 lg:grid-cols-2 lg:p-5">
       <div className="flex flex-1 items-center justify-center">
         <div className="w-full max-w-[350px]">
           <LoginForm />

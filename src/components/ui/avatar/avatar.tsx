@@ -4,6 +4,7 @@ import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 import { cn } from "@/lib/utils";
+import { Building2, UserRound } from "lucide-react";
 
 function Avatar({
   className,
@@ -34,19 +35,33 @@ function AvatarImage({
   );
 }
 
+interface AvatarFallbackProps extends React.ComponentProps<
+  typeof AvatarPrimitive.Fallback
+> {
+  company?: boolean;
+}
+
 function AvatarFallback({
   className,
+  company = false,
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+}: AvatarFallbackProps) {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "bg-muted flex size-full items-center justify-center rounded-full",
+        "dark:bg-muted bg-base-400 flex size-full items-center justify-center rounded-full",
+        company && "bg-primary text-primary-foreground",
         className
       )}
       {...props}
-    />
+    >
+      {company ? (
+        <Building2 className="text-primary-foreground size-4" />
+      ) : (
+        <UserRound className="dark:text-primary text-base-100 size-4" />
+      )}
+    </AvatarPrimitive.Fallback>
   );
 }
 

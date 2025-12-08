@@ -1,11 +1,15 @@
 "use client";
 
 import { useSession } from "@/hooks/useSession";
-import { Button } from "@/components/ui/button/button";
-import { useAuth } from "@/hooks/useAuth";
+import { SectionCards } from "@/components/ui/card/exampleCards";
+import { Heading } from "@/components/ui/heading/heading";
 
+// TODO: move to utils
 const getGreeting = () => {
   const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "Good morning";
+  if (hour >= 12 && hour < 18) return "Good afternoon";
+  return "Good evening";
   if (hour >= 5 && hour < 12) return "Good morning";
   if (hour >= 12 && hour < 18) return "Good afternoon";
   return "Good evening";
@@ -13,19 +17,24 @@ const getGreeting = () => {
 
 const Page = () => {
   const { user } = useSession();
-  const { logout, isLoading } = useAuth();
 
   return (
-    <section className="flex flex-col gap-10 px-24 pt-6">
-      <div className="space-y-6">
-        <span className="text-muted-foreground text-xl font-medium">
-          {getGreeting()}
-        </span>
-        <h1 className="text-3xl">{user?.firstName}</h1>
+    <section className="flex flex-col gap-10 p-8">
+      <div className="">
+        <Heading
+          level="h2"
+          variant="muted"
+          className="text-2xl! font-extralight"
+        >
+          {getGreeting()},
+        </Heading>
+        <Heading level="h2" className="text-3xl!">
+          {user?.firstName}
+        </Heading>
       </div>
-      <Button className="w-30" onClick={logout} disabled={isLoading}>
-        Logout
-      </Button>
+      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+        <SectionCards />
+      </div>
     </section>
   );
 };

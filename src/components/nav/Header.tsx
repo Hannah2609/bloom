@@ -3,7 +3,7 @@ import { SidebarTrigger } from "../ui/sidebar";
 
 const Header = () => {
   return (
-    <header className="flex justify-between px-3 py-6">
+    <header className="flex justify-between p-3">
       <SidebarTrigger />
       <ThemeToggle />
     </header>

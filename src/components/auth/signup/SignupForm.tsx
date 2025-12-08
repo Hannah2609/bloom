@@ -20,6 +20,9 @@ import { SignupSchema, emailSchema } from "@/lib/validation/validation";
 import { Role } from "@/generated/prisma/enums";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Heading } from "@/components/ui/heading/heading";
+import Link from "next/link";
+import { ArrowRight, Loader2Icon } from "lucide-react";
 
 type PendingCompanyInfo = {
   id: string;
@@ -76,6 +79,13 @@ export default function SignupProfileForm({
 
       const data = await response.json();
 
+      // Check if user already exists
+      if (data.userExists) {
+        toast.info("You are already a Bloom member, please log in");
+        router.push("/login");
+        return;
+      }
+
       if (data.hasCompany && data.company) {
         // Set session with EMPLOYEE role and redirect
         const sessionResponse = await fetch("/api/auth/set-pending-company", {
@@ -92,11 +102,13 @@ export default function SignupProfileForm({
           router.push(data.redirectUrl);
           return;
         }
+      } else {
+        // No company found - show error and don't proceed
+        toast.info(
+          "No company found with this email domain. Contact your company to be added."
+        );
+        return;
       }
-
-      // No company found, show full form
-      setEmailChecked(true);
-      form.setValue("email", email);
     } catch (error) {
       console.error("Error checking email domain:", error);
       toast.error("Failed to check email. Please try again.");
@@ -116,9 +128,19 @@ export default function SignupProfileForm({
           className="space-y-6"
         >
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">Get started</h1>
-            <p className="text-muted-foreground text-sm">
-              Enter your email to continue
+            <Heading
+              level="h3"
+              variant="muted"
+              className="text-lg! font-normal!"
+            >
+              Employee signup
+            </Heading>
+            <Heading level="h2" className="mb-6 text-2xl font-bold">
+              Get started
+            </Heading>
+            <p className="text-muted-foreground mb-10 text-sm">
+              Enter your work email to continue. We`ll check if your company is
+              already a Bloom member.
             </p>
           </div>
 
@@ -142,10 +164,25 @@ export default function SignupProfileForm({
             )}
           />
 
-          <div className="pt-4">
-            <Button type="submit" className="w-full" disabled={checkingEmail}>
-              {checkingEmail ? "Checking..." : "Continue"}
-            </Button>
+          <Button type="submit" className="w-full" disabled={checkingEmail}>
+            {checkingEmail ? (
+              <>
+                Checking...
+                <Loader2Icon className="size-4 animate-spin" />
+              </>
+            ) : (
+              <>
+                Continue
+                <ArrowRight className="size-4" />
+              </>
+            )}
+          </Button>
+
+          <div className="text-muted-foreground mt-8 flex justify-center gap-2 text-center text-sm">
+            <p>Already have an account?</p>
+            <Link href="/login" className="underline underline-offset-4">
+              Login
+            </Link>
           </div>
         </form>
       </Form>
@@ -289,7 +326,17 @@ export default function SignupProfileForm({
 
         <div className="pt-4">
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Creating account..." : "Create Account"}
+            {isSubmitting ? (
+              <>
+                Creating account...
+                <Loader2Icon className="size-4 animate-spin" />
+              </>
+            ) : (
+              <>
+                Create Account
+                <ArrowRight className="size-4" />
+              </>
+            )}
           </Button>
         </div>
       </form>

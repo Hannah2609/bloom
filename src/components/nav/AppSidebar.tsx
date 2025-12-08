@@ -1,13 +1,13 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarFooter,
+  SidebarHeader,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -17,23 +17,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown/dropdownMenu";
 import {
-  ChevronsUpDown,
+  EllipsisVertical,
   House,
   LogOut,
   UserRound,
   MessageCircleHeart,
   Settings,
   LucideEdit,
+  Users,
 } from "lucide-react";
-import { Avatar, AvatarImage } from "../ui/avatar/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar/avatar";
 import { useSession } from "@/hooks/useSession";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Role } from "@/generated/prisma/enums";
+import { isActive } from "@/lib/utils";
 
 export function AppSidebar() {
   const { user } = useSession();
   const { logout } = useAuth();
+  const pathname = usePathname();
 
+  // menu (items) data
   const items = [
     {
       title: "Home",
@@ -44,6 +50,11 @@ export function AppSidebar() {
       title: "Survey",
       url: "/survey",
       icon: MessageCircleHeart,
+    },
+    {
+      title: "Teams",
+      url: "/teams",
+      icon: Users,
     },
   ];
 
@@ -60,6 +71,10 @@ export function AppSidebar() {
     },
   ];
 
+  // Combine items based on user role
+  const menuItems =
+    user?.role === Role.ADMIN ? [...items, ...adminItems] : items;
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="pt-4">
@@ -71,10 +86,14 @@ export function AppSidebar() {
               disabled
             >
               <Avatar className="h-8 w-8">
-                <AvatarImage
-                  src={user?.company.logo || "https://github.com/shadcn.png"}
-                  alt={user?.company.name || "Company Logo"}
-                />
+                {user?.company.logo ? (
+                  <AvatarImage
+                    src={user.company.logo}
+                    alt={user.company.name}
+                  />
+                ) : (
+                  <AvatarFallback company />
+                )}
               </Avatar>
               <span className="truncate pl-2 text-base font-semibold">
                 {user?.company.name}
@@ -83,39 +102,35 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent className="flex items-center justify-center">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-6">
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon className="size-5!" />
-                      <span className="pl-1 text-base font-medium">
-                        {item.title}
-                      </span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              {user?.role === "ADMIN" &&
-                adminItems.map((item) => (
+            <SidebarMenu className="space-y-2">
+              {menuItems.map((item) => {
+                const active = item.url !== "#" && isActive(pathname, item.url);
+
+                return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton
+                      size="sm"
+                      asChild
+                      isActive={active}
+                      className="group"
+                    >
                       <Link href={item.url}>
-                        <item.icon className="size-5!" />
-                        <span className="pl-1 text-base font-medium">
-                          {item.title}
-                        </span>
+                        <item.icon className="group-data-[active=true]:text-primary-foreground dark:group-data-[active=true]:text-foreground text-muted-foreground" />
+                        <span className="pl-1 text-base">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter className="pb-4">
         <SidebarMenu>
           <SidebarMenuItem>
@@ -123,15 +138,16 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
+                    {user?.avatar ? (
+                      <AvatarImage src={user.avatar} alt={user.firstName} />
+                    ) : (
+                      <AvatarFallback />
+                    )}
                   </Avatar>
                   <span className="truncate pl-2 font-medium">
                     {user?.firstName} {user?.lastName}
                   </span>
-                  <ChevronsUpDown className="ml-auto" />
+                  <EllipsisVertical className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="mb-1 w-48">
