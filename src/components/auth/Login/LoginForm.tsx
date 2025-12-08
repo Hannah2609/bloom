@@ -5,14 +5,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/forms/form';
-import { Input } from '@/components/ui/forms/input';
-import { loginSchema, LoginSchema } from '@/lib/validation/validation';
-import { useForm } from 'react-hook-form';
-import { PasswordInput } from '@/components/ui/forms/passwordInput';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button/button';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from "@/components/ui/forms/form";
+import { Input } from "@/components/ui/forms/input";
+import { loginSchema, LoginSchema } from "@/lib/validation/validation";
+import { useForm } from "react-hook-form";
+import { PasswordInput } from "@/components/ui/forms/passwordInput";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button/button";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const LoginForm = () => {
   const { login, isLoading } = useAuth();
@@ -20,8 +20,8 @@ const LoginForm = () => {
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
@@ -36,7 +36,9 @@ const LoginForm = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Login</h1>
-          <p className="text-muted-foreground text-sm">Log in to your account</p>
+          <p className="text-muted-foreground text-sm">
+            Log in to your account
+          </p>
         </div>
 
         <FormField
@@ -46,7 +48,12 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" autoComplete="email" {...field} disabled={isLoading} />
+                <Input
+                  type="email"
+                  autoComplete="email"
+                  {...field}
+                  disabled={isLoading}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -60,7 +67,11 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Adgangskode</FormLabel>
               <FormControl>
-                <PasswordInput autoComplete="current-password" {...field} disabled={isLoading} />
+                <PasswordInput
+                  autoComplete="current-password"
+                  {...field}
+                  disabled={isLoading}
+                />
               </FormControl>
               <div className="relative">
                 <FormMessage />
@@ -69,12 +80,12 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-        
+
         <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
           Login
         </Button>
 
-        <div className="text-center text-sm flex gap-2 justify-center">
+        <div className="flex justify-center gap-2 text-center text-sm">
           <p>Dont have an account?</p>
           <a href="/signup" className="underline underline-offset-4">
             Signup

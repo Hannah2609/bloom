@@ -8,14 +8,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown/dropdownMenu';
+} from "@/components/ui/dropdown/dropdownMenu";
 import {
   ChevronsUpDown,
   House,
@@ -23,12 +23,12 @@ import {
   UserRound,
   MessageCircleHeart,
   Settings,
-  LucideEdit
-} from 'lucide-react';
-import { Avatar, AvatarImage } from '../ui/avatar/avatar';
-import { useSession } from '@/hooks/useSession';
-import { useAuth } from '@/hooks/useAuth';
-import Link from 'next/link';
+  LucideEdit,
+} from "lucide-react";
+import { Avatar, AvatarImage } from "../ui/avatar/avatar";
+import { useSession } from "@/hooks/useSession";
+import { useAuth } from "@/hooks/useAuth";
+import Link from "next/link";
 
 export function AppSidebar() {
   const { user } = useSession();
@@ -36,26 +36,26 @@ export function AppSidebar() {
 
   const items = [
     {
-      title: 'Home',
-      url: '/home',
+      title: "Home",
+      url: "/home",
       icon: House,
     },
     {
-      title: 'Survey',
-      url: '/survey',
+      title: "Survey",
+      url: "/survey",
       icon: MessageCircleHeart,
     },
   ];
 
   const adminItems = [
     {
-      title: 'Manage users',
-      url: '/admin',
+      title: "Manage users",
+      url: "/admin",
       icon: Settings,
     },
     {
-      title: 'Create surveys',
-      url: '#',
+      title: "Create surveys",
+      url: "#",
       icon: LucideEdit,
     },
   ];
@@ -67,15 +67,18 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              className="disabled:pointer-events-none disabled:opacity-100 hover:bg-transparent"
-              disabled>
+              className="hover:bg-transparent disabled:pointer-events-none disabled:opacity-100"
+              disabled
+            >
               <Avatar className="h-8 w-8">
                 <AvatarImage
-                  src={user?.company?.logo || 'https://github.com/shadcn.png'}
-                  alt={user?.company?.name || 'Company Logo'}
+                  src={user?.company?.logo || "https://github.com/shadcn.png"}
+                  alt={user?.company?.name || "Company Logo"}
                 />
               </Avatar>
-              <span className="truncate font-semibold text-base pl-2">{user?.company?.name}</span>
+              <span className="truncate pl-2 text-base font-semibold">
+                {user?.company?.name}
+              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -89,18 +92,22 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <Link href={item.url}>
                       <item.icon className="size-5!" />
-                      <span className="text-base font-medium pl-1">{item.title}</span>
+                      <span className="pl-1 text-base font-medium">
+                        {item.title}
+                      </span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              {user?.role === 'ADMIN' &&
+              {user?.role === "ADMIN" &&
                 adminItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <Link href={item.url}>
                         <item.icon className="size-5!" />
-                        <span className="text-base font-medium pl-1">{item.title}</span>
+                        <span className="pl-1 text-base font-medium">
+                          {item.title}
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -116,15 +123,18 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                    <AvatarImage
+                      src="https://github.com/shadcn.png"
+                      alt="@shadcn"
+                    />
                   </Avatar>
-                  <span className="truncate font-medium pl-2">
+                  <span className="truncate pl-2 font-medium">
                     {user?.firstName} {user?.lastName}
                   </span>
                   <ChevronsUpDown className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" className="w-48 mb-1">
+              <DropdownMenuContent side="top" className="mb-1 w-48">
                 <DropdownMenuItem>
                   <UserRound />
                   <span>Profile</span>

@@ -1,9 +1,9 @@
-import { ThemeToggle } from '../theme/ThemeToggle';
-import { SidebarTrigger } from '../ui/sidebar';
+import { ThemeToggle } from "../theme/ThemeToggle";
+import { SidebarTrigger } from "../ui/sidebar";
 
 const Header = () => {
   return (
-    <header className="flex justify-between py-6 px-3">
+    <header className="flex justify-between px-3 py-6">
       <SidebarTrigger />
       <ThemeToggle />
     </header>

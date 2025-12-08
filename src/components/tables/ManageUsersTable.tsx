@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,11 +12,11 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
-} from '@tanstack/react-table';
-import { ArrowUpDown, Trash2 } from 'lucide-react';
+} from "@tanstack/react-table";
+import { ArrowUpDown, Trash2 } from "lucide-react";
 
-import { Button } from '@/components/ui/button/button';
-import { Input } from '@/components/ui/forms/input';
+import { Button } from "@/components/ui/button/button";
+import { Input } from "@/components/ui/forms/input";
 import {
   Table,
   TableBody,
@@ -24,16 +24,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Role } from '@/generated/prisma/enums';
-import { UserTableRow } from '@/types/user';
+} from "@/components/ui/select";
+import { Role } from "@/generated/prisma/enums";
+import { UserTableRow } from "@/types/user";
 
 interface UserTableProps {
   users: UserTableRow[];
@@ -55,14 +55,18 @@ function RoleSelect({ user, onRoleChange }: RoleSelectProps) {
         try {
           await onRoleChange(user.id, newRole as Role);
         } catch (error) {
-          console.error('Error updating role:', error);
+          console.error("Error updating role:", error);
         }
       });
     }
   };
 
   return (
-    <Select value={user.role} onValueChange={handleRoleChange} disabled={isPending}>
+    <Select
+      value={user.role}
+      onValueChange={handleRoleChange}
+      disabled={isPending}
+    >
       <SelectTrigger className="w-[140px]">
         <SelectValue />
       </SelectTrigger>
@@ -89,15 +93,20 @@ function DeleteUserButton({ user, onDeleteUser }: DeleteUserButtonProps) {
         try {
           await onDeleteUser(user.id);
         } catch (error) {
-          console.error('Error deleting user:', error);
+          console.error("Error deleting user:", error);
         }
       });
     }
   };
 
   return (
-    <Button variant="ghost" size="icon" disabled={isPending} onClick={handleDelete}>
-      <Trash2 className="h-4 w-4 text-destructive" />
+    <Button
+      variant="ghost"
+      size="icon"
+      disabled={isPending}
+      onClick={handleDelete}
+    >
+      <Trash2 className="text-destructive h-4 w-4" />
     </Button>
   );
 }
@@ -108,26 +117,28 @@ const getColumns = (
   onDeleteUser?: (userId: string) => Promise<void>
 ): ColumnDef<UserTableRow>[] => [
   {
-    accessorKey: 'email',
+    accessorKey: "email",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Email
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
-    accessorKey: 'name',
+    accessorKey: "name",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -143,12 +154,13 @@ const getColumns = (
     },
   },
   {
-    accessorKey: 'role',
+    accessorKey: "role",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Role
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -159,18 +171,27 @@ const getColumns = (
     },
   },
   {
-    id: 'actions',
-    header: 'Actions',
+    id: "actions",
+    header: "Actions",
     cell: ({ row }) => {
-      return <DeleteUserButton user={row.original} onDeleteUser={onDeleteUser} />;
+      return (
+        <DeleteUserButton user={row.original} onDeleteUser={onDeleteUser} />
+      );
     },
   },
 ];
 
-export function ManageUsersTable({ users, onRoleChange, onDeleteUser }: UserTableProps) {
+export function ManageUsersTable({
+  users,
+  onRoleChange,
+  onDeleteUser,
+}: UserTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
 
   const columns = getColumns(onRoleChange, onDeleteUser);
 
@@ -194,19 +215,24 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser }: UserTabl
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between py-4 gap-4">
+      <div className="flex items-center justify-between gap-4 py-4">
         <Input
           placeholder="Search by email..."
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
+          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("email")?.setFilterValue(event.target.value)
+          }
           className="max-w-sm"
         />
 
         <Select
-          value={(table.getColumn('role')?.getFilterValue() as string) ?? 'all'}
+          value={(table.getColumn("role")?.getFilterValue() as string) ?? "all"}
           onValueChange={(value) =>
-            table.getColumn('role')?.setFilterValue(value === 'all' ? '' : value)
-          }>
+            table
+              .getColumn("role")
+              ?.setFilterValue(value === "all" ? "" : value)
+          }
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by role" />
           </SelectTrigger>
@@ -229,7 +255,10 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser }: UserTabl
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   );
                 })}
@@ -242,14 +271,20 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser }: UserTabl
                 <TableRow key={row.id} className="even:bg-muted/50">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -262,7 +297,8 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser }: UserTabl
         <div>
           <Select
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => table.setPageSize(Number(value))}>
+            onValueChange={(value) => table.setPageSize(Number(value))}
+          >
             <SelectTrigger className="w-[70px]">
               <SelectValue />
             </SelectTrigger>
@@ -279,14 +315,16 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser }: UserTabl
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}>
+            disabled={!table.getCanPreviousPage()}
+          >
             Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}>
+            disabled={!table.getCanNextPage()}
+          >
             Next
           </Button>
         </div>
