@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Role } from '@/generated/prisma/enums';
-import { UserTableRow } from '@/types/user';
+} from "@/components/ui/select";
+import { Role } from "@/generated/prisma/enums";
+import { UserTableRow } from "@/types/user";
 
 interface RoleSelectProps {
   user: UserTableRow;
@@ -25,14 +25,18 @@ export function RoleSelect({ user, onRoleChange }: RoleSelectProps) {
         try {
           await onRoleChange(user.id, newRole as Role);
         } catch (error) {
-          console.error('Error updating role:', error);
+          console.error("Error updating role:", error);
         }
       });
     }
   };
 
   return (
-    <Select value={user.role} onValueChange={handleRoleChange} disabled={isPending}>
+    <Select
+      value={user.role}
+      onValueChange={handleRoleChange}
+      disabled={isPending}
+    >
       <SelectTrigger className="w-[140px]">
         <SelectValue />
       </SelectTrigger>

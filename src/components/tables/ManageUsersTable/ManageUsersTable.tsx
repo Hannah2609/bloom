@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition } from "react";
 import {
   ColumnFiltersState,
   flexRender,
@@ -11,7 +11,7 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button/button";
 import { Input } from "@/components/ui/forms/input";
@@ -29,10 +29,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Role } from '@/generated/prisma/enums';
-import { UserTableRow } from '@/types/user';
-import { getColumns } from './columns';
+} from "@/components/ui/select";
+import { Role } from "@/generated/prisma/enums";
+import { UserTableRow } from "@/types/user";
+import { getColumns } from "./columns";
 
 interface UserTableProps {
   users: UserTableRow[];
@@ -41,14 +41,19 @@ interface UserTableProps {
   isLoading?: boolean;
 }
 
-export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading }: UserTableProps) {
+export function ManageUsersTable({
+  users,
+  onRoleChange,
+  onDeleteUser,
+  isLoading,
+}: UserTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     firstName: false,
     lastName: false,
   });
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const columns = getColumns(onRoleChange, onDeleteUser);
 
@@ -63,7 +68,7 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading 
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    globalFilterFn: 'includesString',
+    globalFilterFn: "includesString",
     state: {
       sorting,
       columnFilters,
@@ -74,7 +79,7 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading 
 
   return (
     <section className="w-full">
-      <div className="flex items-center justify-between py-4 gap-4">
+      <div className="flex items-center justify-between gap-4 py-4">
         <Input
           placeholder="Search users..."
           value={searchQuery}
@@ -189,4 +194,3 @@ export function ManageUsersTable({ users, onRoleChange, onDeleteUser, isLoading 
     </section>
   );
 }
-

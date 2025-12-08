@@ -1,10 +1,10 @@
 "use client";
 
-import { ManageUsersTable } from '@/components/tables/ManageUsersTable/ManageUsersTable';
-import { Role } from '@/generated/prisma/enums';
-import { UserTableRow } from '@/types/user';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { ManageUsersTable } from "@/components/tables/ManageUsersTable/ManageUsersTable";
+import { Role } from "@/generated/prisma/enums";
+import { UserTableRow } from "@/types/user";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function AdminPage() {
   const [users, setUsers] = useState<UserTableRow[]>([]);
@@ -61,23 +61,25 @@ export default function AdminPage() {
   const handleDeleteUser = async (userId: string) => {
     try {
       const response = await fetch(`/api/dashboard/users/${userId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to delete user');
+        throw new Error(data.error || "Failed to delete user");
       }
 
       // Remove user from local state
       setUsers((prev) => prev.filter((user) => user.id !== userId));
 
       // Success toast
-      toast.success('User deleted successfully');
+      toast.success("User deleted successfully");
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
       toast.error(
-        error instanceof Error ? error.message : 'Failed to delete user. Please try again.'
+        error instanceof Error
+          ? error.message
+          : "Failed to delete user. Please try again."
       );
       throw error;
     }
@@ -87,9 +89,16 @@ export default function AdminPage() {
     <div className="p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Manage Users</h1>
-        <p className="text-muted-foreground mt-1">Manage users and their roles</p>
+        <p className="text-muted-foreground mt-1">
+          Manage users and their roles
+        </p>
       </div>
-      <ManageUsersTable users={users} onRoleChange={handleRoleChange} onDeleteUser={handleDeleteUser} isLoading={isLoading} />
+      <ManageUsersTable
+        users={users}
+        onRoleChange={handleRoleChange}
+        onDeleteUser={handleDeleteUser}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
