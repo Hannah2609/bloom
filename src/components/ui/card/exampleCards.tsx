@@ -12,7 +12,7 @@ import {
 
 export function SectionCards() {
   return (
-    <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
       <Card>
         <CardHeader>
           <CardDescription>Total Revenue</CardDescription>

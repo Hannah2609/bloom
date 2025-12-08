@@ -24,7 +24,8 @@ const headingVariants = cva("tracking-tight", {
 });
 
 interface HeadingProps
-  extends React.ComponentPropsWithoutRef<"h1">,
+  extends
+    React.ComponentPropsWithoutRef<"h1">,
     VariantProps<typeof headingVariants> {}
 
 const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(

@@ -135,10 +135,10 @@ export default function SignupProfileForm({
             >
               Employee signup
             </Heading>
-            <Heading level="h2" className="text-2xl font-bold mb-6">
+            <Heading level="h2" className="mb-6 text-2xl font-bold">
               Get started
             </Heading>
-            <p className="text-muted-foreground text-sm mb-10">
+            <p className="text-muted-foreground mb-10 text-sm">
               Enter your work email to continue. We`ll check if your company is
               already a Bloom member.
             </p>
@@ -178,7 +178,7 @@ export default function SignupProfileForm({
             )}
           </Button>
 
-          <div className="text-center text-sm flex gap-2 justify-center mt-8 text-muted-foreground">
+          <div className="text-muted-foreground mt-8 flex justify-center gap-2 text-center text-sm">
             <p>Already have an account?</p>
             <Link href="/login" className="underline underline-offset-4">
               Login

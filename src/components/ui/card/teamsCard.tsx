@@ -19,18 +19,18 @@ export function TeamsCard({ team }: TeamsCardProps) {
       <Card className="group hover:border-primary-300 dark:hover:border-base-700 cursor-pointer">
         <CardHeader className="flex items-center justify-between">
           <CardTitle>
-            <Heading level="h3" className="font-normal! text-2xl!">
+            <Heading level="h3" className="text-2xl! font-normal!">
               {team.name}
             </Heading>
           </CardTitle>
         </CardHeader>
-        <CardFooter className="pt-12 flex justify-between items-center">
+        <CardFooter className="flex items-center justify-between pt-12">
           <Badge icon={<UsersIcon className="size-3" />}>
             {team.members} members
           </Badge>
           <div className="flex items-center gap-2">
             {/* <p className="text-sm font-medium">View team</p> */}
-            <ArrowRight className="size-5 group-hover:translate-x-2 group-hover:size-5.5 transition-transform duration-300 text-muted-foreground" />
+            <ArrowRight className="text-muted-foreground size-5 transition-transform duration-300 group-hover:size-5.5 group-hover:translate-x-2" />
           </div>
         </CardFooter>
       </Card>

@@ -37,21 +37,21 @@ function Page() {
   return (
     <>
       <section className="p-8">
-        <div className="flex items-center justify-between my-8">
+        <div className="my-8 flex items-center justify-between">
           <Heading level="h2">Teams</Heading>
           <Button size="lg" onClick={() => setIsOpen(true)}>
             <PlusIcon className="size-4" />
             Create new team
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {teams.map((team) => (
             <TeamsCard key={team.id} team={team} />
           ))}
         </div>
       </section>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md ">
+        <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>
             <SheetTitle>Create New Team</SheetTitle>
             <SheetDescription>
