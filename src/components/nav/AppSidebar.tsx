@@ -72,12 +72,12 @@ export function AppSidebar() {
             >
               <Avatar className="h-8 w-8">
                 <AvatarImage
-                  src={user?.company?.logo || "https://github.com/shadcn.png"}
-                  alt={user?.company?.name || "Company Logo"}
+                  src={user?.company.logo || "https://github.com/shadcn.png"}
+                  alt={user?.company.name || "Company Logo"}
                 />
               </Avatar>
               <span className="truncate pl-2 text-base font-semibold">
-                {user?.company?.name}
+                {user?.company.name}
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>

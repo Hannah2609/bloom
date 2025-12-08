@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { SessionData } from "@/lib/session/session";
+import { UserWithCompany } from "@/types/user";
 
 type SessionResponse = {
   isLoggedIn: boolean;
-  user: SessionData["user"] | null;
+  user: UserWithCompany | null;
   isLoading: boolean;
   error: Error | null;
 };
@@ -11,7 +11,7 @@ type SessionResponse = {
 export function useSession(): SessionResponse {
   // States to hold session data
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<SessionData["user"] | null>(null);
+  const [user, setUser] = useState<UserWithCompany | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
