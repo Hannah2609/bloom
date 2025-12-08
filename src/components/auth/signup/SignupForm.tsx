@@ -20,6 +20,9 @@ import { SignupSchema, emailSchema } from "@/lib/validation/validation";
 import { Role } from "@/generated/prisma/enums";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Heading } from "@/components/ui/heading/heading";
+import Link from "next/link";
+import { ArrowRight, Loader2Icon } from "lucide-react";
 
 type PendingCompanyInfo = {
   id: string;
@@ -125,9 +128,19 @@ export default function SignupProfileForm({
           className="space-y-6"
         >
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">Get started</h1>
-            <p className="text-muted-foreground text-sm">
-              Enter your email to continue
+            <Heading
+              level="h3"
+              variant="muted"
+              className="text-lg! font-normal!"
+            >
+              Employee signup
+            </Heading>
+            <Heading level="h2" className="text-2xl font-bold mb-6">
+              Get started
+            </Heading>
+            <p className="text-muted-foreground text-sm mb-10">
+              Enter your work email to continue. We`ll check if your company is
+              already a Bloom member.
             </p>
           </div>
 
@@ -151,10 +164,25 @@ export default function SignupProfileForm({
             )}
           />
 
-          <div className="pt-4">
-            <Button type="submit" className="w-full" disabled={checkingEmail}>
-              {checkingEmail ? "Checking..." : "Continue"}
-            </Button>
+          <Button type="submit" className="w-full" disabled={checkingEmail}>
+            {checkingEmail ? (
+              <>
+                Checking...
+                <Loader2Icon className="size-4 animate-spin" />
+              </>
+            ) : (
+              <>
+                Continue
+                <ArrowRight className="size-4" />
+              </>
+            )}
+          </Button>
+
+          <div className="text-center text-sm flex gap-2 justify-center mt-8 text-muted-foreground">
+            <p>Already have an account?</p>
+            <Link href="/login" className="underline underline-offset-4">
+              Login
+            </Link>
           </div>
         </form>
       </Form>
@@ -298,7 +326,17 @@ export default function SignupProfileForm({
 
         <div className="pt-4">
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Creating account..." : "Create Account"}
+            {isSubmitting ? (
+              <>
+                Creating account...
+                <Loader2Icon className="size-4 animate-spin" />
+              </>
+            ) : (
+              <>
+                Create Account
+                <ArrowRight className="size-4" />
+              </>
+            )}
           </Button>
         </div>
       </form>

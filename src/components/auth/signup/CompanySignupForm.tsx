@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ImageIcon, XIcon } from "lucide-react";
+import { ArrowRight, ImageIcon, Loader2Icon, XIcon } from "lucide-react";
 import {
   Form,
   FormField,
@@ -18,6 +18,7 @@ import { UploadDropzone, useUploadThing } from "@/lib/uploadthing";
 import { companySignupSchema } from "@/lib/validation/validation";
 import { Button } from "../../ui/button/button";
 import { useRouter } from "next/navigation";
+import { Heading } from "@/components/ui/heading/heading";
 
 export default function CompanySignupForm() {
   const router = useRouter();
@@ -97,10 +98,16 @@ export default function CompanySignupForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">Company signup</h1>
-          <p className="text-muted-foreground text-sm">
-            Enter your company info to get started
+        <div className="space-y-2">
+          <Heading level="h3" variant="muted" className="text-lg! font-normal!">
+            Company signup
+          </Heading>
+          <Heading level="h2" className="text-2xl font-bold mb-6">
+            Get started
+          </Heading>
+          <p className="text-muted-foreground text-sm mb-10 max-w-md">
+            Enter your company name and domain to get started. We`ll use this to
+            create your company and add you as the first admin.
           </p>
         </div>
 
@@ -235,16 +242,27 @@ export default function CompanySignupForm() {
             className="w-full"
             disabled={submitStep !== "idle" || isLogoUploading}
           >
-            {submitStep === "uploading-logo"
-              ? "Uploading logo..."
-              : submitStep === "creating-company"
-              ? "Creating company..."
-              : "Create company"}
+            {submitStep === "uploading-logo" ? (
+              <>
+                Uploading logo...
+                <Loader2Icon className="size-4 animate-spin" />
+              </>
+            ) : submitStep === "creating-company" ? (
+              <>
+                Creating your company...
+                <Loader2Icon className="size-4 animate-spin" />
+              </>
+            ) : (
+              <>
+                Sign up and add yourself as admin
+                <ArrowRight className="size-4" />
+              </>
+            )}
           </Button>
         </div>
 
         <div className="text-center text-sm flex gap-2 justify-center">
-          <p>Already have an accaount?</p>
+          <p>Already have an account?</p>
           <a href="/login" className="underline underline-offset-4">
             Login
           </a>

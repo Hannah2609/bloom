@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const headingVariants = cva("tracking-tight", {
   variants: {
-    size: {
+    level: {
       h1: "text-4xl lg:text-5xl font-regular",
       h2: "text-3xl lg:text-4xl font-regular",
       h3: "text-2xl lg:text-3xl font-extralight",
@@ -18,7 +18,7 @@ const headingVariants = cva("tracking-tight", {
     },
   },
   defaultVariants: {
-    size: "h1",
+    level: "h1",
     variant: "default",
   },
 });
@@ -28,13 +28,13 @@ interface HeadingProps
     VariantProps<typeof headingVariants> {}
 
 const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
-  ({ className, size = "h1", variant, ...props }, ref) => {
-    const Element = size || "h1";
+  ({ className, level = "h1", variant, ...props }, ref) => {
+    const Element = level || "h1";
 
     return (
       <Element
         ref={ref}
-        className={cn(headingVariants({ size, variant, className }))}
+        className={cn(headingVariants({ level, variant, className }))}
         {...props}
       />
     );

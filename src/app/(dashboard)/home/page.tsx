@@ -1,9 +1,8 @@
 "use client";
 
 import { useSession } from "@/hooks/useSession";
-import { Button } from "@/components/ui/button/button";
-import { useAuth } from "@/hooks/useAuth";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card/card";
+import { SectionCards } from "@/components/ui/card/exampleCards";
+import { Heading } from "@/components/ui/heading/heading";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -14,24 +13,24 @@ const getGreeting = () => {
 
 const Page = () => {
   const { user } = useSession();
-  const { logout, isLoading } = useAuth();
 
   return (
-    <section className="px-24 pt-6 flex flex-col gap-10">
-      <div className="space-y-6">
-        <span className="text-xl font-medium text-muted-foreground">
-          {getGreeting()}
-        </span>
-        <h1 className="text-3xl">{user?.firstName}</h1>
+    <section className="p-8 flex flex-col gap-10">
+      <div className="">
+        <Heading
+          level="h2"
+          variant="muted"
+          className="text-2xl! font-extralight"
+        >
+          {getGreeting()},
+        </Heading>
+        <Heading level="h2" className="text-3xl!">
+          {user?.firstName}
+        </Heading>
       </div>
-      <Button className="w-30" onClick={logout} disabled={isLoading}>
-        Logout
-      </Button>
-      <Card>
-        <CardHeader>
-          <CardTitle>Welcome to Bloom</CardTitle>
-        </CardHeader>
-      </Card>
+      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+        <SectionCards />
+      </div>
     </section>
   );
 };

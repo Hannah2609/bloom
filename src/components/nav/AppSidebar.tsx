@@ -1,13 +1,13 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarFooter,
+  SidebarHeader,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -24,16 +24,22 @@ import {
   MessageCircleHeart,
   Settings,
   LucideEdit,
+  Users,
 } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar/avatar";
 import { useSession } from "@/hooks/useSession";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Role } from "@/generated/prisma/enums";
+import { isActive } from "@/lib/utils";
 
 export function AppSidebar() {
   const { user } = useSession();
   const { logout } = useAuth();
+  const pathname = usePathname();
 
+  // menu (items) data
   const items = [
     {
       title: "Home",
@@ -44,6 +50,11 @@ export function AppSidebar() {
       title: "Survey",
       url: "/survey",
       icon: MessageCircleHeart,
+    },
+    {
+      title: "Teams",
+      url: "/teams",
+      icon: Users,
     },
   ];
 
@@ -59,6 +70,10 @@ export function AppSidebar() {
       icon: LucideEdit,
     },
   ];
+
+  // Combine items based on user role
+  const menuItems =
+    user?.role === Role.ADMIN ? [...items, ...adminItems] : items;
 
   return (
     <Sidebar collapsible="icon">
@@ -83,39 +98,35 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent className="flex items-center justify-center">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-6">
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon className="size-5!" />
-                      <span className="text-base font-medium pl-1">
-                        {item.title}
-                      </span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              {user?.role === "ADMIN" &&
-                adminItems.map((item) => (
+            <SidebarMenu className="space-y-2">
+              {menuItems.map((item) => {
+                const active = item.url !== "#" && isActive(pathname, item.url);
+
+                return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton
+                      size="sm"
+                      asChild
+                      isActive={active}
+                      className="group"
+                    >
                       <Link href={item.url}>
-                        <item.icon className="size-5!" />
-                        <span className="text-base font-medium pl-1">
-                          {item.title}
-                        </span>
+                        <item.icon className="group-data-[active=true]:text-primary-foreground dark:group-data-[active=true]:text-foreground text-muted-foreground" />
+                        <span className="text-base pl-1">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter className="pb-4">
         <SidebarMenu>
           <SidebarMenuItem>
