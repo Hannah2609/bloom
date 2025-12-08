@@ -69,7 +69,11 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
     needs: [lint-and-format, database]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -88,6 +92,3 @@ jobs:
 
       - name: Build project
         run: npm run build
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
