@@ -1,9 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session/session";
 import { NextResponse } from "next/server";
-import { Role } from "@/generated/prisma/enums";
 
-export async function PATCH(
+export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -23,17 +22,11 @@ export async function PATCH(
     }
 
     const { id } = await params;
-    const { role } = await request.json();
 
-    // Validate role
-    if (!role || !["ADMIN", "MANAGER", "EMPLOYEE"].includes(role)) {
-      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
-    }
-
-    // Prevent user from changing their own role to prevent lockout fx. you're the only admin
+    // Prevent user from deleting themselves
     if (id === session.user.id) {
       return NextResponse.json(
-        { error: "Cannot change your own role" },
+        { error: "Cannot delete your own account" },
         { status: 400 }
       );
     }
@@ -51,26 +44,19 @@ export async function PATCH(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Update user role
-    const updatedUser = await prisma.user.update({
+    // Soft delete user
+    await prisma.user.update({
       where: {
         id,
       },
       data: {
-        role: role as Role,
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        role: true,
+        deletedAt: new Date(),
       },
     });
 
-    return NextResponse.json({ user: updatedUser });
+    return NextResponse.json({ message: "User deleted successfully" });
   } catch (error) {
-    console.error("Error updating user role:", error);
+    console.error("Error deleting user:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

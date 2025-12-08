@@ -102,10 +102,10 @@ export default function CompanySignupForm() {
           <Heading level="h3" variant="muted" className="text-lg! font-normal!">
             Company signup
           </Heading>
-          <Heading level="h2" className="text-2xl font-bold mb-6">
+          <Heading level="h2" className="mb-6 text-2xl font-bold">
             Get started
           </Heading>
-          <p className="text-muted-foreground text-sm mb-10 max-w-md">
+          <p className="text-muted-foreground mb-10 max-w-md text-sm">
             Enter your company name and domain to get started. We`ll use this to
             create your company and add you as the first admin.
           </p>
@@ -158,9 +158,9 @@ export default function CompanySignupForm() {
               <FormControl>
                 <div className="space-y-2">
                   {field.value ? (
-                    <div className="rounded-lg border border-dashed border-border bg-muted/50 p-4">
+                    <div className="border-border bg-muted/50 rounded-lg border border-dashed p-4">
                       <p className="text-sm font-normal">Logo uploaded</p>
-                      <p className="text-xs text-muted-foreground break-all">
+                      <p className="text-muted-foreground text-xs break-all">
                         {logoFileName ?? field.value}
                       </p>
                       <div className="mt-3 flex gap-2">
@@ -179,13 +179,10 @@ export default function CompanySignupForm() {
                       </div>
                     </div>
                   ) : logoFile ? (
-                    <div
-                      className="rounded-lg border border-black/50 p-5
-                    flex items-center justify-between"
-                    >
+                    <div className="flex items-center justify-between rounded-lg border border-black/50 p-5">
                       <div>
                         <p className="text-sm font-normal">Logo chosen</p>
-                        <p className="text-xs text-muted-foreground break-all">
+                        <p className="text-muted-foreground text-xs break-all">
                           {logoFileName ?? logoFile.name}
                         </p>
                       </div>
@@ -224,7 +221,7 @@ export default function CompanySignupForm() {
                       }}
                     />
                   )}
-                  <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <p className="text-muted-foreground flex items-center gap-1 text-xs">
                     <ImageIcon className="h-4 w-4" />
                     Upload your logo image (PNG, JPG, SVG or WEBP up to 4MB)
                   </p>
@@ -261,7 +258,7 @@ export default function CompanySignupForm() {
           </Button>
         </div>
 
-        <div className="text-center text-sm flex gap-2 justify-center">
+        <div className="flex justify-center gap-2 text-center text-sm">
           <p>Already have an account?</p>
           <a href="/login" className="underline underline-offset-4">
             Login

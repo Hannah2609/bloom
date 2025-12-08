@@ -218,7 +218,7 @@ export default function SignupProfileForm({
         </div>
 
         {pendingCompany && (
-          <div className="rounded-lg border border-primary/40 bg-primary/5 p-4 text-left text-sm">
+          <div className="border-primary/40 bg-primary/5 rounded-lg border p-4 text-left text-sm">
             <p className="font-medium">
               {pendingCompany.role === Role.ADMIN
                 ? `Admin signup for ${pendingCompany.name}`
@@ -299,7 +299,7 @@ export default function SignupProfileForm({
           pendingCompany.email && (
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>
-              <div className="rounded-md border border-input bg-muted px-3 py-2 text-sm">
+              <div className="border-input bg-muted rounded-md border px-3 py-2 text-sm">
                 {pendingCompany.email}
               </div>
             </div>

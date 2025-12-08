@@ -1,8 +1,8 @@
-import { loginSchema } from '@/lib/validation/validation';
-import { getSession } from '@/lib/session/session';
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
+import { loginSchema } from "@/lib/validation/validation";
+import { getSession } from "@/lib/session/session";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
@@ -25,20 +25,29 @@ export async function POST(req: Request) {
 
     // Check if user exist
     if (!user) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
     }
 
     // check if user is deleted
     if (user.deletedAt) {
       return NextResponse.json(
-        { error: 'This account has been deleted, contact customer support' },
+        { error: "This account has been deleted, contact customer support" },
         { status: 401 }
       );
     }
     // Verify password
-    const isValidPassword = await bcrypt.compare(validatedData.password, user.password);
+    const isValidPassword = await bcrypt.compare(
+      validatedData.password,
+      user.password
+    );
     if (!isValidPassword) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
     }
 
     // Create session
@@ -57,7 +66,7 @@ export async function POST(req: Request) {
     await session.save();
 
     return NextResponse.json({
-      message: 'Login successful',
+      message: "Login successful",
       user: {
         id: user.id,
         firstName: user.firstName,
@@ -70,7 +79,10 @@ export async function POST(req: Request) {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+    console.error("Login error:", error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
 }

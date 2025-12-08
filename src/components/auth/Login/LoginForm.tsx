@@ -38,13 +38,13 @@ const LoginForm = () => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-2">
-          <Heading level="h2" className="text-2xl font-bold ">
+          <Heading level="h2" className="text-2xl font-bold">
             Log in
           </Heading>
           <Heading
             level="h3"
             variant="muted"
-            className="text-lg! mb-6 font-normal!"
+            className="mb-6 text-lg! font-normal!"
           >
             Welcome back Bloomer!
           </Heading>
@@ -104,7 +104,7 @@ const LoginForm = () => {
           )}
         </Button>
 
-        <div className="text-center text-sm flex gap-2 justify-center text-muted-foreground">
+        <div className="text-muted-foreground flex justify-center gap-2 text-center text-sm">
           <p>Don&apos;t have an account?</p>
           <Link href="/signup" className="underline underline-offset-4">
             Signup
