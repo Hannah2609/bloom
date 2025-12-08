@@ -31,6 +31,14 @@ export async function POST(req: Request) {
       );
     }
 
+    // All users must have a company (based on schema)
+    if (!userCompanyId) {
+      return NextResponse.json(
+        { error: "Company ID is required" },
+        { status: 400 }
+      );
+    }
+
     // Create the user
     const user = await prismaClient.user.create({
       data: {
@@ -39,7 +47,7 @@ export async function POST(req: Request) {
         email: validatedData.email,
         password: hashedPassword,
         role: userRole,
-        companyId: userCompanyId,
+        companyId: userCompanyId, // Now TypeScript knows this is string, not undefined
       },
     });
 
