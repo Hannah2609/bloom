@@ -1,6 +1,6 @@
-import { useSession } from './useSession';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useSession } from "./useSession";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export function useProtectedRoute() {
   const router = useRouter();
@@ -8,7 +8,7 @@ export function useProtectedRoute() {
 
   useEffect(() => {
     if (!isLoading && !isLoggedIn) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [isLoading, isLoggedIn, router]);
 

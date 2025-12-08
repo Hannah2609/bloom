@@ -50,4 +50,3 @@ export function useSignup() {
 
   return { signup, isSubmitting };
 }
-

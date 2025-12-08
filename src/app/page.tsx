@@ -11,7 +11,7 @@ export default function Home() {
         {/* <BubbleBackground interactive> */}
         <div className="flex flex-col items-center justify-center py-40">
           <h1 className="text-4xl font-bold">Welcome to Bloom</h1>
-          <p className="text-lg text-muted-foreground py-4">
+          <p className="text-muted-foreground py-4 text-lg">
             Take the first step to building a better team.
           </p>
           <div className="flex items-center gap-4 py-8">

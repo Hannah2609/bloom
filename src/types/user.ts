@@ -1,4 +1,4 @@
-import { Role } from '@/generated/prisma/enums';
+import { Role } from "@/generated/prisma/enums";
 
 // Basic user type from database
 export interface User {

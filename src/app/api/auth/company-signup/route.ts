@@ -7,63 +7,62 @@ import { getSession } from "@/lib/session/session";
 import { Role } from "@/generated/prisma/enums";
 
 export async function POST(req: Request) {
-    try {
-        const body = await req.json();
-            
-        // Validate the request body
-        const validatedData = companySignupSchema.parse(body);
+  try {
+    const body = await req.json();
 
-        // Create the company
-        const company = await prismaClient.company.create({
-            data: {
-                name: validatedData.companyName,
-                domain: validatedData.companyDomain,
-                logo: validatedData.logo,
-            },
-        });
+    // Validate the request body
+    const validatedData = companySignupSchema.parse(body);
 
-        const session = await getSession();
-        session.pendingCompany = {
-            companyId: company.id,
-            role: Role.ADMIN,
-        };
-        await session.save();
+    // Create the company
+    const company = await prismaClient.company.create({
+      data: {
+        name: validatedData.companyName,
+        domain: validatedData.companyDomain,
+        logo: validatedData.logo,
+      },
+    });
 
-        return NextResponse.json(
-            { 
-                company,
-                message: "Company created successfully",
-                redirectUrl: `/signup/company/${company.id}`
-            },
-            { status: 201 }
-        );
+    const session = await getSession();
+    session.pendingCompany = {
+      companyId: company.id,
+      role: Role.ADMIN,
+    };
+    await session.save();
 
-    } catch (error) {
-        console.error("Company signup error:", error);
+    return NextResponse.json(
+      {
+        company,
+        message: "Company created successfully",
+        redirectUrl: `/signup/company/${company.id}`,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Company signup error:", error);
 
-        if (error instanceof z.ZodError) {
-            return NextResponse.json(
-                {
-                    error: "Validation error",
-                    details: error.issues,
-                },
-                { status: 400 }
-            );
-        }
-
-        // Error handling for catching existing company
-        if (error instanceof PrismaError.PrismaClientKnownRequestError) {
-            if (error.code === 'P2002') {
-                return NextResponse.json(
-                    { error: "A company with this domain already exists" },
-                    { status: 400 }
-                );
-            }
-        }
-
-        return NextResponse.json(
-            { error: "Something went wrong" },
-            { status: 500 }
-        );
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          error: "Validation error",
+          details: error.issues,
+        },
+        { status: 400 }
+      );
     }
+
+    // Error handling for catching existing company
+    if (error instanceof PrismaError.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return NextResponse.json(
+          { error: "A company with this domain already exists" },
+          { status: 400 }
+        );
+      }
+    }
+
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
+  }
 }

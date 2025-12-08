@@ -1,6 +1,6 @@
-'use client';
-import Image from 'next/image';
-import LoginForm from '@/components/auth/Login/LoginForm';
+"use client";
+import Image from "next/image";
+import LoginForm from "@/components/auth/Login/LoginForm";
 
 function Page() {
   return (
@@ -16,7 +16,7 @@ function Page() {
           height={600}
           src="/placeholder.webp"
           alt="Image"
-          className="absolute inset-0 rounded-4xl h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          className="absolute inset-0 h-full w-full rounded-4xl object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
     </section>
