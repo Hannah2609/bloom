@@ -38,7 +38,7 @@ function Page() {
     <>
       <section className="p-8">
         <div className="my-8 flex items-center justify-between">
-          <Heading level="h2">Teams</Heading>
+          <Heading level="h1">Teams</Heading>
           <Button size="lg" onClick={() => setIsOpen(true)}>
             <PlusIcon className="size-4" />
             Create new team

@@ -10,9 +10,6 @@ const getGreeting = () => {
   if (hour >= 5 && hour < 12) return "Good morning";
   if (hour >= 12 && hour < 18) return "Good afternoon";
   return "Good evening";
-  if (hour >= 5 && hour < 12) return "Good morning";
-  if (hour >= 12 && hour < 18) return "Good afternoon";
-  return "Good evening";
 };
 
 const Page = () => {
@@ -20,15 +17,13 @@ const Page = () => {
 
   return (
     <section className="flex flex-col gap-10 p-8">
-      <div className="">
-        <Heading
-          level="h2"
-          variant="muted"
-          className="text-2xl! font-extralight"
+      <div>
+        <p
+          className="font-extralight text-muted-foreground text-xl lg:text-2xl"
         >
-          {getGreeting()},
-        </Heading>
-        <Heading level="h2" className="text-3xl!">
+          {getGreeting()}
+        </p>
+        <Heading level="h1">
           {user?.firstName}
         </Heading>
       </div>

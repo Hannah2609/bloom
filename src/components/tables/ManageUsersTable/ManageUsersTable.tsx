@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import {
   ColumnFiltersState,
   flexRender,
@@ -12,7 +12,6 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-
 import { Button } from "@/components/ui/button/button";
 import { Input } from "@/components/ui/forms/input";
 import {
@@ -45,6 +44,7 @@ export function ManageUsersTable({
   users,
   onRoleChange,
   onDeleteUser,
+  // TODO: Handle loading state in table body
   isLoading,
 }: UserTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -78,13 +78,13 @@ export function ManageUsersTable({
   });
 
   return (
-    <section className="w-full">
+    <section className="w-full md:max-w-[70vw]">
       <div className="flex items-center justify-between gap-4 py-4">
         <Input
           placeholder="Search users..."
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
-          className="max-w-sm"
+          className="max-w-xs"
         />
 
         <Select
@@ -95,7 +95,7 @@ export function ManageUsersTable({
               ?.setFilterValue(value === "all" ? "" : value)
           }
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-40">
             <SelectValue placeholder="Filter by role" />
           </SelectTrigger>
           <SelectContent>
@@ -130,7 +130,7 @@ export function ManageUsersTable({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="even:bg-muted/50">
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
