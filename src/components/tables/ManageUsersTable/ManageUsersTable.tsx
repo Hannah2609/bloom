@@ -1,8 +1,7 @@
 "use client";
 
-import * as React from "react";
+import { useState, useTransition } from "react";
 import {
-  ColumnDef,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -13,7 +12,6 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button/button";
 import { Input } from "@/components/ui/forms/input";
@@ -34,194 +32,58 @@ import {
 } from "@/components/ui/select";
 import { Role } from "@/generated/prisma/enums";
 import { UserTableRow } from "@/types/user";
+import { getColumns } from "./columns";
 
 interface UserTableProps {
   users: UserTableRow[];
   onRoleChange?: (userId: string, newRole: Role) => Promise<void>;
   onDeleteUser?: (userId: string) => Promise<void>;
+  isLoading?: boolean;
 }
-
-interface RoleSelectProps {
-  user: UserTableRow;
-  onRoleChange?: (userId: string, newRole: Role) => Promise<void>;
-}
-
-function RoleSelect({ user, onRoleChange }: RoleSelectProps) {
-  const [isPending, startTransition] = React.useTransition();
-
-  const handleRoleChange = (newRole: string) => {
-    if (onRoleChange) {
-      startTransition(async () => {
-        try {
-          await onRoleChange(user.id, newRole as Role);
-        } catch (error) {
-          console.error("Error updating role:", error);
-        }
-      });
-    }
-  };
-
-  return (
-    <Select
-      value={user.role}
-      onValueChange={handleRoleChange}
-      disabled={isPending}
-    >
-      <SelectTrigger className="w-[140px]">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="ADMIN">Admin</SelectItem>
-        <SelectItem value="MANAGER">Manager</SelectItem>
-        <SelectItem value="EMPLOYEE">Employee</SelectItem>
-      </SelectContent>
-    </Select>
-  );
-}
-
-interface DeleteUserButtonProps {
-  user: UserTableRow;
-  onDeleteUser?: (userId: string) => Promise<void>;
-}
-
-function DeleteUserButton({ user, onDeleteUser }: DeleteUserButtonProps) {
-  const [isPending, startTransition] = React.useTransition();
-
-  const handleDelete = () => {
-    if (onDeleteUser) {
-      startTransition(async () => {
-        try {
-          await onDeleteUser(user.id);
-        } catch (error) {
-          console.error("Error deleting user:", error);
-        }
-      });
-    }
-  };
-
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      disabled={isPending}
-      onClick={handleDelete}
-    >
-      <Trash2 className="text-destructive h-4 w-4" />
-    </Button>
-  );
-}
-
-// Column definitions
-const getColumns = (
-  onRoleChange?: (userId: string, newRole: Role) => Promise<void>,
-  onDeleteUser?: (userId: string) => Promise<void>
-): ColumnDef<UserTableRow>[] => [
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const user = row.original;
-      return (
-        <div>
-          {user.firstName} {user.lastName}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "role",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Role
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return <RoleSelect user={row.original} onRoleChange={onRoleChange} />;
-    },
-  },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-      return (
-        <DeleteUserButton user={row.original} onDeleteUser={onDeleteUser} />
-      );
-    },
-  },
-];
 
 export function ManageUsersTable({
   users,
   onRoleChange,
   onDeleteUser,
+  isLoading,
 }: UserTableProps) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    firstName: false,
+    lastName: false,
+  });
+  const [searchQuery, setSearchQuery] = useState("");
 
   const columns = getColumns(onRoleChange, onDeleteUser);
 
-  // TODO: Remove/ hide warning
   const table = useReactTable({
     data: users,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setSearchQuery,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    globalFilterFn: "includesString",
     state: {
       sorting,
       columnFilters,
       columnVisibility,
+      globalFilter: searchQuery,
     },
   });
 
   return (
-    <div className="w-full">
+    <section className="w-full">
       <div className="flex items-center justify-between gap-4 py-4">
         <Input
-          placeholder="Search by email..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
+          placeholder="Search users..."
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
           className="max-w-sm"
         />
 
@@ -294,7 +156,7 @@ export function ManageUsersTable({
       </div>
 
       <div className="flex items-center justify-between py-4">
-        <div>
+        <div className="flex items-center gap-2">
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => table.setPageSize(Number(value))}
@@ -329,6 +191,6 @@ export function ManageUsersTable({
           </Button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

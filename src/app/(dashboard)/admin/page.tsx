@@ -1,6 +1,6 @@
 "use client";
 
-import { ManageUsersTable } from "@/components/tables/ManageUsersTable";
+import { ManageUsersTable } from "@/components/tables/ManageUsersTable/ManageUsersTable";
 import { Role } from "@/generated/prisma/enums";
 import { UserTableRow } from "@/types/user";
 import { useEffect, useState } from "react";
@@ -58,17 +58,47 @@ export default function AdminPage() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/dashboard/users/${userId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete user");
+      }
+
+      // Remove user from local state
+      setUsers((prev) => prev.filter((user) => user.id !== userId));
+
+      // Success toast
+      toast.success("User deleted successfully");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete user. Please try again."
+      );
+      throw error;
+    }
+  };
 
   return (
     <div className="p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Manage Users</h1>
         <p className="text-muted-foreground mt-1">
-          Manage user roles and permissions
+          Manage users and their roles
         </p>
       </div>
-      <ManageUsersTable users={users} onRoleChange={handleRoleChange} />
+      <ManageUsersTable
+        users={users}
+        onRoleChange={handleRoleChange}
+        onDeleteUser={handleDeleteUser}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
