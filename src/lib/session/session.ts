@@ -13,8 +13,8 @@ export interface PendingCompanySetup {
 }
 
 export interface SessionData {
-  user?: UserWithCompany;
-  isLoggedIn?: boolean;
+  user: UserWithCompany;
+  isLoggedIn: boolean;
   lastVerified?: number;
   pendingCompany?: PendingCompanySetup;
 }
@@ -30,8 +30,8 @@ export const sessionOptions: SessionOptions = {
 // Udvid IronSessionData med vores brugerdata interface
 declare module "iron-session" {
   interface IronSessionData {
-    user?: UserWithCompany;
-    isLoggedIn?: boolean;
+    user: UserWithCompany;
+    isLoggedIn: boolean;
     lastVerified?: number;
     pendingCompany?: PendingCompanySetup;
   }

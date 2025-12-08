@@ -96,7 +96,7 @@ export function AppSidebar() {
                 )}
               </Avatar>
               <span className="truncate pl-2 text-base font-semibold">
-                {user?.company?.name}
+                {user?.company.name}
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
