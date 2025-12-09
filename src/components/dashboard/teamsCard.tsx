@@ -1,5 +1,10 @@
 import React from "react";
-import { Card, CardHeader, CardTitle, CardFooter } from "./card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card/card";
 import { ArrowRight, PencilIcon, UsersIcon } from "lucide-react";
 import { Heading } from "@/components/ui/heading/heading";
 import { Badge } from "@/components/ui/badge/badge";

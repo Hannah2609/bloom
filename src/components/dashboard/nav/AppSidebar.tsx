@@ -26,7 +26,7 @@ import {
   LucideEdit,
   Users,
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar/avatar";
 import { useSession } from "@/hooks/useSession";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";

@@ -1,6 +1,7 @@
 "use client";
 
-import { ManageUsersTable } from "@/components/tables/ManageUsersTable/ManageUsersTable";
+import { ManageUsersTable } from "@/components/dashboard/tables/ManageUsersTable/ManageUsersTable";
+import { Heading } from "@/components/ui/heading/heading";
 import { Role } from "@/generated/prisma/enums";
 import { UserTableRow } from "@/types/user";
 import { useEffect, useState } from "react";
@@ -88,7 +89,7 @@ export default function AdminPage() {
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Manage Users</h1>
+        <Heading className="text-2xl! font-extralight!">Manage Users</Heading>
         <p className="text-muted-foreground mt-1">
           Manage users and their roles
         </p>

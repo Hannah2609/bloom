@@ -10,6 +10,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { isActive } from "@/lib/utils";
+import { Heading } from "@/components/ui/heading/heading";
 
 export default function Header() {
   const pathname = usePathname();
@@ -17,7 +18,9 @@ export default function Header() {
   return (
     <header className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between bg-transparent px-4 py-4 md:px-8">
       <Link href="/">
-        <h2 className="text-2xl font-bold">Bloom</h2>
+        <Heading level="h2" className="text-2xl! font-bold!">
+          Bloom
+        </Heading>
       </Link>
       <div className="bg-background flex items-center rounded-full p-2 md:gap-2">
         <Link

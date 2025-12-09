@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button/button";
-import Header from "@/components/ui/layout/auth/header/header";
+import Header from "@/components/auth/header/header";
 import Link from "next/link";
-import { BubbleBackground } from "@/components/ui/animations/bubble";
 import { ArrowRight } from "lucide-react";
+import { Heading } from "@/components/ui/heading/heading";
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
       <main>
         {/* <BubbleBackground interactive> */}
         <div className="flex min-h-svh flex-col items-center justify-center">
-          <h1 className="text-4xl font-bold">Welcome to Bloom</h1>
+          <Heading>Welcome to Bloom</Heading>
           <p className="text-muted-foreground py-4 text-lg">
             Take the first step to building a better team.
           </p>

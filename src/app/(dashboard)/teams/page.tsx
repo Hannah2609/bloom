@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Heading } from "@/components/ui/heading/heading";
 import { Button } from "@/components/ui/button/button";
 import { PlusIcon } from "lucide-react";
-import { TeamsCard } from "@/components/ui/card/teamsCard";
+import { TeamsCard } from "@/components/dashboard/teamsCard";
 import {
   Sheet,
   SheetContent,
