@@ -22,7 +22,7 @@ export default function Header() {
           Bloom
         </Heading>
       </Link>
-      <div className="bg-background flex items-center rounded-full p-2 md:gap-2">
+      <div className="bg-background/50 border-border/20 flex items-center rounded-full border p-2 backdrop-blur-xs md:gap-2">
         <Link
           href="/"
           data-active={isActive(pathname, "/")}

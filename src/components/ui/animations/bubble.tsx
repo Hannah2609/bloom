@@ -32,12 +32,12 @@ function BubbleBackground({
   interactive = false,
   transition = { stiffness: 100, damping: 20 },
   colors = {
-    first: "18,113,255",
-    second: "221,74,255",
-    third: "0,220,255",
-    fourth: "200,50,50",
-    fifth: "180,180,50",
-    sixth: "140,100,255",
+    first: "224,232,221",
+    second: "242,246,241",
+    third: "254,215,178",
+    fourth: "254,237,147",
+    fifth: "218,247,166",
+    sixth: "184,233,83",
   },
   ...props
 }: BubbleBackgroundProps) {
@@ -78,9 +78,6 @@ function BubbleBackground({
   React.useEffect(() => {
     if (!interactive) return;
 
-    const el = containerRef.current;
-    if (!el) return;
-
     const handleMouseMove = (e: MouseEvent) => {
       const rect = rectRef.current;
       if (!rect) return;
@@ -94,11 +91,12 @@ function BubbleBackground({
       });
     };
 
-    el.addEventListener("mousemove", handleMouseMove as EventListener, {
+    // Lyt til window i stedet for containeren
+    window.addEventListener("mousemove", handleMouseMove, {
       passive: true,
     });
     return () => {
-      el.removeEventListener("mousemove", handleMouseMove as EventListener);
+      window.removeEventListener("mousemove", handleMouseMove);
       if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current);
     };
   }, [interactive, mouseX, mouseY]);
@@ -108,7 +106,7 @@ function BubbleBackground({
       ref={containerRef}
       data-slot="bubble-background"
       className={cn(
-        "relative size-full overflow-hidden bg-gradient-to-br from-violet-900 to-blue-900",
+        "from-base-200 to-primary-200 relative size-full overflow-hidden bg-linear-to-br",
         className
       )}
       {...props}
@@ -190,7 +188,7 @@ function BubbleBackground({
         />
 
         <motion.div
-          className="absolute inset-0 flex origin-[calc(50%_-_800px)_calc(50%_+_200px)] items-center justify-center"
+          className="absolute inset-0 flex origin-[calc(50%-800px)_calc(50%+200px)] items-center justify-center"
           animate={{ rotate: 360 }}
           transition={{ duration: 20, ease: "linear", repeat: Infinity }}
           style={{ transform: "translateZ(0)", willChange: "transform" }}

@@ -3,14 +3,18 @@ import Header from "@/components/auth/header/header";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Heading } from "@/components/ui/heading/heading";
+import { BubbleBackground } from "@/components/ui/animations/bubble";
 
 export default function Home() {
   return (
     <>
       <Header />
-      <main>
-        {/* <BubbleBackground interactive> */}
-        <div className="flex min-h-svh flex-col items-center justify-center">
+      <main className="relative min-h-svh">
+        <BubbleBackground
+          interactive
+          className="absolute inset-0 -z-10 hidden lg:block dark:hidden"
+        />
+        <div className="relative z-10 flex min-h-svh flex-col items-center justify-center">
           <Heading>Welcome to Bloom</Heading>
           <p className="text-muted-foreground py-4 text-lg">
             Take the first step to building a better team.
@@ -36,7 +40,6 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        {/* </BubbleBackground> */}
       </main>
     </>
   );
