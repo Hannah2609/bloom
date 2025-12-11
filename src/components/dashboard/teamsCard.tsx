@@ -34,7 +34,6 @@ export function TeamsCard({ team }: TeamsCardProps) {
             {team.memberCount} members
           </Badge>
           <div className="flex items-center gap-2">
-            {/* <p className="text-sm font-medium">View team</p> */}
             <ArrowRight className="text-muted-foreground size-5 transition-transform duration-300 group-hover:size-5.5 group-hover:translate-x-2" />
           </div>
         </CardFooter>
