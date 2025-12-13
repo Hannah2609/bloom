@@ -6,7 +6,7 @@ const headingVariants = cva("tracking-tight", {
   variants: {
     level: {
       h1: "text-2xl lg:text-3xl font-regular",
-      h2: "text-xl lg:text-2xl font-regular",
+      h2: "text-xl lg:text-2xl font-light",
       h3: "text-lg lg:text-xl font-extralight",
       h4: "text-base lg:text-lg font-extralight",
     },

@@ -37,10 +37,10 @@ export function RoleSelect({ user, onRoleChange }: RoleSelectProps) {
       onValueChange={handleRoleChange}
       disabled={isPending}
     >
-      <SelectTrigger className="w-[140px]">
+      <SelectTrigger className="w-32">
         <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="w-32">
         <SelectItem value="ADMIN">Admin</SelectItem>
         <SelectItem value="MANAGER">Manager</SelectItem>
         <SelectItem value="EMPLOYEE">Employee</SelectItem>
