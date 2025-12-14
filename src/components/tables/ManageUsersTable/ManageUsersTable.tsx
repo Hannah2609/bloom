@@ -118,7 +118,11 @@ export function ManageUsersTable({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} style={{ width: header.getSize() }} className="p-2">
+                    <TableHead
+                      key={header.id}
+                      style={{ width: header.getSize() }}
+                      className="p-2"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -136,7 +140,11 @@ export function ManageUsersTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} style={{ width: cell.column.getSize()}} className="px-4">
+                    <TableCell
+                      key={cell.id}
+                      style={{ width: cell.column.getSize() }}
+                      className="px-4"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
