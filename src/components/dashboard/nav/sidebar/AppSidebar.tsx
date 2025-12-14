@@ -31,7 +31,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../../ui/avatar/avatar";
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/contexts/SessionContext";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

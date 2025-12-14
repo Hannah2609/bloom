@@ -6,6 +6,12 @@ import { cookies } from "next/headers";
 // henter secret session key fra .env
 const secretKey = process.env.SESSION_SECRET;
 
+if (!secretKey) {
+  throw new Error(
+    "SESSION_SECRET environment variable is required. Please set it in your .env file."
+  );
+}
+
 export interface PendingCompanySetup {
   companyId: string;
   role: Role;
@@ -20,10 +26,13 @@ export interface SessionData {
 }
 
 export const sessionOptions: SessionOptions = {
-  password: secretKey as string,
+  password: secretKey,
   cookieName: "bloom-session",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 7, // 7 days
   },
 };
 

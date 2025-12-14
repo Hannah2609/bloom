@@ -1,50 +1,74 @@
-import { useState } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LoginSchema } from "@/lib/validation/validation";
+import { useSession } from "@/contexts/SessionContext";
 
 export function useAuth() {
   const router = useRouter();
+  const { refetch } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const login = async (data: LoginSchema) => {
-    try {
-      setIsLoading(true);
-      toast.loading("Logging in...");
-
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Something went wrong");
+  // LOGIN
+  const login = useCallback(
+    async (data: LoginSchema) => {
+      // Clear any existing timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
 
-      toast.dismiss();
-      toast.success(`Welcome back, ${result.user.firstName}!`, {
-        duration: 3000,
-      });
-      setTimeout(() => {
-        router.push("/home");
-      }, 1000);
-    } catch (error) {
-      toast.dismiss();
-      toast.error(
-        error instanceof Error ? error.message : "Something went wrong",
-        {
-          duration: 4000,
-        }
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      try {
+        setIsLoading(true);
+        toast.loading("Logging in...");
 
-  const logout = async () => {
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Something went wrong");
+        }
+
+        // Update session context after successful login
+        await refetch();
+
+        toast.dismiss();
+        toast.success(`Welcome back, ${result.user.firstName}!`, {
+          duration: 3000,
+        });
+
+        // Navigate after delay
+        timeoutRef.current = setTimeout(() => {
+          router.push("/home");
+        }, 1000);
+      } catch (error) {
+        toast.dismiss();
+        toast.error(
+          error instanceof Error ? error.message : "Something went wrong",
+          {
+            duration: 4000,
+          }
+        );
+        throw error; // Re-throw for component handling
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [refetch, router]
+  );
+
+  // LOGOUT
+  const logout = useCallback(async () => {
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     try {
       setIsLoading(true);
       toast.loading("Logging out...");
@@ -54,26 +78,37 @@ export function useAuth() {
       });
 
       if (!response.ok) {
-        throw new Error("Logout failed");
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result.error || "Logout failed");
       }
+
+      // Redirect - SessionContext will automatically refetch when /login loads
+      router.push("/login");
 
       toast.dismiss();
       toast.success("You are logged out", {
         duration: 2000,
       });
-      setTimeout(() => {
-        router.push("/login");
-      }, 1000);
     } catch (error) {
       toast.dismiss();
       toast.error(
         error instanceof Error ? error.message : "Failed to log out",
         { duration: 4000 }
       );
+      throw error;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return { login, logout, isLoading };
 }
