@@ -12,6 +12,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 
 const teams = [
   {
@@ -36,7 +37,7 @@ function Page() {
 
   return (
     <>
-      <section className="p-8">
+      <PageLayout>
         <div className="my-8 flex items-center justify-between">
           <Heading level="h1">Teams</Heading>
           <Button size="lg" onClick={() => setIsOpen(true)}>
@@ -49,7 +50,7 @@ function Page() {
             <TeamsCard key={team.id} team={team} />
           ))}
         </div>
-      </section>
+      </PageLayout>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent side="right" className="w-full sm:max-w-md">
           <SheetHeader>

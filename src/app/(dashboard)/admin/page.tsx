@@ -2,6 +2,7 @@
 
 import { ManageUsersTable } from "@/components/tables/ManageUsersTable/ManageUsersTable";
 import { Heading } from "@/components/ui/heading/heading";
+import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 import { Role } from "@/generated/prisma/enums";
 import { UserTableRow } from "@/types/user";
 import { useEffect, useState } from "react";
@@ -87,7 +88,7 @@ export default function AdminPage() {
   };
 
   return (
-    <section className="p-4 lg:p-8">
+    <PageLayout>
       <div className="mb-6">
         <Heading level="h1">Manage Users</Heading>
       </div>
@@ -97,6 +98,6 @@ export default function AdminPage() {
         onDeleteUser={handleDeleteUser}
         isLoading={isLoading}
       />
-    </section>
+    </PageLayout>
   );
 }
