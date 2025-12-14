@@ -43,6 +43,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { type LucideIcon } from "lucide-react";
+import { useState, useEffect } from "react";
 
 // Types
 type MenuItem = {
@@ -56,6 +57,11 @@ type CollapsibleMenuItem = MenuItem & {
     title: string;
     url: string;
   }[];
+};
+
+type Team = {
+  id: string;
+  name: string;
 };
 
 // Constants
@@ -72,20 +78,6 @@ const MENU_ITEMS: MenuItem[] = [
     title: "Survey",
     url: "/survey",
     icon: MessageCircleHeart,
-  },
-];
-
-const TEAM_ITEMS: CollapsibleMenuItem[] = [
-  {
-    title: "Teams",
-    url: "/teams",
-    icon: Users,
-    items: [
-      {
-        title: "Teams",
-        url: "/teams",
-      },
-    ],
   },
 ];
 
@@ -111,6 +103,42 @@ export function AppSidebar() {
   const { user } = useSession();
   const { logout } = useAuth();
   const pathname = usePathname();
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  // Fetch teams for sidebar
+  useEffect(() => {
+    if (user) {
+      fetch("/api/dashboard/teams")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.teams) {
+            setTeams(data.teams);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching teams for sidebar:", error);
+        });
+    }
+  }, [user]);
+
+  // Build team items dynamically
+  const teamItems: CollapsibleMenuItem[] = [
+    {
+      title: "Teams",
+      url: "/teams",
+      icon: Users,
+      items: [
+        {
+          title: "All Teams",
+          url: "/teams",
+        },
+        ...teams.map((team) => ({
+          title: team.name,
+          url: `/teams/${team.id}`,
+        })),
+      ],
+    },
+  ];
 
   // Combine items based on user role
   const menuItems =
@@ -144,7 +172,7 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="flex items-center justify-center">
+      <SidebarContent className="flex items-center justify-center px-2">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="mb-2 space-y-2">
@@ -169,7 +197,7 @@ export function AppSidebar() {
               })}
             </SidebarMenu>
             <SidebarMenu>
-              {TEAM_ITEMS.map((item) => {
+              {teamItems.map((item) => {
                 const itemActive = checkIsActive(item.url, pathname);
                 const hasActiveSubItem = item.items?.some((subItem) =>
                   checkIsActive(subItem.url, pathname)
@@ -188,7 +216,7 @@ export function AppSidebar() {
                         <SidebarMenuButton
                           size="sm"
                           isActive={itemActive}
-                          className="group"
+                          className="group cursor-pointer"
                           tooltip={item.title}
                         >
                           <item.icon className={ICON_ACTIVE_CLASSES} />
