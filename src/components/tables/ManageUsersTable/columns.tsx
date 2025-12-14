@@ -12,10 +12,12 @@ export const getColumns = (
 ): ColumnDef<UserTableRow>[] => [
   {
     accessorKey: "email",
+    size: 250,
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
+          className="hover:bg-primary! dark:hover:text-background font-bold"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Email
@@ -39,11 +41,13 @@ export const getColumns = (
   {
     accessorFn: (row) => `${row.firstName} ${row.lastName}`,
     id: "name",
+    size: 200,
     enableGlobalFilter: false,
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
+          className="hover:bg-primary! dark:hover:text-background font-bold"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Name
@@ -62,24 +66,35 @@ export const getColumns = (
   },
   {
     accessorKey: "role",
+    size: 150,
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Role
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            className="hover:bg-primary! dark:hover:text-background font-bold"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Role
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       );
     },
     cell: ({ row }) => {
-      return <RoleSelect user={row.original} onRoleChange={onRoleChange} />;
+      return (
+        <div className="flex justify-center">
+          <RoleSelect user={row.original} onRoleChange={onRoleChange} />
+        </div>
+      );
     },
   },
   {
     id: "actions",
-    header: "Actions",
+    size: 100,
+    header: () => {
+      return <span className="text-base font-bold">Actions</span>;
+    },
     cell: ({ row }) => {
       return (
         <DeleteUserButton user={row.original} onDeleteUser={onDeleteUser} />

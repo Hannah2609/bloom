@@ -32,6 +32,7 @@ import {
 import { Role } from "@/generated/prisma/enums";
 import { UserTableRow } from "@/types/user";
 import { getColumns } from "./columns";
+import { Search } from "lucide-react";
 
 interface UserTableProps {
   users: UserTableRow[];
@@ -78,14 +79,17 @@ export function ManageUsersTable({
   });
 
   return (
-    <section className="w-full md:max-w-[70vw]">
+    <section className="w-full">
       <div className="flex items-center justify-between gap-4 py-4">
-        <Input
-          placeholder="Search users..."
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
-          className="max-w-xs"
-        />
+        <div className="relative max-w-xs w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Input
+            placeholder="Search users"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            className="pl-9"
+          />
+        </div>
 
         <Select
           value={(table.getColumn("role")?.getFilterValue() as string) ?? "all"}
@@ -98,7 +102,7 @@ export function ManageUsersTable({
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Filter by role" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="w-40">
             <SelectItem value="all">All Roles</SelectItem>
             <SelectItem value="ADMIN">Admin</SelectItem>
             <SelectItem value="MANAGER">Manager</SelectItem>
@@ -114,7 +118,11 @@ export function ManageUsersTable({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      style={{ width: header.getSize() }}
+                      className="p-2"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -132,7 +140,11 @@ export function ManageUsersTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      style={{ width: cell.column.getSize() }}
+                      className="px-4"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -161,7 +173,7 @@ export function ManageUsersTable({
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => table.setPageSize(Number(value))}
           >
-            <SelectTrigger className="w-[70px]">
+            <SelectTrigger className="w-18">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -87,21 +87,16 @@ export default function AdminPage() {
   };
 
   return (
-    <section className="p-8">
+    <section className="p-4 lg:p-8">
       <div className="mb-6">
         <Heading level="h1">Manage Users</Heading>
-        <Heading level="h2" variant="muted" className="mt-1">
-          Manage users and their roles
-        </Heading>
       </div>
-      <div className="flex justify-center items-center">
       <ManageUsersTable
         users={users}
         onRoleChange={handleRoleChange}
         onDeleteUser={handleDeleteUser}
         isLoading={isLoading}
       />
-      </div>
     </section>
   );
 }
