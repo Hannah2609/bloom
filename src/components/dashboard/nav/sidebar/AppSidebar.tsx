@@ -46,23 +46,23 @@ import { type LucideIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 
 // Types
-type MenuItem = {
+interface MenuItem {
   title: string;
   url: string;
   icon: LucideIcon;
-};
+}
 
-type CollapsibleMenuItem = MenuItem & {
-  items?: {
+interface CollapsibleMenuItem extends MenuItem {
+  items: {
     title: string;
     url: string;
   }[];
-};
+}
 
-type Team = {
+interface Team {
   id: string;
   name: string;
-};
+}
 
 // Constants
 const ICON_ACTIVE_CLASSES =
