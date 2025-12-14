@@ -19,6 +19,7 @@ import { companySignupSchema } from "@/lib/validation/validation";
 import { Button } from "../../ui/button/button";
 import { useRouter } from "next/navigation";
 import { Heading } from "@/components/ui/heading/heading";
+import Link from "next/link";
 
 export default function CompanySignupForm() {
   const router = useRouter();
@@ -260,9 +261,9 @@ export default function CompanySignupForm() {
 
         <div className="flex justify-center gap-2 text-center text-sm">
           <p>Already have an account?</p>
-          <a href="/login" className="underline underline-offset-4">
+          <Link href="/login" className="underline underline-offset-4">
             Login
-          </a>
+          </Link>
         </div>
       </form>
     </Form>

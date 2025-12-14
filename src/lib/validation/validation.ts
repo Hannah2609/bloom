@@ -47,8 +47,13 @@ export const emailSchema = z.object({
   email: z.email("Invalid email address"),
 });
 
+export const createTeamSchema = z.object({
+  name: z.string().min(1, "Team name is required"),
+});
+
 export type SignupSchema = z.infer<typeof signupSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type CompanySignupSchema = z.infer<typeof companySignupSchema>;
 export type SetPendingCompanySchema = z.infer<typeof setPendingCompanySchema>;
 export type EmailSchema = z.infer<typeof emailSchema>;
+export type CreateTeamSchema = z.infer<typeof createTeamSchema>;

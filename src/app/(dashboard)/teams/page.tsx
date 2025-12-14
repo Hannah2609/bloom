@@ -1,68 +1,87 @@
-"use client";
+import { getSession } from "@/lib/session/session";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import TeamsClient from "./TeamsClient";
 
-import React, { useState } from "react";
-import { Heading } from "@/components/ui/heading/heading";
-import { Button } from "@/components/ui/button/button";
-import { PlusIcon } from "lucide-react";
-import { TeamsCard } from "@/components/ui/card/teamsCard";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
+export default async function TeamsPage() {
+  const session = await getSession();
 
-const teams = [
-  {
-    id: 1,
-    name: "Team 1",
-    members: 10,
-  },
-  {
-    id: 2,
-    name: "Team 2",
-    members: 20,
-  },
-  {
-    id: 3,
-    name: "Team 3",
-    members: 30,
-  },
-];
+  // Check authentication
+  if (!session.user) {
+    redirect("/login");
+  }
 
-function Page() {
-  const [isOpen, setIsOpen] = useState(false);
+  // Fetch teams based on user role
+  let teams;
 
-  return (
-    <>
-      <section className="p-8">
-        <div className="my-8 flex items-center justify-between">
-          <Heading level="h1">Teams</Heading>
-          <Button size="lg" onClick={() => setIsOpen(true)}>
-            <PlusIcon className="size-4" />
-            Create new team
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {teams.map((team) => (
-            <TeamsCard key={team.id} team={team} />
-          ))}
-        </div>
-      </section>
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>Create New Team</SheetTitle>
-            <SheetDescription>
-              Fill in the details to create a new team.
-            </SheetDescription>
-          </SheetHeader>
-          {/* form */}
-        </SheetContent>
-      </Sheet>
-    </>
-  );
+  if (session.user.role === "ADMIN") {
+    // Admin: Fetch all teams in the company
+    teams = await prisma.team.findMany({
+      where: {
+        companyId: session.user.companyId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+        members: {
+          where: {
+            leftAt: null, // Only active members
+          },
+          select: {
+            id: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } else {
+    // Non-admin: Fetch only teams the user is a member of
+    teams = await prisma.team.findMany({
+      where: {
+        companyId: session.user.companyId,
+        deletedAt: null,
+        members: {
+          some: {
+            userId: session.user.id,
+            leftAt: null, // Only active memberships
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+        members: {
+          where: {
+            leftAt: null, // Only active members
+          },
+          select: {
+            id: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  // Map teams to include member count
+  const teamsWithMemberCount = teams.map((team) => ({
+    id: team.id,
+    name: team.name,
+    memberCount: team.members.length,
+    createdAt: team.createdAt.toISOString(),
+    updatedAt: team.updatedAt.toISOString(),
+  }));
+
+  const isAdmin = session.user.role === "ADMIN";
+
+  return <TeamsClient initialTeams={teamsWithMemberCount} isAdmin={isAdmin} />;
 }
-
-export default Page;

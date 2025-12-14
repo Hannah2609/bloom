@@ -6,6 +6,7 @@ import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { SessionProvider } from "@/contexts/SessionContext";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -57,8 +58,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster richColors position="top-right" />
+          <SessionProvider>
+            {children}
+            <Toaster richColors position="top-right" />
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
