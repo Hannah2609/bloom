@@ -17,17 +17,11 @@ const Page = () => {
 
   return (
     <section className="flex flex-col gap-10 p-8">
-      <div className="">
-        <Heading
-          level="h2"
-          variant="muted"
-          className="text-2xl! font-extralight"
-        >
-          {getGreeting()},
-        </Heading>
-        <Heading level="h2" className="text-3xl!">
-          {user?.firstName}
-        </Heading>
+      <div>
+        <p className="font-extralight text-muted-foreground text-xl lg:text-2xl">
+          {getGreeting()}
+        </p>
+        <Heading level="h1">{user?.firstName}</Heading>
       </div>
       <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
         <SectionCards />

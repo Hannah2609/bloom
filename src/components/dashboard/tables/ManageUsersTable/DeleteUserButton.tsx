@@ -50,7 +50,7 @@ export function DeleteUserButton({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete User</AlertDialogTitle>
+          <AlertDialogTitle className="text-xl">Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete{" "}
             <strong>

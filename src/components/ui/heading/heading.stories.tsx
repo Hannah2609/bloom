@@ -18,7 +18,7 @@ const meta: Meta<typeof Heading> = {
     children: { control: "text" },
     level: {
       control: { type: "radio" },
-      options: ["h1", "h2", "h3", "h4", "h5", "h6"],
+      options: ["h1", "h2", "h3", "h4"],
     },
     variant: {
       control: { type: "radio" },
@@ -63,22 +63,6 @@ export const H4: Story = {
   },
 };
 
-export const H5: Story = {
-  args: {
-    children: "Heading 5",
-    level: "h5",
-    variant: "default",
-  },
-};
-
-export const H6: Story = {
-  args: {
-    children: "Heading 6",
-    level: "h6",
-    variant: "default",
-  },
-};
-
 export const Muted: Story = {
   args: {
     children: "Muted Heading",
@@ -94,8 +78,6 @@ export const AllSizes: Story = {
       <Heading level="h2">Heading 2</Heading>
       <Heading level="h3">Heading 3</Heading>
       <Heading level="h4">Heading 4</Heading>
-      <Heading level="h5">Heading 5</Heading>
-      <Heading level="h6">Heading 6</Heading>
     </div>
   ),
 };
