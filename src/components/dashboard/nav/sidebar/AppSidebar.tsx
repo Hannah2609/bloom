@@ -52,13 +52,6 @@ interface MenuItem {
   icon: LucideIcon;
 }
 
-interface CollapsibleMenuItem extends MenuItem {
-  items: {
-    title: string;
-    url: string;
-  }[];
-}
-
 interface Team {
   id: string;
   name: string;
@@ -94,11 +87,6 @@ const ADMIN_ITEMS: MenuItem[] = [
   },
 ];
 
-// Helper functions
-const checkIsActive = (url: string, pathname: string): boolean => {
-  return url !== "#" && isActive(pathname, url);
-};
-
 export function AppSidebar() {
   const { user } = useSession();
   const { logout } = useAuth();
@@ -121,28 +109,15 @@ export function AppSidebar() {
     }
   }, [user]);
 
-  // Build team items dynamically
-  const teamItems: CollapsibleMenuItem[] = [
-    {
-      title: "Teams",
-      url: "/teams",
-      icon: Users,
-      items: [
-        {
-          title: "All Teams",
-          url: "/teams",
-        },
-        ...teams.map((team) => ({
-          title: team.name,
-          url: `/teams/${team.id}`,
-        })),
-      ],
-    },
-  ];
-
   // Combine items based on user role
   const menuItems =
     user?.role === Role.ADMIN ? [...MENU_ITEMS, ...ADMIN_ITEMS] : MENU_ITEMS;
+
+  // Teams menu state
+  const teamsItemActive = isActive(pathname, "/teams");
+  const hasActiveTeamSubItem = teams.some((team) =>
+    isActive(pathname, `/teams/${team.id}`)
+  );
 
   return (
     <Sidebar collapsible="icon">
@@ -177,8 +152,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu className="mb-2 space-y-2">
               {menuItems.map((item) => {
-                const active = checkIsActive(item.url, pathname);
-
+                const active = item.url !== "#" && isActive(pathname, item.url);
+                
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
@@ -197,61 +172,67 @@ export function AppSidebar() {
               })}
             </SidebarMenu>
             <SidebarMenu>
-              {teamItems.map((item) => {
-                const itemActive = checkIsActive(item.url, pathname);
-                const hasActiveSubItem = item.items?.some((subItem) =>
-                  checkIsActive(subItem.url, pathname)
-                );
-                const shouldBeOpen = itemActive || hasActiveSubItem;
+              <Collapsible
+                key="teams"
+                asChild
+                defaultOpen={hasActiveTeamSubItem}
+                className="group/collapsible"
+              >
+                <SidebarMenuItem>
+                  <div className="relative">
+                    {/* Clickable link covering most of button */}
+                    <SidebarMenuButton
+                      size="sm"
+                      asChild
+                      isActive={teamsItemActive}
+                      className="group"
+                    >
+                      <Link href="/teams" className="pr-8">
+                        <Users className={ICON_ACTIVE_CLASSES} />
+                        <span className="pl-1 text-base group-data-[collapsible=icon]:hidden">
+                          Teams
+                        </span>
+                      </Link>
+                    </SidebarMenuButton>
 
-                return (
-                  <Collapsible
-                    key={item.title}
-                    asChild
-                    defaultOpen={shouldBeOpen}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton
-                          size="sm"
-                          isActive={itemActive}
-                          className="group cursor-pointer"
-                          tooltip={item.title}
-                        >
-                          <item.icon className={ICON_ACTIVE_CLASSES} />
-                          <span className="pl-1 text-base">{item.title}</span>
-                          <ChevronRight className="text-muted-foreground ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                          {item.items?.map((subItem) => {
-                            const subItemActive = checkIsActive(
-                              subItem.url,
-                              pathname
-                            );
-                            return (
-                              <SidebarMenuSubItem key={subItem.title}>
-                                <SidebarMenuSubButton
-                                  size="sm"
-                                  asChild
-                                  isActive={subItemActive}
-                                  className="group"
-                                >
-                                  <Link href={subItem.url}>
-                                    <span>{subItem.title}</span>
-                                  </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            );
-                          })}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
-                );
-              })}
+                    {/* Chevron trigger - hidden when collapsed */}
+                    <CollapsibleTrigger asChild>
+                      <button
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-accent rounded-sm group-data-[collapsible=icon]:hidden"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      </button>
+                    </CollapsibleTrigger>
+                  </div>
+
+                  {/* Sub-items hidden when sidebar is collapsed */}
+                  <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
+                    <SidebarMenuSub>
+                      {teams.map((team) => {
+                        const subItemActive = isActive(
+                          pathname,
+                          `/teams/${team.id}`
+                        );
+                        return (
+                          <SidebarMenuSubItem key={team.id}>
+                            <SidebarMenuSubButton
+                              size="sm"
+                              asChild
+                              isActive={subItemActive}
+                              className="group"
+                            >
+                              <Link href={`/teams/${team.id}`}>
+                                <span>{team.name}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        );
+                      })}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
