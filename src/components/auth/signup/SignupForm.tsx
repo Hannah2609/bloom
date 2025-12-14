@@ -201,13 +201,13 @@ export default function SignupProfileForm({
         className="space-y-6"
       >
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold">
+          <Heading className="text-2xl! font-bold!">
             {pendingCompany
               ? pendingCompany.role === Role.ADMIN
                 ? `Create the first user for ${pendingCompany.name}`
                 : `Finish signing up for ${pendingCompany.name}`
               : "Get started"}
-          </h1>
+          </Heading>
           <p className="text-muted-foreground text-sm">
             {pendingCompany
               ? pendingCompany.role === Role.ADMIN

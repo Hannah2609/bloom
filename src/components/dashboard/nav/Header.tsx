@@ -1,5 +1,5 @@
-import { ThemeToggle } from "../theme/ThemeToggle";
-import { SidebarTrigger } from "../ui/sidebar";
+import { ThemeToggle } from "../../theme/ThemeToggle";
+import { SidebarTrigger } from "../../ui/sidebar";
 
 const Header = () => {
   return (

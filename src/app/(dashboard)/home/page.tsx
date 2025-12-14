@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "@/hooks/useSession";
+import { useSession } from "@/contexts/SessionContext";
 import { SectionCards } from "@/components/ui/card/exampleCards";
 import { Heading } from "@/components/ui/heading/heading";
 import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
