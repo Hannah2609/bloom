@@ -1,18 +1,14 @@
-"use client";
+import { getSession } from "@/lib/session/session";
+import { redirect } from "next/navigation";
+import ProfileClient from "./ProfileClient";
 
-import React from "react";
-import { Heading } from "@/components/ui/heading/heading";
-import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
+export default async function ProfilePage() {
+  const session = await getSession();
 
-const ProfilePage = () => {
+  // Check authentication
+  if (!session.user) {
+    redirect("/login");
+  }
 
-  return (
-    <PageLayout>
-      <Heading level="h1">Profile</Heading>
-      <section>
-      </section>
-    </PageLayout>
-  );
-};
-
-export default ProfilePage;
+  return <ProfileClient user={session.user} />;
+}
