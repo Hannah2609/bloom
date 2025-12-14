@@ -24,7 +24,7 @@ export function TeamsCard({ team }: TeamsCardProps) {
       <Card className="group hover:border-primary-300 dark:hover:border-base-700 cursor-pointer">
         <CardHeader className="flex items-center justify-between">
           <CardTitle>
-            <Heading level="h3" className="text-2xl! font-normal!">
+            <Heading level="h2">
               {team.name}
             </Heading>
           </CardTitle>

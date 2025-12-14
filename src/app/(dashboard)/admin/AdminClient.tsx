@@ -2,6 +2,7 @@
 
 import { ManageUsersTable } from "@/components/dashboard/tables/ManageUsersTable/ManageUsersTable";
 import { Heading } from "@/components/ui/heading/heading";
+import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 import { Role } from "@/generated/prisma/enums";
 import { UserTableRow } from "@/types/user";
 import { useState } from "react";
@@ -77,9 +78,9 @@ export default function AdminClient({ initialUsers }: AdminClientProps) {
   };
 
   return (
-    <div className="p-8">
+    <PageLayout>
       <div className="mb-6">
-        <Heading className="text-2xl! font-extralight!">Manage Users</Heading>
+        <Heading level="h1">Manage Users</Heading>
         <p className="text-muted-foreground mt-1">
           Manage users and their roles
         </p>
@@ -90,6 +91,6 @@ export default function AdminClient({ initialUsers }: AdminClientProps) {
         onDeleteUser={handleDeleteUser}
         isLoading={false}
       />
-    </div>
+    </PageLayout>
   );
 }
