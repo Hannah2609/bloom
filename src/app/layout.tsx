@@ -47,14 +47,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${nunito.variable} bg-sidebar font-sans antialiased`}
-        suppressHydrationWarning
-      >
+      <body className={`${nunito.variable} bg-sidebar font-sans antialiased`}>
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light" //TODO: Change to "system" when bubble background supports dark mode
           enableSystem
           disableTransitionOnChange
         >

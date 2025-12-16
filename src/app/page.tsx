@@ -15,7 +15,7 @@ export default function Home() {
           className="absolute inset-0 -z-10 hidden lg:block dark:hidden"
         />
         <div className="relative z-10 flex min-h-svh flex-col items-center justify-center">
-          <Heading>Welcome to Bloom</Heading>
+          <Heading level="h1">Welcome to Bloom</Heading>
           <p className="text-muted-foreground py-4 text-lg">
             Take the first step to building a better team.
           </p>
