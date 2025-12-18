@@ -3,9 +3,9 @@ import { hash } from "bcryptjs";
 import { prisma as prismaClient } from "@/lib/prisma";
 import { signupSchema } from "@/lib/validation/validation";
 import { z } from "zod";
-import { Prisma as PrismaError } from "@/generated/prisma/client";
+import { Prisma as PrismaError } from "@/generated/prisma/client"; //TODO
 import { getSession } from "@/lib/session/session";
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "@/types/user";
 
 export async function POST(req: Request) {
   try {
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const session = await getSession();
     const pendingCompany = session.pendingCompany;
 
-    const userRole = pendingCompany?.role ?? Role.EMPLOYEE;
+    const userRole = pendingCompany?.role ?? ("EMPLOYEE" as Role);
     const userCompanyId = pendingCompany?.companyId;
 
     if (!userCompanyId) {

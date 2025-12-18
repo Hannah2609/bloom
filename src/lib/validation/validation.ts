@@ -1,5 +1,4 @@
 import { z } from "zod";
-// import { Role } from "@/generated/prisma/client";
 
 const Role = ["ADMIN", "MANAGER", "EMPLOYEE"] as const;
 

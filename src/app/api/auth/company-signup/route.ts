@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma as prismaClient } from "@/lib/prisma";
 import { companySignupSchema } from "@/lib/validation/validation";
 import { z } from "zod";
-import { Prisma as PrismaError } from "@/generated/prisma/client";
+import { Prisma as PrismaError } from "@/generated/prisma/client"; //TODO
 import { getSession } from "@/lib/session/session";
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "@/types/user";
 
 export async function POST(req: Request) {
   try {
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     const session = await getSession();
     session.pendingCompany = {
       companyId: company.id,
-      role: Role.ADMIN,
+      role: "ADMIN" as Role,
     };
     await session.save();
 

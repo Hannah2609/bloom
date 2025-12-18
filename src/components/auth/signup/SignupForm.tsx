@@ -17,7 +17,7 @@ import { Button } from "../../ui/button/button";
 import { PasswordInput } from "../../ui/forms/passwordInput";
 import { useSignup } from "@/hooks/useSignup";
 import { SignupSchema, emailSchema } from "@/lib/validation/validation";
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Heading } from "@/components/ui/heading/heading";
@@ -93,7 +93,7 @@ export default function SignupProfileForm({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             companyId: data.company.id,
-            role: Role.EMPLOYEE,
+            role: "EMPLOYEE" as Role,
             email: email,
           }),
         });
@@ -203,15 +203,15 @@ export default function SignupProfileForm({
         <div className="space-y-2">
           <Heading className="text-2xl! font-bold!">
             {pendingCompany
-              ? pendingCompany.role === Role.ADMIN
+              ? pendingCompany.role === ("ADMIN" as Role)
                 ? `Create the first user for ${pendingCompany.name}`
                 : `Finish signing up for ${pendingCompany.name}`
               : "Get started"}
           </Heading>
           <p className="text-muted-foreground text-sm">
             {pendingCompany
-              ? pendingCompany.role === Role.ADMIN
-                ? "We'll automatically assign the admin role and connect you to the company - you can always change this and add more admins later"
+              ? pendingCompany.role === ("ADMIN" as Role)
+                ? ("We'll automatically assign the admin role and connect you to the company - you can always change this and add more admins later" as string)
                 : "Complete your profile to join the company"
               : "Create your account to get started on Bloom"}
           </p>
@@ -220,7 +220,7 @@ export default function SignupProfileForm({
         {pendingCompany && (
           <div className="border-primary/40 bg-primary/5 rounded-lg border p-4 text-left text-sm">
             <p className="font-medium">
-              {pendingCompany.role === Role.ADMIN
+              {pendingCompany.role === ("ADMIN" as Role)
                 ? `Admin signup for ${pendingCompany.name}`
                 : `Signup for ${pendingCompany.name}`}
             </p>
@@ -271,7 +271,7 @@ export default function SignupProfileForm({
         />
 
         {/* Only show email field if not employee (they already entered it) */}
-        {!(pendingCompany && pendingCompany.role === Role.EMPLOYEE) && (
+        {!(pendingCompany && pendingCompany.role === ("EMPLOYEE" as Role)) && (
           <FormField
             control={form.control}
             name="email"
@@ -295,7 +295,7 @@ export default function SignupProfileForm({
 
         {/* Show email as read-only for employees */}
         {pendingCompany &&
-          pendingCompany.role === Role.EMPLOYEE &&
+          pendingCompany.role === ("EMPLOYEE" as Role) &&
           pendingCompany.email && (
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>

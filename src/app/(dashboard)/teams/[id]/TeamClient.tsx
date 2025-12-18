@@ -15,7 +15,9 @@ import {
   SheetTitle,
   Sheet,
 } from "@/components/ui/sheet";
-import { Role, Team } from "@/generated/prisma/client";
+import { Team } from "@/types/team";
+import { Role } from "@/types/user";
+
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

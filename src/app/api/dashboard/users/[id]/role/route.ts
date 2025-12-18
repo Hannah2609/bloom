@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session/session";
 import { NextResponse } from "next/server";
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "@/types/user";
 
 export async function PATCH(
   request: Request,
