@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "postinstall": "dotenv -e .env.production -- prisma generate",
     "prebuild": "dotenv -e .env.production -- prisma generate",
     "build": "next build",
     "start": "next start",
