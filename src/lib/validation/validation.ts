@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { Role } from "@/generated/prisma/enums";
+// import { Role } from "@/generated/prisma/client";
+
+const Role = ["ADMIN", "MANAGER", "EMPLOYEE"] as const;
 
 export const signupSchema = z.object({
   firstName: z

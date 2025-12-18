@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && dotenv -e .env.production -- prisma generate",
     "start": "next start",
     "lint": "eslint",
     "reset:dev": "dotenv -e .env.development -- prisma migrate reset --force",
