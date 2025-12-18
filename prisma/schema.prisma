@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -14,28 +8,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// **User Model**
+// Represents a user in the system (admin, manager, or employee)
+// - Belongs to ONE company
+// - Can be member of MULTIPLE teams (via TeamMember)
+// - Can create surveys (if admin)
+// - Can submit survey responses
 model User {
-  id          String       @id @default(uuid())
-  firstName   String
-  lastName    String
-  email       String       @unique
-  avatar      String?
-  password    String
-  role        Role         @default(EMPLOYEE)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  deletedAt   DateTime?
-  company     Company     @relation(fields: [companyId], references: [id])
-  companyId   String
-  memberships TeamMember[]
+  id              String           @id @default(uuid())
+  firstName       String
+  lastName        String
+  email           String           @unique
+  avatar          String?
+  password        String
+  role            Role             @default(EMPLOYEE)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+  company         Company          @relation(fields: [companyId], references: [id])
+  companyId       String
+  memberships     TeamMember[] // Many-to-many with Team
+  surveyResponses SurveyResponse[]
 }
 
 enum Role {
-  ADMIN
-  MANAGER
-  EMPLOYEE
+  ADMIN // Can manage everything, create surveys
+  MANAGER // Can manage teams
+  EMPLOYEE // Regular user
 }
 
+// **Company Model**
+// Organization that owns users, teams, and surveys
+// - Has MANY users
+// - Has MANY teams
+// - Has MANY surveys
+// - Root level entity - everything belongs to a company
 model Company {
   id        String    @id @default(uuid())
   name      String
@@ -43,11 +50,17 @@ model Company {
   logo      String?
   users     User[]
   teams     Team[]
+  surveys   Survey[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
+// **Team Model**
+// Group of users within a company
+// - Belongs to ONE company
+// - Has MANY members (via TeamMember)
+// - Can be assigned to surveys (for targeted surveys)
 model Team {
   id        String       @id @default(uuid())
   name      String
@@ -56,9 +69,16 @@ model Team {
   deletedAt DateTime?
   company   Company      @relation(fields: [companyId], references: [id])
   companyId String
-  members   TeamMember[]
+  members   TeamMember[] // Many-to-many with User
+  surveys   SurveyTeam[] // Many-to-many with Survey
 }
 
+// **TeamMember Model**
+// Junction table for User <-> Team relationship
+// - Links ONE user to ONE team
+// - Tracks team-specific role and membership period
+// - Allows users to be in multiple teams
+// - Unique constraint prevents duplicate memberships
 model TeamMember {
   id       String    @id @default(uuid())
   role     Role      @default(EMPLOYEE) // Users role in team
@@ -70,4 +90,135 @@ model TeamMember {
   userId   String
 
   @@unique([teamId, userId]) // A user can only be member of a team once
+}
+
+// **Survey Model**
+// Questionnaire for employee feedback
+// - Belongs to ONE company
+// - Created by ONE admin user
+// - Has MANY questions
+// - Has MANY responses
+// - Can be global (all teams) or targeted (specific teams)
+// - Anonymous flag for privacy
+model Survey {
+  id          String           @id @default(uuid())
+  title       String
+  description String?
+  status      SurveyStatus     @default(DRAFT)
+  isGlobal    Boolean          @default(false) // If true, all company users can see
+  isAnonymous Boolean          @default(true) // If true, responses are anonymous
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?
+  company     Company          @relation(fields: [companyId], references: [id])
+  companyId   String
+  questions   Question[] // One-to-many
+  responses   SurveyResponse[] // One-to-many
+  teams       SurveyTeam[] // Many-to-many with Team (if not global)
+}
+
+enum SurveyStatus {
+  DRAFT // Being created, not visible to users
+  ACTIVE // Live and accepting responses
+  CLOSED // No longer accepting responses
+  ARCHIVED // Hidden from normal views
+}
+
+// **Question Model**
+// Single question in a survey
+// - Belongs to ONE survey
+// - Has question type (text, rating, multiple choice, etc.)
+// - Has optional multiple choice options
+// - Order determines display sequence
+// - Category for grouping in analytics
+model Question {
+  id          String           @id @default(uuid())
+  title       String
+  description String?
+  type        QuestionType
+  required    Boolean          @default(false)
+  order       Int // Display order (1, 2, 3...)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  survey      Survey           @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  surveyId    String
+  options     QuestionOption[] // Only for SINGLE_CHOICE, MULTIPLE_CHOICE
+  answers     Answer[] // One-to-many
+}
+
+enum QuestionType {
+  SINGLE_CHOICE // Radio buttons (one option) + yes/no
+  MULTIPLE_CHOICE // Checkboxes (multiple options)
+  RATING // 1-5 scale
+}
+
+// **QuestionOption Model**
+// Option for multiple choice questions
+// - Belongs to ONE question
+// - Has numeric value for aggregation (e.g., 1-5 for ratings)
+// - Order determines display sequence
+model QuestionOption {
+  id         String   @id @default(uuid())
+  text       String
+  order      Int // 1-5 for RATING, 1-n for choices
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  answers    Answer[] // Many-to-many (multiple answers can select this option)
+}
+
+// **SurveyResponse Model**
+// A user's submission of a survey
+// - Belongs to ONE survey
+// - Belongs to ONE user (for personal tracking)
+// - Has MANY answers (one per question)
+// - TeamId tracked for aggregation but not exposed in anonymous views
+// - Unique constraint: user can only submit once per survey
+model SurveyResponse {
+  id          String   @id @default(uuid())
+  submittedAt DateTime @default(now())
+  survey      Survey   @relation(fields: [surveyId], references: [id])
+  surveyId    String
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  teamId      String? // For team aggregation (anonymous)
+  answers     Answer[] // One-to-many
+
+  @@unique([surveyId, userId])
+  @@index([surveyId, teamId])
+}
+
+// **Answer Model**
+// Single answer to a question
+// - Belongs to ONE response
+// - Belongs to ONE question
+// - Can have text, number, or selected options depending on question type
+// - Unique constraint: one answer per question per response
+model Answer {
+  id              String           @id @default(uuid())
+  textAnswer      String? // For TEXT, TEXTAREA
+  selectedOptions QuestionOption[] // For SINGLE_CHOICE, YES_NO, MULTIPLE_CHOICE, RATING
+  createdAt       DateTime         @default(now())
+  question        Question         @relation(fields: [questionId], references: [id])
+  questionId      String
+  response        SurveyResponse   @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  responseId      String
+
+  @@unique([responseId, questionId])
+}
+
+// **SurveyTeam Model**
+// Junction table for Survey <-> Team relationship
+// - Links surveys to specific teams (if not global)
+// - Allows targeted surveys for specific teams
+// - Unique constraint prevents duplicate assignments
+model SurveyTeam {
+  id       String @id @default(uuid())
+  survey   Survey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  surveyId String
+  team     Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId   String
+
+  @@unique([surveyId, teamId])
 }
