@@ -198,7 +198,6 @@ model SurveyResponse {
 // - Unique constraint: one answer per question per response
 model Answer {
   id              String           @id @default(uuid())
-  textAnswer      String? // For TEXT, TEXTAREA
   selectedOptions QuestionOption[] // For SINGLE_CHOICE, YES_NO, MULTIPLE_CHOICE, RATING
   createdAt       DateTime         @default(now())
   question        Question         @relation(fields: [questionId], references: [id])

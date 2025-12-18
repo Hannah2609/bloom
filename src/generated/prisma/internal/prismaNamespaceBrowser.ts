@@ -52,7 +52,13 @@ export const ModelName = {
   User: 'User',
   Company: 'Company',
   Team: 'Team',
-  TeamMember: 'TeamMember'
+  TeamMember: 'TeamMember',
+  Survey: 'Survey',
+  Question: 'Question',
+  QuestionOption: 'QuestionOption',
+  SurveyResponse: 'SurveyResponse',
+  Answer: 'Answer',
+  SurveyTeam: 'SurveyTeam'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -123,6 +129,80 @@ export const TeamMemberScalarFieldEnum = {
 } as const
 
 export type TeamMemberScalarFieldEnum = (typeof TeamMemberScalarFieldEnum)[keyof typeof TeamMemberScalarFieldEnum]
+
+
+export const SurveyScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  isGlobal: 'isGlobal',
+  isAnonymous: 'isAnonymous',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  companyId: 'companyId'
+} as const
+
+export type SurveyScalarFieldEnum = (typeof SurveyScalarFieldEnum)[keyof typeof SurveyScalarFieldEnum]
+
+
+export const QuestionScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  type: 'type',
+  required: 'required',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  surveyId: 'surveyId'
+} as const
+
+export type QuestionScalarFieldEnum = (typeof QuestionScalarFieldEnum)[keyof typeof QuestionScalarFieldEnum]
+
+
+export const QuestionOptionScalarFieldEnum = {
+  id: 'id',
+  text: 'text',
+  order: 'order',
+  questionId: 'questionId'
+} as const
+
+export type QuestionOptionScalarFieldEnum = (typeof QuestionOptionScalarFieldEnum)[keyof typeof QuestionOptionScalarFieldEnum]
+
+
+export const SurveyResponseScalarFieldEnum = {
+  id: 'id',
+  submittedAt: 'submittedAt',
+  surveyId: 'surveyId',
+  userId: 'userId',
+  teamId: 'teamId'
+} as const
+
+export type SurveyResponseScalarFieldEnum = (typeof SurveyResponseScalarFieldEnum)[keyof typeof SurveyResponseScalarFieldEnum]
+
+
+export const AnswerScalarFieldEnum = {
+  id: 'id',
+  textAnswer: 'textAnswer',
+  createdAt: 'createdAt',
+  questionId: 'questionId',
+  responseId: 'responseId'
+} as const
+
+export type AnswerScalarFieldEnum = (typeof AnswerScalarFieldEnum)[keyof typeof AnswerScalarFieldEnum]
+
+
+export const SurveyTeamScalarFieldEnum = {
+  id: 'id',
+  surveyId: 'surveyId',
+  teamId: 'teamId'
+} as const
+
+export type SurveyTeamScalarFieldEnum = (typeof SurveyTeamScalarFieldEnum)[keyof typeof SurveyTeamScalarFieldEnum]
 
 
 export const SortOrder = {

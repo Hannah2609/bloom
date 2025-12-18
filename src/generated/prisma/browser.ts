@@ -37,3 +37,33 @@ export type Team = Prisma.TeamModel
  * 
  */
 export type TeamMember = Prisma.TeamMemberModel
+/**
+ * Model Survey
+ * 
+ */
+export type Survey = Prisma.SurveyModel
+/**
+ * Model Question
+ * 
+ */
+export type Question = Prisma.QuestionModel
+/**
+ * Model QuestionOption
+ * 
+ */
+export type QuestionOption = Prisma.QuestionOptionModel
+/**
+ * Model SurveyResponse
+ * 
+ */
+export type SurveyResponse = Prisma.SurveyResponseModel
+/**
+ * Model Answer
+ * 
+ */
+export type Answer = Prisma.AnswerModel
+/**
+ * Model SurveyTeam
+ * 
+ */
+export type SurveyTeam = Prisma.SurveyTeamModel

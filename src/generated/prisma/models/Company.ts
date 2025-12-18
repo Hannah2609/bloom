@@ -200,6 +200,7 @@ export type CompanyWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"Company"> | Date | string | null
   users?: Prisma.UserListRelationFilter
   teams?: Prisma.TeamListRelationFilter
+  surveys?: Prisma.SurveyListRelationFilter
 }
 
 export type CompanyOrderByWithRelationInput = {
@@ -212,6 +213,7 @@ export type CompanyOrderByWithRelationInput = {
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   teams?: Prisma.TeamOrderByRelationAggregateInput
+  surveys?: Prisma.SurveyOrderByRelationAggregateInput
 }
 
 export type CompanyWhereUniqueInput = Prisma.AtLeast<{
@@ -227,6 +229,7 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   deletedAt?: Prisma.DateTimeNullableFilter<"Company"> | Date | string | null
   users?: Prisma.UserListRelationFilter
   teams?: Prisma.TeamListRelationFilter
+  surveys?: Prisma.SurveyListRelationFilter
 }, "id" | "domain">
 
 export type CompanyOrderByWithAggregationInput = {
@@ -265,6 +268,7 @@ export type CompanyCreateInput = {
   deletedAt?: Date | string | null
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
   teams?: Prisma.TeamCreateNestedManyWithoutCompanyInput
+  surveys?: Prisma.SurveyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateInput = {
@@ -277,6 +281,7 @@ export type CompanyUncheckedCreateInput = {
   deletedAt?: Date | string | null
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutCompanyInput
+  surveys?: Prisma.SurveyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUpdateInput = {
@@ -289,6 +294,7 @@ export type CompanyUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
   teams?: Prisma.TeamUpdateManyWithoutCompanyNestedInput
+  surveys?: Prisma.SurveyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateInput = {
@@ -301,6 +307,7 @@ export type CompanyUncheckedUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutCompanyNestedInput
+  surveys?: Prisma.SurveyUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateManyInput = {
@@ -396,6 +403,20 @@ export type CompanyUpdateOneRequiredWithoutTeamsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutTeamsInput, Prisma.CompanyUpdateWithoutTeamsInput>, Prisma.CompanyUncheckedUpdateWithoutTeamsInput>
 }
 
+export type CompanyCreateNestedOneWithoutSurveysInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutSurveysInput, Prisma.CompanyUncheckedCreateWithoutSurveysInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutSurveysInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneRequiredWithoutSurveysNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutSurveysInput, Prisma.CompanyUncheckedCreateWithoutSurveysInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutSurveysInput
+  upsert?: Prisma.CompanyUpsertWithoutSurveysInput
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutSurveysInput, Prisma.CompanyUpdateWithoutSurveysInput>, Prisma.CompanyUncheckedUpdateWithoutSurveysInput>
+}
+
 export type CompanyCreateWithoutUsersInput = {
   id?: string
   name: string
@@ -405,6 +426,7 @@ export type CompanyCreateWithoutUsersInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   teams?: Prisma.TeamCreateNestedManyWithoutCompanyInput
+  surveys?: Prisma.SurveyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutUsersInput = {
@@ -416,6 +438,7 @@ export type CompanyUncheckedCreateWithoutUsersInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutCompanyInput
+  surveys?: Prisma.SurveyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutUsersInput = {
@@ -443,6 +466,7 @@ export type CompanyUpdateWithoutUsersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   teams?: Prisma.TeamUpdateManyWithoutCompanyNestedInput
+  surveys?: Prisma.SurveyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutUsersInput = {
@@ -454,6 +478,7 @@ export type CompanyUncheckedUpdateWithoutUsersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   teams?: Prisma.TeamUncheckedUpdateManyWithoutCompanyNestedInput
+  surveys?: Prisma.SurveyUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutTeamsInput = {
@@ -465,6 +490,7 @@ export type CompanyCreateWithoutTeamsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   users?: Prisma.UserCreateNestedManyWithoutCompanyInput
+  surveys?: Prisma.SurveyCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutTeamsInput = {
@@ -476,6 +502,7 @@ export type CompanyUncheckedCreateWithoutTeamsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
+  surveys?: Prisma.SurveyUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutTeamsInput = {
@@ -503,6 +530,7 @@ export type CompanyUpdateWithoutTeamsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
+  surveys?: Prisma.SurveyUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutTeamsInput = {
@@ -514,6 +542,71 @@ export type CompanyUncheckedUpdateWithoutTeamsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
+  surveys?: Prisma.SurveyUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyCreateWithoutSurveysInput = {
+  id?: string
+  name: string
+  domain: string
+  logo?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  users?: Prisma.UserCreateNestedManyWithoutCompanyInput
+  teams?: Prisma.TeamCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutSurveysInput = {
+  id?: string
+  name: string
+  domain: string
+  logo?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutCompanyInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutSurveysInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutSurveysInput, Prisma.CompanyUncheckedCreateWithoutSurveysInput>
+}
+
+export type CompanyUpsertWithoutSurveysInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutSurveysInput, Prisma.CompanyUncheckedUpdateWithoutSurveysInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutSurveysInput, Prisma.CompanyUncheckedCreateWithoutSurveysInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutSurveysInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutSurveysInput, Prisma.CompanyUncheckedUpdateWithoutSurveysInput>
+}
+
+export type CompanyUpdateWithoutSurveysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  domain?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  users?: Prisma.UserUpdateManyWithoutCompanyNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutSurveysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  domain?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  users?: Prisma.UserUncheckedUpdateManyWithoutCompanyNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 
@@ -524,11 +617,13 @@ export type CompanyUncheckedUpdateWithoutTeamsInput = {
 export type CompanyCountOutputType = {
   users: number
   teams: number
+  surveys: number
 }
 
 export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | CompanyCountOutputTypeCountUsersArgs
   teams?: boolean | CompanyCountOutputTypeCountTeamsArgs
+  surveys?: boolean | CompanyCountOutputTypeCountSurveysArgs
 }
 
 /**
@@ -555,6 +650,13 @@ export type CompanyCountOutputTypeCountTeamsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.TeamWhereInput
 }
 
+/**
+ * CompanyCountOutputType without action
+ */
+export type CompanyCountOutputTypeCountSurveysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SurveyWhereInput
+}
+
 
 export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -566,6 +668,7 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   deletedAt?: boolean
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   teams?: boolean | Prisma.Company$teamsArgs<ExtArgs>
+  surveys?: boolean | Prisma.Company$surveysArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
 
@@ -603,6 +706,7 @@ export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Company$usersArgs<ExtArgs>
   teams?: boolean | Prisma.Company$teamsArgs<ExtArgs>
+  surveys?: boolean | Prisma.Company$surveysArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CompanyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -613,6 +717,7 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     users: Prisma.$UserPayload<ExtArgs>[]
     teams: Prisma.$TeamPayload<ExtArgs>[]
+    surveys: Prisma.$SurveyPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1018,6 +1123,7 @@ export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   users<T extends Prisma.Company$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   teams<T extends Prisma.Company$teamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  surveys<T extends Prisma.Company$surveysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$surveysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SurveyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1487,6 +1593,30 @@ export type Company$teamsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.TeamScalarFieldEnum | Prisma.TeamScalarFieldEnum[]
+}
+
+/**
+ * Company.surveys
+ */
+export type Company$surveysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Survey
+   */
+  select?: Prisma.SurveySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Survey
+   */
+  omit?: Prisma.SurveyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SurveyInclude<ExtArgs> | null
+  where?: Prisma.SurveyWhereInput
+  orderBy?: Prisma.SurveyOrderByWithRelationInput | Prisma.SurveyOrderByWithRelationInput[]
+  cursor?: Prisma.SurveyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SurveyScalarFieldEnum | Prisma.SurveyScalarFieldEnum[]
 }
 
 /**
