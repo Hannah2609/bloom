@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button/button";
 import { Input } from "@/components/ui/forms/input";
 import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import UserSearch, { User } from "./UserSearch";
 
 interface CreateTeamFormProps {
   onSuccess?: () => void;
@@ -26,6 +27,7 @@ interface CreateTeamFormProps {
 
 export default function CreateTeamForm({ onSuccess }: CreateTeamFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
   const form = useForm<z.infer<typeof createTeamSchema>>({
     resolver: zodResolver(createTeamSchema),
@@ -39,6 +41,7 @@ export default function CreateTeamForm({ onSuccess }: CreateTeamFormProps) {
       setIsSubmitting(true);
       toast.loading("Creating team...");
 
+      // Create team
       const response = await fetch("/api/dashboard/teams", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,12 +54,37 @@ export default function CreateTeamForm({ onSuccess }: CreateTeamFormProps) {
         throw new Error(result.error || "Failed to create team");
       }
 
+      const teamId = result.team.id;
+
+      // Add members if any
+      if (selectedUsers.length > 0) {
+        const membersResponse = await fetch(
+          `/api/dashboard/teams/${teamId}/members`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userIds: selectedUsers.map((u) => u.id),
+            }),
+          }
+        );
+
+        if (!membersResponse.ok) {
+          const error = await membersResponse.json();
+          toast.warning(
+            `Team created but failed to add members: ${error.error}`
+          );
+        }
+      }
+
       toast.dismiss();
-      toast.success("Team created successfully!", {
-        duration: 3000,
-      });
+      toast.success(
+        `Team created${selectedUsers.length > 0 ? ` with ${selectedUsers.length} member(s)` : ""}!`,
+        { duration: 3000 }
+      );
 
       form.reset();
+      setSelectedUsers([]);
 
       // Close sheet and refresh teams list if callback provided
       if (onSuccess) {
@@ -94,7 +122,11 @@ export default function CreateTeamForm({ onSuccess }: CreateTeamFormProps) {
           )}
         />
 
-        {/* Add people - picker/selctor/search? */}
+        <UserSearch
+          selectedUsers={selectedUsers}
+          onUsersChange={setSelectedUsers}
+          label="Add Members (Optional)"
+        />
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? "Creating..." : "Create Team"}

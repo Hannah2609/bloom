@@ -35,6 +35,14 @@ export default async function TeamPage({
           role: true,
           joinedAt: true,
           leftAt: true,
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true,
+              avatar: true,
+            },
+          },
         },
         where: {
           leftAt: null, // Only active members
@@ -48,8 +56,7 @@ export default async function TeamPage({
     redirect("/teams");
   }
 
-  // At this point, session.user is guaranteed to exist (checked above)
-  const user = session.user!;
+  const user = session.user;
 
   // Check if team belongs to user's company
   if (team.companyId !== user.companyId) {
@@ -77,5 +84,7 @@ export default async function TeamPage({
     members: team.members,
   };
 
-  return <TeamClient team={teamData} />;
+  const isAdmin = session.user.role === "ADMIN";
+
+  return <TeamClient team={teamData} isAdmin={isAdmin} />;
 }
