@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma as prismaClient } from "@/lib/prisma";
 import { companySignupSchema } from "@/lib/validation/validation";
 import { z } from "zod";
-import { Prisma as PrismaError } from "@/generated/prisma/client"; //TODO
+import { Prisma as PrismaError } from "@prisma/client";
 import { getSession } from "@/lib/session/session";
 import { Role } from "@/types/user";
 
