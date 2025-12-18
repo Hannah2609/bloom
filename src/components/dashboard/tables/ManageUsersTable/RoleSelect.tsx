@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "@/types/user";
 import { UserTableRow } from "@/types/user";
 
 interface RoleSelectProps {

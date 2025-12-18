@@ -422,7 +422,7 @@ export default function ProtectedPage() {
 
 ```tsx
 import { useSession } from "@/contexts/SessionContext";
-import { Role } from "@/generated/prisma/enums";
+// import { Role } from "@/generated/prisma/enums";
 
 export function AdminOnlyButton() {
   const { user } = useSession();

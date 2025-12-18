@@ -1,4 +1,5 @@
-import { Role } from "@/generated/prisma/enums";
+// Role type from database
+export type Role = "ADMIN" | "MANAGER" | "EMPLOYEE";
 
 // Basic user type from database
 export interface User {
