@@ -5,6 +5,7 @@ import { Heading } from "@/components/ui/heading/heading";
 import { UserTableRow, Role } from "@/types/user";
 import { useState } from "react";
 import { toast } from "sonner";
+import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 // import { useRouter } from "next/navigation";
 
 interface AdminClientProps {
