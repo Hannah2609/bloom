@@ -11,11 +11,22 @@ import {
 } from "@/components/ui/avatar/avatar";
 import { Button } from "@/components/ui/button/button";
 import { Input } from "@/components/ui/forms/input";
-import { Label } from "@/components/ui/forms/label";
-import { toast } from "sonner";
-import { useUploadThing } from "@/lib/uploadthing";
-import { Edit, Loader2, LogOut } from "lucide-react";
+import { Edit, Loader2, LogOut, XIcon } from "lucide-react";
+import { editProfileSchema } from "@/lib/validation/validation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/forms/form";
+import { useUploadThing } from "@/lib/uploadthing";
+import { toast } from "sonner";
 
 interface ProfileClientProps {
   user: UserWithCompany;
@@ -23,77 +34,95 @@ interface ProfileClientProps {
 
 export default function ProfileClient({ user }: ProfileClientProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    avatar: user.avatar,
+  const [submitStep, setSubmitStep] = useState<
+    "idle" | "uploading-avatar" | "updating-profile"
+  >("idle");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const { logout } = useAuth();
+  const { startUpload, isUploading: isAvatarUploading } =
+    useUploadThing("imageUploader");
+
+  const form = useForm<z.infer<typeof editProfileSchema>>({
+    resolver: zodResolver(editProfileSchema),
+    defaultValues: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatar: user.avatar || "",
+    },
   });
 
-  const { startUpload } = useUploadThing("imageUploader");
-  const { logout } = useAuth();
-
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsUploadingAvatar(true);
+  const handleAvatarUpload = async (file: File) => {
+    setSubmitStep("uploading-avatar");
 
     try {
       const uploaded = await startUpload([file]);
-
       if (!uploaded || uploaded.length === 0 || !uploaded[0]?.url) {
-        throw new Error("Avatar upload failed");
+        throw new Error("Avatar upload failed. Please try again.");
       }
 
       const avatarUrl = uploaded[0].url;
 
-      // TODO: Add API call when route is ready
-      // const response = await fetch("/api/dashboard/profile", {
-      //   method: "PATCH",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ avatar: avatarUrl }),
-      // });
+      // Update avatar immediately
+      const response = await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          avatar: avatarUrl,
+        }),
+      });
 
-      setFormData((prev) => ({ ...prev, avatar: avatarUrl }));
-      toast.success("Profile picture updated successfully");
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("Avatar updated successfully!");
+        form.setValue("avatar", avatarUrl);
+        setAvatarFile(null);
+      } else {
+        toast.error(data.error || "Failed to update avatar");
+      }
     } catch (error) {
-      console.error("Error uploading avatar:", error);
+      console.error("Avatar upload error:", error);
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to upload avatar. Please try again."
+        error instanceof Error ? error.message : "Failed to upload avatar"
       );
     } finally {
-      setIsUploadingAvatar(false);
+      setSubmitStep("idle");
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (formData: z.infer<typeof editProfileSchema>) => {
+    setSubmitStep("updating-profile");
 
     try {
-      // TODO: Add API call when route is ready
-      // const response = await fetch("/api/dashboard/profile", {
-      //   method: "PATCH",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     firstName: formData.firstName,
-      //     lastName: formData.lastName,
-      //     email: formData.email,
-      //   }),
-      // });
+      const response = await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          posistion: formData.posistion,
+        }),
+      });
 
-      toast.success("Profile updated successfully");
-      setIsEditing(false);
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("Profile updated successfully!");
+        setIsEditing(false);
+      } else {
+        toast.error(data.error || "Failed to update profile");
+      }
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Profile update error:", error);
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to update profile. Please try again."
+        error instanceof Error ? error.message : "Failed to update profile"
       );
+    } finally {
+      setSubmitStep("idle");
     }
   };
 
@@ -106,134 +135,214 @@ export default function ProfileClient({ user }: ProfileClientProps) {
         </p>
       </div>
 
-      <section className="grid grid-cols-1 md:grid-cols-8 gap-6">
-        {/* Avatar Section */}
-        <div className="bg-sidebar col-span-full md:col-span-3 lg:col-span-2 rounded-md p-8">
-          <div className="grid place-items-center gap-4">
-            <div className="relative">
-              <Avatar className="h-32 w-32">
-                {formData.avatar ? (
-                  <AvatarImage src={formData.avatar} alt={formData.firstName} />
-                ) : (
-                  <AvatarFallback className="[&>svg]:size-18!" />
-                )}
-              </Avatar>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <section className="grid grid-cols-1 gap-6 md:grid-cols-10">
+            {/* Avatar Section */}
+            <div className="bg-sidebar max-h-96 col-span-full rounded-md p-8 lg:col-span-4 xl:col-span-3">
+              <div className="grid place-items-center gap-4">
+                <FormField
+                  control={form.control}
+                  name="avatar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="relative">
+                          <Avatar className="h-32 w-32">
+                            {field.value ? (
+                              <AvatarImage
+                                src={field.value}
+                                alt={form.watch("firstName")}
+                              />
+                            ) : (
+                              <AvatarFallback className="[&>svg]:size-18!" />
+                            )}
+                          </Avatar>
 
-              {/* Upload Overlay */}
-              <label
-                htmlFor="avatar-upload"
-                className="absolute inset-0 grid place-items-center bg-black/60 rounded-full opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
-              >
-                {isUploadingAvatar ? (
-                  <Loader2 className="h-8 w-8 text-white animate-spin" />
-                ) : (
-                  <Edit className="h-8 w-8 text-white" />
-                )}
-              </label>
-              <input
-                id="avatar-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleAvatarUpload}
-                disabled={isUploadingAvatar}
-              />
-            </div>
-
-            <div className="text-center space-y-2">
-              <Heading level="h2">
-                {formData.firstName} {formData.lastName}
-              </Heading>
-              <p className="text-sm text-muted-foreground">{user.role}</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {user.company.name}
-              </p>
-            </div>
-          </div>
-
-          {/* Logout Button */}
-          <Button onClick={logout} className="w-full mt-6">
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-          </Button>
-        </div>
-
-        {/* Profile Form */}
-        <div className="col-span-full md:col-span-5 lg:col-span-6 bg-sidebar rounded-md p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      firstName: e.target.value,
-                    }))
-                  }
-                  disabled={!isEditing}
+                          {/* Upload Overlay - Always visible */}
+                          <>
+                            {avatarFile ? (
+                              <div className="absolute inset-0 grid place-items-center rounded-full bg-black/60">
+                                <Button
+                                  type="button"
+                                  size="icon-sm"
+                                  variant="ghost"
+                                  className="text-white hover:bg-white/20"
+                                  onClick={() => {
+                                    setAvatarFile(null);
+                                  }}
+                                >
+                                  <XIcon className="h-8 w-8" />
+                                </Button>
+                              </div>
+                            ) : (
+                              <label
+                                htmlFor="avatar-upload"
+                                className="absolute inset-0 grid cursor-pointer place-items-center rounded-full bg-black/60 opacity-0 transition-opacity hover:opacity-100"
+                              >
+                                {submitStep === "uploading-avatar" ? (
+                                  <Loader2 className="h-8 w-8 animate-spin text-white" />
+                                ) : (
+                                  <Edit className="h-8 w-8 text-white" />
+                                )}
+                              </label>
+                            )}
+                            <input
+                              id="avatar-upload"
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  handleAvatarUpload(file);
+                                }
+                              }}
+                              disabled={submitStep !== "idle"}
+                            />
+                          </>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      lastName: e.target.value,
-                    }))
-                  }
-                  disabled={!isEditing}
-                />
-              </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, email: e.target.value }))
-                }
-                disabled={!isEditing}
-              />
-            </div>
+                <div className="space-y-2 text-center">
+                  <Heading level="h2">
+                    {form.watch("firstName")} {form.watch("lastName")}
+                  </Heading>
+                  <p className="text-muted-foreground text-sm">{user.role}</p>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    {user.company.name}
+                  </p>
 
-            <div className="flex gap-2 pt-4">
-              {isEditing ? (
-                <>
-                  <Button type="submit">Save Changes</Button>
+                  {/* Logout Button */}
                   <Button
+                    onClick={logout}
+                    className="mt-6 min-w-48"
                     type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsEditing(false);
-                      setFormData({
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        email: user.email,
-                        avatar: user.avatar,
-                      });
-                    }}
                   >
-                    Cancel
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
                   </Button>
-                </>
-              ) : (
-                <Button type="button" onClick={() => setIsEditing(true)}>
-                  Edit Profile
-                </Button>
-              )}
+                </div>
+              </div>
             </div>
-          </form>
-        </div>
-      </section>
+
+            {/* Profile Form */}
+            <div className="bg-sidebar col-span-full rounded-md p-8 lg:col-span-6 xl:col-span-7">
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={!isEditing}
+                            autoComplete="given-name"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={!isEditing}
+                            autoComplete="family-name"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="posistion"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Position</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          disabled={!isEditing}
+                          placeholder="e.g. Software Engineer"
+                          autoComplete="organization-title"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-2">
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    type="email"
+                    value={user.email}
+                    disabled
+                    className="opacity-60"
+                  />
+                  <p className="text-muted-foreground text-xs">
+                    Email cannot be changed
+                  </p>
+                </div>
+
+                <div className="flex gap-2 pt-4">
+                  {isEditing ? (
+                    <>
+                      <Button
+                        type="submit"
+                        disabled={
+                          submitStep === "updating-profile" || isAvatarUploading
+                        }
+                      >
+                        {submitStep === "updating-profile" ? (
+                          <>
+                            Saving changes...
+                            <Loader2 className="size-4 animate-spin" />
+                          </>
+                        ) : (
+                          "Save Changes"
+                        )}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setIsEditing(false);
+                          form.reset();
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <Button type="button" onClick={() => setIsEditing(true)}>
+                      Edit Profile
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        </form>
+      </Form>
     </PageLayout>
   );
 }
