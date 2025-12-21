@@ -2,7 +2,7 @@
 export type Role = "ADMIN" | "MANAGER" | "EMPLOYEE";
 
 // Basic user type from database
-export interface User {
+export type User = {
   id: string;
   email: string;
   firstName: string;
@@ -10,7 +10,7 @@ export interface User {
   avatar?: string | null;
   role: Role;
   companyId: string;
-}
+};
 
 // User with company data (as in session)
 export interface UserWithCompany extends User {
@@ -22,19 +22,19 @@ export interface UserWithCompany extends User {
 }
 
 // User for table display
-export interface UserTableRow {
+export type UserTableRow = {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
   role: Role;
-}
+};
 
 // API response types
-export interface UserResponse {
+export type UserResponse = {
   user: User;
-}
+};
 
-export interface UsersResponse {
+export type UsersResponse = {
   users: User[];
-}
+};

@@ -15,6 +15,11 @@ export default async function SurveyPage({
     redirect("/login");
   }
 
+  // Check admin access
+  if (session.user.role !== "ADMIN") {
+    redirect("/home");
+  }
+
   // get survey based on id
 
   return <SurveyClient />;

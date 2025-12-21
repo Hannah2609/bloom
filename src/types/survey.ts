@@ -1,0 +1,55 @@
+// Survey list item type for displaying surveys in a list of cards (lightweight)
+export type SurveyListItem = {
+  id: string;
+  title: string;
+  description: string | null;
+  status: SurveyStatus;
+  isGlobal: boolean;
+  startDate: string | null;
+  endDate: string | null;
+  createdAt: string;
+  questionCount: number;
+  responseCount: number;
+};
+
+export type Survey = {
+  id: string;
+  title: string;
+  description: string | null;
+  status: SurveyStatus;
+  isGlobal: boolean;
+  startDate: Date | null;
+  endDate: Date | null;
+  createdAt: Date;
+  updatedAt: Date | null;
+  companyId: string;
+};
+
+export type SurveyStatus = "DRAFT" | "ACTIVE" | "CLOSED" | "ARCHIVED";
+
+export type Question = {
+  id: string;
+  title: string;
+  description: string | null;
+  required: boolean;
+  order: number;
+  surveyId: string;
+  createdAt: Date;
+  updatedAt: Date | null;
+};
+
+export type SurveyResponse = {
+  id: string;
+  submittedAt: Date;
+  surveyId: string;
+  userId: string;
+  teamId: string | null;
+};
+
+export type Answer = {
+  id: string;
+  ratingValue: number;
+  questionId: string;
+  responseId: string;
+  createdAt: Date;
+};
