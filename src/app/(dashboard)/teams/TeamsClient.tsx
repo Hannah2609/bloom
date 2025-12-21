@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sheet";
 import CreateTeamForm from "@/components/dashboard/forms/createTeamForm";
 import { useRouter } from "next/navigation";
+import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 
 interface Team {
   id: string;
@@ -45,9 +46,9 @@ export default function TeamsClient({
 
   return (
     <>
-      <section className="p-8">
-        <div className="my-8 flex items-center justify-between">
-          <Heading level="h2">Teams</Heading>
+      <PageLayout>
+        <div className="mb-8 flex items-center justify-between">
+          <Heading level="h1">Teams</Heading>
           {isAdmin && (
             <Button size="lg" onClick={() => setIsOpen(true)}>
               <PlusIcon className="size-4" />
@@ -76,7 +77,7 @@ export default function TeamsClient({
             ))}
           </div>
         )}
-      </section>
+      </PageLayout>
       {isAdmin && (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetContent side="right" className="w-full sm:max-w-md">

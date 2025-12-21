@@ -3,6 +3,7 @@
 import { useSession } from "@/contexts/SessionContext";
 import { SectionCards } from "@/components/ui/card/exampleCards";
 import { Heading } from "@/components/ui/heading/heading";
+import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 
 // TODO: move to utils
 const getGreeting = () => {
@@ -16,7 +17,7 @@ const Page = () => {
   const { user } = useSession();
 
   return (
-    <section className="flex flex-col gap-10 p-8">
+    <PageLayout>
       <div>
         <p className="font-extralight text-muted-foreground text-xl lg:text-2xl">
           {getGreeting()}
@@ -26,7 +27,7 @@ const Page = () => {
       <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
         <SectionCards />
       </div>
-    </section>
+    </PageLayout>
   );
 };
 
