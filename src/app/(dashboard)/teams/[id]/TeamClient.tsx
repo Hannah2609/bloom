@@ -1,6 +1,6 @@
 "use client";
 
-import AddTeamMemberForm from "@/components/dashboard/forms/addTeamMemberForm";
+import AddTeamMemberForm from "@/components/dashboard/forms/AddTeamMemberForm";
 import {
   Avatar,
   AvatarFallback,

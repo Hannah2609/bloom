@@ -12,7 +12,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import CreateTeamForm from "@/components/dashboard/forms/createTeamForm";
+import CreateTeamForm from "@/components/dashboard/forms/CreateTeamForm";
 import { useRouter } from "next/navigation";
 import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 

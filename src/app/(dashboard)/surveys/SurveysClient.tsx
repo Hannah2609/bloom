@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button/button";
 import { PlusIcon } from "lucide-react";
 import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 import { SurveyListItem } from "@/types/survey";
+import CreateSurveyForm from "@/components/dashboard/forms/CreateSurveyForm";
 import {
   Sheet,
   SheetContent,
@@ -14,14 +15,23 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { SurveyCard } from "@/components/dashboard/cards/surveys/SurveyCard";
+import { useRouter } from "next/navigation";
 
 interface SurveysClientProps {
   initialSurveys: SurveyListItem[];
 }
 
 export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const surveys = initialSurveys;
+
+  // Refresh surveys after creating a new one
+  const handleSurveyCreated = () => {
+    setIsOpen(false);
+    // Refresh the page to get updated data from server
+    router.refresh();
+  };
 
   return (
     <>
@@ -67,8 +77,7 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
             </SheetDescription>
           </SheetHeader>
           <div className="flex h-full items-center">
-            {/* TODO: Add CreateSurveyForm component */}
-            <p className="text-muted-foreground">Form coming soon...</p>
+            <CreateSurveyForm onSuccess={handleSurveyCreated} />
           </div>
         </SheetContent>
       </Sheet>
