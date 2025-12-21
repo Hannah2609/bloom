@@ -10,10 +10,7 @@ interface SidebarMenuItemProps {
   isActive: boolean;
 }
 
-export function SidebarMenuItem({
-  item,
-  isActive,
-}: SidebarMenuItemProps) {
+export function SidebarMenuItem({ item, isActive }: SidebarMenuItemProps) {
   return (
     <SidebarMenuItemBase>
       <SidebarMenuButton

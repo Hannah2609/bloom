@@ -36,7 +36,8 @@ interface ExtendedTeam extends Team {
     joinedAt: Date;
     leftAt: Date | null;
   }[];
-}import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
+}
+import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 
 interface TeamProps {
   team: ExtendedTeam;
