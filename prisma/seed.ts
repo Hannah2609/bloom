@@ -371,6 +371,18 @@ async function main() {
   console.log("🌱 Starting seed...\n");
 
   try {
+    // ✅ Clean ALL data first (avoid duplicates)
+    console.log("🧹 Cleaning existing data...");
+    await prisma.surveyResponse.deleteMany({});
+    await prisma.answer.deleteMany({});
+    await prisma.question.deleteMany({});
+    await prisma.surveyTeam.deleteMany({});
+    await prisma.survey.deleteMany({});
+    await prisma.teamMember.deleteMany({});
+    await prisma.team.deleteMany({});
+    await prisma.user.deleteMany({});
+    console.log("✅ Data cleaned\n");
+
     const company = await seedCompany();
     const users = await seedUsers(company.id);
     const teams = await seedTeams(company.id, users);
