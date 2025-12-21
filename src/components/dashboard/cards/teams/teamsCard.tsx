@@ -1,11 +1,10 @@
-import React from "react";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardFooter,
 } from "@/components/ui/card/card";
-import { ArrowRight, PencilIcon, UsersIcon } from "lucide-react";
+import { ArrowRight, UsersIcon } from "lucide-react";
 import { Heading } from "@/components/ui/heading/heading";
 import { Badge } from "@/components/ui/badge/badge";
 import Link from "next/link";

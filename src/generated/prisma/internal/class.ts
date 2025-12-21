@@ -23,7 +23,7 @@ const config: runtime.GetPrismaClientConfig = {
       "value": "prisma-client"
     },
     "output": {
-      "value": "/Users/hannahgrenade/dokumenter/Bachelor/bloom/src/generated/prisma",
+      "value": "/Users/katja/Desktop/WebDev/bachelor/bloom/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -41,7 +41,7 @@ const config: runtime.GetPrismaClientConfig = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/hannahgrenade/dokumenter/Bachelor/bloom/prisma/schema.prisma",
+    "sourceFilePath": "/Users/katja/Desktop/WebDev/bachelor/bloom/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativePath": "../../../prisma",
