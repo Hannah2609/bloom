@@ -2,7 +2,7 @@
 
 import { SectionCards } from "@/components/ui/card/exampleCards";
 import { Heading } from "@/components/ui/heading/heading";
-import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
+import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { User } from "@/types/user";
 
 interface HomeClientProps {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Heading } from "@/components/ui/heading/heading";
-import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
+import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { UserWithCompany } from "@/types/user";
 import {
   Avatar,

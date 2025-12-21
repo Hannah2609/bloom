@@ -20,7 +20,7 @@ import { Role } from "@/types/user";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
+import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 
 interface ExtendedTeam extends Team {
   members: {
