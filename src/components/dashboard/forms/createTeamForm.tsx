@@ -11,32 +11,31 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  CreateTeamSchema,
-  createTeamSchema,
-} from "@/lib/validation/validation";
+import { createTeamSchema } from "@/lib/validation/validation";
 import { Button } from "@/components/ui/button/button";
 import { Input } from "@/components/ui/forms/input";
 import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import UserSearch, { User } from "./UserSearch";
 
-interface CreateTeamFormProps {
-  onSuccess?: () => void;
-}
+type CreateTeamFormProps = {
+  onSuccess?: () => void; // Callback to refresh teams list after creation
+};
+
+type CreateTeamFormData = z.infer<typeof createTeamSchema>;
 
 export default function CreateTeamForm({ onSuccess }: CreateTeamFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
-  const form = useForm<z.infer<typeof createTeamSchema>>({
+  const form = useForm<CreateTeamFormData>({
     resolver: zodResolver(createTeamSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  const handleSubmit = async (data: CreateTeamSchema) => {
+  const handleSubmit = async (data: CreateTeamFormData) => {
     try {
       setIsSubmitting(true);
       toast.loading("Creating team...");
@@ -86,7 +85,7 @@ export default function CreateTeamForm({ onSuccess }: CreateTeamFormProps) {
       form.reset();
       setSelectedUsers([]);
 
-      // Close sheet and refresh teams list if callback provided
+      // Refresh teams list
       if (onSuccess) {
         onSuccess();
       }
