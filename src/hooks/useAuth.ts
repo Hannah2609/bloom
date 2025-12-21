@@ -82,13 +82,16 @@ export function useAuth() {
         throw new Error(result.error || "Logout failed");
       }
 
-      // Redirect - SessionContext will automatically refetch when /login loads
-      router.push("/login");
+      // Force refetch to clear session context
+      await refetch();
 
       toast.dismiss();
       toast.success("You are logged out", {
         duration: 2000,
       });
+
+      // Use replace to prevent back button navigation
+      router.replace("/login");
     } catch (error) {
       toast.dismiss();
       toast.error(
@@ -99,7 +102,7 @@ export function useAuth() {
     } finally {
       setIsLoading(false);
     }
-  }, [router]);
+  }, [refetch, router]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
