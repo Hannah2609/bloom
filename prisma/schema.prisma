@@ -13,7 +13,6 @@ datasource db {
 // Represents a user in the system (admin, manager, or employee)
 // - Belongs to ONE company
 // - Can be member of MULTIPLE teams (via TeamMember)
-// - Can create surveys (if admin)
 // - Can submit survey responses
 model User {
   id              String           @id @default(uuid())
@@ -28,14 +27,14 @@ model User {
   deletedAt       DateTime?
   company         Company          @relation(fields: [companyId], references: [id])
   companyId       String
-  memberships     TeamMember[] // Many-to-many with Team
+  memberships     TeamMember[]
   surveyResponses SurveyResponse[]
 }
 
 enum Role {
-  ADMIN // Can manage everything, create surveys
-  MANAGER // Can manage teams
-  EMPLOYEE // Regular user
+  ADMIN
+  MANAGER
+  EMPLOYEE
 }
 
 // **Company Model**
@@ -70,8 +69,8 @@ model Team {
   deletedAt DateTime?
   company   Company      @relation(fields: [companyId], references: [id])
   companyId String
-  members   TeamMember[] // Many-to-many with User
-  surveys   SurveyTeam[] // Many-to-many with Survey
+  members   TeamMember[]
+  surveys   SurveyTeam[]
 }
 
 // **TeamMember Model**
@@ -82,7 +81,7 @@ model Team {
 // - Unique constraint prevents duplicate memberships
 model TeamMember {
   id       String    @id @default(uuid())
-  role     Role      @default(EMPLOYEE) // Users role in team
+  role     Role      @default(EMPLOYEE)
   joinedAt DateTime  @default(now())
   leftAt   DateTime?
   team     Team      @relation(fields: [teamId], references: [id])
@@ -90,24 +89,22 @@ model TeamMember {
   user     User      @relation(fields: [userId], references: [id])
   userId   String
 
-  @@unique([teamId, userId]) // A user can only be member of a team once
+  @@unique([teamId, userId])
 }
 
 // **Survey Model**
 // Questionnaire for employee feedback
 // - Belongs to ONE company
-// - Created by ONE admin user
-// - Has MANY questions
+// - Has MANY questions (all RATING type)
 // - Has MANY responses
 // - Can be global (all teams) or targeted (specific teams)
-// - Anonymous flag for privacy
+// - Always anonymous
 model Survey {
   id          String           @id @default(uuid())
   title       String
   description String?
   status      SurveyStatus     @default(DRAFT)
-  isGlobal    Boolean          @default(false) // If true, all company users can see
-  isAnonymous Boolean          @default(true) // If true, responses are anonymous
+  isGlobal    Boolean          @default(false)
   startDate   DateTime?
   endDate     DateTime?
   createdAt   DateTime         @default(now())
@@ -115,58 +112,34 @@ model Survey {
   deletedAt   DateTime?
   company     Company          @relation(fields: [companyId], references: [id])
   companyId   String
-  questions   Question[] // One-to-many
-  responses   SurveyResponse[] // One-to-many
-  teams       SurveyTeam[] // Many-to-many with Team (if not global)
+  questions   Question[]
+  responses   SurveyResponse[]
+  teams       SurveyTeam[]
 }
 
 enum SurveyStatus {
-  DRAFT // Being created, not visible to users
-  ACTIVE // Live and accepting responses
-  CLOSED // No longer accepting responses
-  ARCHIVED // Hidden from normal views
+  DRAFT
+  ACTIVE
+  CLOSED
+  ARCHIVED
 }
 
 // **Question Model**
-// Single question in a survey
+// Single RATING question in a survey (always 1-5 scale)
 // - Belongs to ONE survey
-// - Has question type (text, rating, multiple choice, etc.)
-// - Has optional multiple choice options
 // - Order determines display sequence
-// - Category for grouping in analytics
+// - Required flag determines if user must answer
 model Question {
-  id          String           @id @default(uuid())
-  title       String
-  description String?
-  type        QuestionType
-  required    Boolean          @default(false)
+  id          String   @id @default(uuid())
+  title       String // E.g., "How satisfied are you with work-life balance?"
+  description String? // Optional explanation
+  required    Boolean  @default(true)
   order       Int // Display order (1, 2, 3...)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  survey      Survey           @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  survey      Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   surveyId    String
-  options     QuestionOption[] // Only for SINGLE_CHOICE, MULTIPLE_CHOICE
-  answers     Answer[] // One-to-many
-}
-
-enum QuestionType {
-  SINGLE_CHOICE // Radio buttons (one option) + yes/no
-  MULTIPLE_CHOICE // Checkboxes (multiple options)
-  RATING // 1-5 scale
-}
-
-// **QuestionOption Model**
-// Option for multiple choice questions
-// - Belongs to ONE question
-// - Has numeric value for aggregation (e.g., 1-5 for ratings)
-// - Order determines display sequence
-model QuestionOption {
-  id         String   @id @default(uuid())
-  text       String
-  order      Int // 1-5 for RATING, 1-n for choices
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  questionId String
-  answers    Answer[] // Many-to-many (multiple answers can select this option)
+  answers     Answer[]
 }
 
 // **SurveyResponse Model**
@@ -184,26 +157,26 @@ model SurveyResponse {
   user        User     @relation(fields: [userId], references: [id])
   userId      String
   teamId      String? // For team aggregation (anonymous)
-  answers     Answer[] // One-to-many
+  answers     Answer[]
 
   @@unique([surveyId, userId])
   @@index([surveyId, teamId])
 }
 
 // **Answer Model**
-// Single answer to a question
+// Single rating answer (1-5) to a question
 // - Belongs to ONE response
 // - Belongs to ONE question
-// - Can have text, number, or selected options depending on question type
+// - Rating value is always between 1-5
 // - Unique constraint: one answer per question per response
 model Answer {
-  id              String           @id @default(uuid())
-  selectedOptions QuestionOption[] // For SINGLE_CHOICE, YES_NO, MULTIPLE_CHOICE, RATING
-  createdAt       DateTime         @default(now())
-  question        Question         @relation(fields: [questionId], references: [id])
-  questionId      String
-  response        SurveyResponse   @relation(fields: [responseId], references: [id], onDelete: Cascade)
-  responseId      String
+  id          String         @id @default(uuid())
+  ratingValue Int // 1-5 scale
+  createdAt   DateTime       @default(now())
+  question    Question       @relation(fields: [questionId], references: [id])
+  questionId  String
+  response    SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  responseId  String
 
   @@unique([responseId, questionId])
 }

@@ -47,11 +47,6 @@ export type Survey = Prisma.SurveyModel;
  */
 export type Question = Prisma.QuestionModel;
 /**
- * Model QuestionOption
- *
- */
-export type QuestionOption = Prisma.QuestionOptionModel;
-/**
  * Model SurveyResponse
  *
  */

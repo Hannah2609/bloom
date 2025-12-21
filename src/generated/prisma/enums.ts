@@ -24,11 +24,3 @@ export const SurveyStatus = {
 } as const;
 
 export type SurveyStatus = (typeof SurveyStatus)[keyof typeof SurveyStatus];
-
-export const QuestionType = {
-  SINGLE_CHOICE: "SINGLE_CHOICE",
-  MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
-  RATING: "RATING",
-} as const;
-
-export type QuestionType = (typeof QuestionType)[keyof typeof QuestionType];

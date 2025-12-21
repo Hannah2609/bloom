@@ -20,12 +20,23 @@ export type AnswerModel =
 
 export type AggregateAnswer = {
   _count: AnswerCountAggregateOutputType | null;
+  _avg: AnswerAvgAggregateOutputType | null;
+  _sum: AnswerSumAggregateOutputType | null;
   _min: AnswerMinAggregateOutputType | null;
   _max: AnswerMaxAggregateOutputType | null;
 };
 
+export type AnswerAvgAggregateOutputType = {
+  ratingValue: number | null;
+};
+
+export type AnswerSumAggregateOutputType = {
+  ratingValue: number | null;
+};
+
 export type AnswerMinAggregateOutputType = {
   id: string | null;
+  ratingValue: number | null;
   createdAt: Date | null;
   questionId: string | null;
   responseId: string | null;
@@ -33,6 +44,7 @@ export type AnswerMinAggregateOutputType = {
 
 export type AnswerMaxAggregateOutputType = {
   id: string | null;
+  ratingValue: number | null;
   createdAt: Date | null;
   questionId: string | null;
   responseId: string | null;
@@ -40,14 +52,24 @@ export type AnswerMaxAggregateOutputType = {
 
 export type AnswerCountAggregateOutputType = {
   id: number;
+  ratingValue: number;
   createdAt: number;
   questionId: number;
   responseId: number;
   _all: number;
 };
 
+export type AnswerAvgAggregateInputType = {
+  ratingValue?: true;
+};
+
+export type AnswerSumAggregateInputType = {
+  ratingValue?: true;
+};
+
 export type AnswerMinAggregateInputType = {
   id?: true;
+  ratingValue?: true;
   createdAt?: true;
   questionId?: true;
   responseId?: true;
@@ -55,6 +77,7 @@ export type AnswerMinAggregateInputType = {
 
 export type AnswerMaxAggregateInputType = {
   id?: true;
+  ratingValue?: true;
   createdAt?: true;
   questionId?: true;
   responseId?: true;
@@ -62,6 +85,7 @@ export type AnswerMaxAggregateInputType = {
 
 export type AnswerCountAggregateInputType = {
   id?: true;
+  ratingValue?: true;
   createdAt?: true;
   questionId?: true;
   responseId?: true;
@@ -111,6 +135,18 @@ export type AnswerAggregateArgs<
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    *
+   * Select which fields to average
+   **/
+  _avg?: AnswerAvgAggregateInputType;
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
+   * Select which fields to sum
+   **/
+  _sum?: AnswerSumAggregateInputType;
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
    * Select which fields to find the minimum value
    **/
   _min?: AnswerMinAggregateInputType;
@@ -143,16 +179,21 @@ export type AnswerGroupByArgs<
   take?: number;
   skip?: number;
   _count?: AnswerCountAggregateInputType | true;
+  _avg?: AnswerAvgAggregateInputType;
+  _sum?: AnswerSumAggregateInputType;
   _min?: AnswerMinAggregateInputType;
   _max?: AnswerMaxAggregateInputType;
 };
 
 export type AnswerGroupByOutputType = {
   id: string;
+  ratingValue: number;
   createdAt: Date;
   questionId: string;
   responseId: string;
   _count: AnswerCountAggregateOutputType | null;
+  _avg: AnswerAvgAggregateOutputType | null;
+  _sum: AnswerSumAggregateOutputType | null;
   _min: AnswerMinAggregateOutputType | null;
   _max: AnswerMaxAggregateOutputType | null;
 };
@@ -175,10 +216,10 @@ export type AnswerWhereInput = {
   OR?: Prisma.AnswerWhereInput[];
   NOT?: Prisma.AnswerWhereInput | Prisma.AnswerWhereInput[];
   id?: Prisma.StringFilter<"Answer"> | string;
+  ratingValue?: Prisma.IntFilter<"Answer"> | number;
   createdAt?: Prisma.DateTimeFilter<"Answer"> | Date | string;
   questionId?: Prisma.StringFilter<"Answer"> | string;
   responseId?: Prisma.StringFilter<"Answer"> | string;
-  selectedOptions?: Prisma.QuestionOptionListRelationFilter;
   question?: Prisma.XOR<
     Prisma.QuestionScalarRelationFilter,
     Prisma.QuestionWhereInput
@@ -191,10 +232,10 @@ export type AnswerWhereInput = {
 
 export type AnswerOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
+  ratingValue?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   questionId?: Prisma.SortOrder;
   responseId?: Prisma.SortOrder;
-  selectedOptions?: Prisma.QuestionOptionOrderByRelationAggregateInput;
   question?: Prisma.QuestionOrderByWithRelationInput;
   response?: Prisma.SurveyResponseOrderByWithRelationInput;
 };
@@ -206,10 +247,10 @@ export type AnswerWhereUniqueInput = Prisma.AtLeast<
     AND?: Prisma.AnswerWhereInput | Prisma.AnswerWhereInput[];
     OR?: Prisma.AnswerWhereInput[];
     NOT?: Prisma.AnswerWhereInput | Prisma.AnswerWhereInput[];
+    ratingValue?: Prisma.IntFilter<"Answer"> | number;
     createdAt?: Prisma.DateTimeFilter<"Answer"> | Date | string;
     questionId?: Prisma.StringFilter<"Answer"> | string;
     responseId?: Prisma.StringFilter<"Answer"> | string;
-    selectedOptions?: Prisma.QuestionOptionListRelationFilter;
     question?: Prisma.XOR<
       Prisma.QuestionScalarRelationFilter,
       Prisma.QuestionWhereInput
@@ -224,12 +265,15 @@ export type AnswerWhereUniqueInput = Prisma.AtLeast<
 
 export type AnswerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
+  ratingValue?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   questionId?: Prisma.SortOrder;
   responseId?: Prisma.SortOrder;
   _count?: Prisma.AnswerCountOrderByAggregateInput;
+  _avg?: Prisma.AnswerAvgOrderByAggregateInput;
   _max?: Prisma.AnswerMaxOrderByAggregateInput;
   _min?: Prisma.AnswerMinOrderByAggregateInput;
+  _sum?: Prisma.AnswerSumOrderByAggregateInput;
 };
 
 export type AnswerScalarWhereWithAggregatesInput = {
@@ -241,6 +285,7 @@ export type AnswerScalarWhereWithAggregatesInput = {
     | Prisma.AnswerScalarWhereWithAggregatesInput
     | Prisma.AnswerScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<"Answer"> | string;
+  ratingValue?: Prisma.IntWithAggregatesFilter<"Answer"> | number;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Answer"> | Date | string;
   questionId?: Prisma.StringWithAggregatesFilter<"Answer"> | string;
   responseId?: Prisma.StringWithAggregatesFilter<"Answer"> | string;
@@ -248,38 +293,39 @@ export type AnswerScalarWhereWithAggregatesInput = {
 
 export type AnswerCreateInput = {
   id?: string;
+  ratingValue: number;
   createdAt?: Date | string;
-  selectedOptions?: Prisma.QuestionOptionCreateNestedManyWithoutAnswersInput;
   question: Prisma.QuestionCreateNestedOneWithoutAnswersInput;
   response: Prisma.SurveyResponseCreateNestedOneWithoutAnswersInput;
 };
 
 export type AnswerUncheckedCreateInput = {
   id?: string;
+  ratingValue: number;
   createdAt?: Date | string;
   questionId: string;
   responseId: string;
-  selectedOptions?: Prisma.QuestionOptionUncheckedCreateNestedManyWithoutAnswersInput;
 };
 
 export type AnswerUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  selectedOptions?: Prisma.QuestionOptionUpdateManyWithoutAnswersNestedInput;
   question?: Prisma.QuestionUpdateOneRequiredWithoutAnswersNestedInput;
   response?: Prisma.SurveyResponseUpdateOneRequiredWithoutAnswersNestedInput;
 };
 
 export type AnswerUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   questionId?: Prisma.StringFieldUpdateOperationsInput | string;
   responseId?: Prisma.StringFieldUpdateOperationsInput | string;
-  selectedOptions?: Prisma.QuestionOptionUncheckedUpdateManyWithoutAnswersNestedInput;
 };
 
 export type AnswerCreateManyInput = {
   id?: string;
+  ratingValue: number;
   createdAt?: Date | string;
   questionId: string;
   responseId: string;
@@ -287,11 +333,13 @@ export type AnswerCreateManyInput = {
 
 export type AnswerUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type AnswerUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   questionId?: Prisma.StringFieldUpdateOperationsInput | string;
   responseId?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -314,13 +362,19 @@ export type AnswerResponseIdQuestionIdCompoundUniqueInput = {
 
 export type AnswerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  ratingValue?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   questionId?: Prisma.SortOrder;
   responseId?: Prisma.SortOrder;
 };
 
+export type AnswerAvgOrderByAggregateInput = {
+  ratingValue?: Prisma.SortOrder;
+};
+
 export type AnswerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  ratingValue?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   questionId?: Prisma.SortOrder;
   responseId?: Prisma.SortOrder;
@@ -328,9 +382,14 @@ export type AnswerMaxOrderByAggregateInput = {
 
 export type AnswerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  ratingValue?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   questionId?: Prisma.SortOrder;
   responseId?: Prisma.SortOrder;
+};
+
+export type AnswerSumOrderByAggregateInput = {
+  ratingValue?: Prisma.SortOrder;
 };
 
 export type AnswerCreateNestedManyWithoutQuestionInput = {
@@ -416,88 +475,6 @@ export type AnswerUncheckedUpdateManyWithoutQuestionNestedInput = {
   updateMany?:
     | Prisma.AnswerUpdateManyWithWhereWithoutQuestionInput
     | Prisma.AnswerUpdateManyWithWhereWithoutQuestionInput[];
-  deleteMany?: Prisma.AnswerScalarWhereInput | Prisma.AnswerScalarWhereInput[];
-};
-
-export type AnswerCreateNestedManyWithoutSelectedOptionsInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.AnswerCreateWithoutSelectedOptionsInput,
-        Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput
-      >
-    | Prisma.AnswerCreateWithoutSelectedOptionsInput[]
-    | Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput[];
-  connectOrCreate?:
-    | Prisma.AnswerCreateOrConnectWithoutSelectedOptionsInput
-    | Prisma.AnswerCreateOrConnectWithoutSelectedOptionsInput[];
-  connect?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-};
-
-export type AnswerUncheckedCreateNestedManyWithoutSelectedOptionsInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.AnswerCreateWithoutSelectedOptionsInput,
-        Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput
-      >
-    | Prisma.AnswerCreateWithoutSelectedOptionsInput[]
-    | Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput[];
-  connectOrCreate?:
-    | Prisma.AnswerCreateOrConnectWithoutSelectedOptionsInput
-    | Prisma.AnswerCreateOrConnectWithoutSelectedOptionsInput[];
-  connect?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-};
-
-export type AnswerUpdateManyWithoutSelectedOptionsNestedInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.AnswerCreateWithoutSelectedOptionsInput,
-        Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput
-      >
-    | Prisma.AnswerCreateWithoutSelectedOptionsInput[]
-    | Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput[];
-  connectOrCreate?:
-    | Prisma.AnswerCreateOrConnectWithoutSelectedOptionsInput
-    | Prisma.AnswerCreateOrConnectWithoutSelectedOptionsInput[];
-  upsert?:
-    | Prisma.AnswerUpsertWithWhereUniqueWithoutSelectedOptionsInput
-    | Prisma.AnswerUpsertWithWhereUniqueWithoutSelectedOptionsInput[];
-  set?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-  disconnect?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-  delete?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-  connect?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-  update?:
-    | Prisma.AnswerUpdateWithWhereUniqueWithoutSelectedOptionsInput
-    | Prisma.AnswerUpdateWithWhereUniqueWithoutSelectedOptionsInput[];
-  updateMany?:
-    | Prisma.AnswerUpdateManyWithWhereWithoutSelectedOptionsInput
-    | Prisma.AnswerUpdateManyWithWhereWithoutSelectedOptionsInput[];
-  deleteMany?: Prisma.AnswerScalarWhereInput | Prisma.AnswerScalarWhereInput[];
-};
-
-export type AnswerUncheckedUpdateManyWithoutSelectedOptionsNestedInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.AnswerCreateWithoutSelectedOptionsInput,
-        Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput
-      >
-    | Prisma.AnswerCreateWithoutSelectedOptionsInput[]
-    | Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput[];
-  connectOrCreate?:
-    | Prisma.AnswerCreateOrConnectWithoutSelectedOptionsInput
-    | Prisma.AnswerCreateOrConnectWithoutSelectedOptionsInput[];
-  upsert?:
-    | Prisma.AnswerUpsertWithWhereUniqueWithoutSelectedOptionsInput
-    | Prisma.AnswerUpsertWithWhereUniqueWithoutSelectedOptionsInput[];
-  set?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-  disconnect?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-  delete?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-  connect?: Prisma.AnswerWhereUniqueInput | Prisma.AnswerWhereUniqueInput[];
-  update?:
-    | Prisma.AnswerUpdateWithWhereUniqueWithoutSelectedOptionsInput
-    | Prisma.AnswerUpdateWithWhereUniqueWithoutSelectedOptionsInput[];
-  updateMany?:
-    | Prisma.AnswerUpdateManyWithWhereWithoutSelectedOptionsInput
-    | Prisma.AnswerUpdateManyWithWhereWithoutSelectedOptionsInput[];
   deleteMany?: Prisma.AnswerScalarWhereInput | Prisma.AnswerScalarWhereInput[];
 };
 
@@ -589,16 +566,16 @@ export type AnswerUncheckedUpdateManyWithoutResponseNestedInput = {
 
 export type AnswerCreateWithoutQuestionInput = {
   id?: string;
+  ratingValue: number;
   createdAt?: Date | string;
-  selectedOptions?: Prisma.QuestionOptionCreateNestedManyWithoutAnswersInput;
   response: Prisma.SurveyResponseCreateNestedOneWithoutAnswersInput;
 };
 
 export type AnswerUncheckedCreateWithoutQuestionInput = {
   id?: string;
+  ratingValue: number;
   createdAt?: Date | string;
   responseId: string;
-  selectedOptions?: Prisma.QuestionOptionUncheckedCreateNestedManyWithoutAnswersInput;
 };
 
 export type AnswerCreateOrConnectWithoutQuestionInput = {
@@ -649,73 +626,24 @@ export type AnswerScalarWhereInput = {
   OR?: Prisma.AnswerScalarWhereInput[];
   NOT?: Prisma.AnswerScalarWhereInput | Prisma.AnswerScalarWhereInput[];
   id?: Prisma.StringFilter<"Answer"> | string;
+  ratingValue?: Prisma.IntFilter<"Answer"> | number;
   createdAt?: Prisma.DateTimeFilter<"Answer"> | Date | string;
   questionId?: Prisma.StringFilter<"Answer"> | string;
   responseId?: Prisma.StringFilter<"Answer"> | string;
 };
 
-export type AnswerCreateWithoutSelectedOptionsInput = {
-  id?: string;
-  createdAt?: Date | string;
-  question: Prisma.QuestionCreateNestedOneWithoutAnswersInput;
-  response: Prisma.SurveyResponseCreateNestedOneWithoutAnswersInput;
-};
-
-export type AnswerUncheckedCreateWithoutSelectedOptionsInput = {
-  id?: string;
-  createdAt?: Date | string;
-  questionId: string;
-  responseId: string;
-};
-
-export type AnswerCreateOrConnectWithoutSelectedOptionsInput = {
-  where: Prisma.AnswerWhereUniqueInput;
-  create: Prisma.XOR<
-    Prisma.AnswerCreateWithoutSelectedOptionsInput,
-    Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput
-  >;
-};
-
-export type AnswerUpsertWithWhereUniqueWithoutSelectedOptionsInput = {
-  where: Prisma.AnswerWhereUniqueInput;
-  update: Prisma.XOR<
-    Prisma.AnswerUpdateWithoutSelectedOptionsInput,
-    Prisma.AnswerUncheckedUpdateWithoutSelectedOptionsInput
-  >;
-  create: Prisma.XOR<
-    Prisma.AnswerCreateWithoutSelectedOptionsInput,
-    Prisma.AnswerUncheckedCreateWithoutSelectedOptionsInput
-  >;
-};
-
-export type AnswerUpdateWithWhereUniqueWithoutSelectedOptionsInput = {
-  where: Prisma.AnswerWhereUniqueInput;
-  data: Prisma.XOR<
-    Prisma.AnswerUpdateWithoutSelectedOptionsInput,
-    Prisma.AnswerUncheckedUpdateWithoutSelectedOptionsInput
-  >;
-};
-
-export type AnswerUpdateManyWithWhereWithoutSelectedOptionsInput = {
-  where: Prisma.AnswerScalarWhereInput;
-  data: Prisma.XOR<
-    Prisma.AnswerUpdateManyMutationInput,
-    Prisma.AnswerUncheckedUpdateManyWithoutSelectedOptionsInput
-  >;
-};
-
 export type AnswerCreateWithoutResponseInput = {
   id?: string;
+  ratingValue: number;
   createdAt?: Date | string;
-  selectedOptions?: Prisma.QuestionOptionCreateNestedManyWithoutAnswersInput;
   question: Prisma.QuestionCreateNestedOneWithoutAnswersInput;
 };
 
 export type AnswerUncheckedCreateWithoutResponseInput = {
   id?: string;
+  ratingValue: number;
   createdAt?: Date | string;
   questionId: string;
-  selectedOptions?: Prisma.QuestionOptionUncheckedCreateNestedManyWithoutAnswersInput;
 };
 
 export type AnswerCreateOrConnectWithoutResponseInput = {
@@ -763,113 +691,58 @@ export type AnswerUpdateManyWithWhereWithoutResponseInput = {
 
 export type AnswerCreateManyQuestionInput = {
   id?: string;
+  ratingValue: number;
   createdAt?: Date | string;
   responseId: string;
 };
 
 export type AnswerUpdateWithoutQuestionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  selectedOptions?: Prisma.QuestionOptionUpdateManyWithoutAnswersNestedInput;
   response?: Prisma.SurveyResponseUpdateOneRequiredWithoutAnswersNestedInput;
 };
 
 export type AnswerUncheckedUpdateWithoutQuestionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   responseId?: Prisma.StringFieldUpdateOperationsInput | string;
-  selectedOptions?: Prisma.QuestionOptionUncheckedUpdateManyWithoutAnswersNestedInput;
 };
 
 export type AnswerUncheckedUpdateManyWithoutQuestionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  responseId?: Prisma.StringFieldUpdateOperationsInput | string;
-};
-
-export type AnswerUpdateWithoutSelectedOptionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string;
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  question?: Prisma.QuestionUpdateOneRequiredWithoutAnswersNestedInput;
-  response?: Prisma.SurveyResponseUpdateOneRequiredWithoutAnswersNestedInput;
-};
-
-export type AnswerUncheckedUpdateWithoutSelectedOptionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string;
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  questionId?: Prisma.StringFieldUpdateOperationsInput | string;
-  responseId?: Prisma.StringFieldUpdateOperationsInput | string;
-};
-
-export type AnswerUncheckedUpdateManyWithoutSelectedOptionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string;
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  questionId?: Prisma.StringFieldUpdateOperationsInput | string;
   responseId?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type AnswerCreateManyResponseInput = {
   id?: string;
+  ratingValue: number;
   createdAt?: Date | string;
   questionId: string;
 };
 
 export type AnswerUpdateWithoutResponseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  selectedOptions?: Prisma.QuestionOptionUpdateManyWithoutAnswersNestedInput;
   question?: Prisma.QuestionUpdateOneRequiredWithoutAnswersNestedInput;
 };
 
 export type AnswerUncheckedUpdateWithoutResponseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   questionId?: Prisma.StringFieldUpdateOperationsInput | string;
-  selectedOptions?: Prisma.QuestionOptionUncheckedUpdateManyWithoutAnswersNestedInput;
 };
 
 export type AnswerUncheckedUpdateManyWithoutResponseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  ratingValue?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   questionId?: Prisma.StringFieldUpdateOperationsInput | string;
-};
-
-/**
- * Count Type AnswerCountOutputType
- */
-
-export type AnswerCountOutputType = {
-  selectedOptions: number;
-};
-
-export type AnswerCountOutputTypeSelect<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  selectedOptions?: boolean | AnswerCountOutputTypeCountSelectedOptionsArgs;
-};
-
-/**
- * AnswerCountOutputType without action
- */
-export type AnswerCountOutputTypeDefaultArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  /**
-   * Select specific fields to fetch from the AnswerCountOutputType
-   */
-  select?: Prisma.AnswerCountOutputTypeSelect<ExtArgs> | null;
-};
-
-/**
- * AnswerCountOutputType without action
- */
-export type AnswerCountOutputTypeCountSelectedOptionsArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  where?: Prisma.QuestionOptionWhereInput;
 };
 
 export type AnswerSelect<
@@ -878,13 +751,12 @@ export type AnswerSelect<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    ratingValue?: boolean;
     createdAt?: boolean;
     questionId?: boolean;
     responseId?: boolean;
-    selectedOptions?: boolean | Prisma.Answer$selectedOptionsArgs<ExtArgs>;
     question?: boolean | Prisma.QuestionDefaultArgs<ExtArgs>;
     response?: boolean | Prisma.SurveyResponseDefaultArgs<ExtArgs>;
-    _count?: boolean | Prisma.AnswerCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["answer"]
 >;
@@ -895,6 +767,7 @@ export type AnswerSelectCreateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    ratingValue?: boolean;
     createdAt?: boolean;
     questionId?: boolean;
     responseId?: boolean;
@@ -910,6 +783,7 @@ export type AnswerSelectUpdateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    ratingValue?: boolean;
     createdAt?: boolean;
     questionId?: boolean;
     responseId?: boolean;
@@ -921,6 +795,7 @@ export type AnswerSelectUpdateManyAndReturn<
 
 export type AnswerSelectScalar = {
   id?: boolean;
+  ratingValue?: boolean;
   createdAt?: boolean;
   questionId?: boolean;
   responseId?: boolean;
@@ -930,17 +805,15 @@ export type AnswerOmit<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
-  "id" | "createdAt" | "questionId" | "responseId",
+  "id" | "ratingValue" | "createdAt" | "questionId" | "responseId",
   ExtArgs["result"]["answer"]
 >;
 export type AnswerInclude<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  selectedOptions?: boolean | Prisma.Answer$selectedOptionsArgs<ExtArgs>;
   question?: boolean | Prisma.QuestionDefaultArgs<ExtArgs>;
   response?: boolean | Prisma.SurveyResponseDefaultArgs<ExtArgs>;
-  _count?: boolean | Prisma.AnswerCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type AnswerIncludeCreateManyAndReturn<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
@@ -963,13 +836,13 @@ export type $AnswerPayload<
 > = {
   name: "Answer";
   objects: {
-    selectedOptions: Prisma.$QuestionOptionPayload<ExtArgs>[];
     question: Prisma.$QuestionPayload<ExtArgs>;
     response: Prisma.$SurveyResponsePayload<ExtArgs>;
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
+      ratingValue: number;
       createdAt: Date;
       questionId: string;
       responseId: string;
@@ -1523,17 +1396,6 @@ export interface Prisma__AnswerClient<
   GlobalOmitOptions = {},
 > extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise";
-  selectedOptions<T extends Prisma.Answer$selectedOptionsArgs<ExtArgs> = {}>(
-    args?: Prisma.Subset<T, Prisma.Answer$selectedOptionsArgs<ExtArgs>>
-  ): Prisma.PrismaPromise<
-    | runtime.Types.Result.GetResult<
-        Prisma.$QuestionOptionPayload<ExtArgs>,
-        T,
-        "findMany",
-        GlobalOmitOptions
-      >
-    | Null
-  >;
   question<T extends Prisma.QuestionDefaultArgs<ExtArgs> = {}>(
     args?: Prisma.Subset<T, Prisma.QuestionDefaultArgs<ExtArgs>>
   ): Prisma.Prisma__QuestionClient<
@@ -1605,6 +1467,7 @@ export interface Prisma__AnswerClient<
  */
 export interface AnswerFieldRefs {
   readonly id: Prisma.FieldRef<"Answer", "String">;
+  readonly ratingValue: Prisma.FieldRef<"Answer", "Int">;
   readonly createdAt: Prisma.FieldRef<"Answer", "DateTime">;
   readonly questionId: Prisma.FieldRef<"Answer", "String">;
   readonly responseId: Prisma.FieldRef<"Answer", "String">;
@@ -2060,37 +1923,6 @@ export type AnswerDeleteManyArgs<
    * Limit how many Answers to delete.
    */
   limit?: number;
-};
-
-/**
- * Answer.selectedOptions
- */
-export type Answer$selectedOptionsArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  /**
-   * Select specific fields to fetch from the QuestionOption
-   */
-  select?: Prisma.QuestionOptionSelect<ExtArgs> | null;
-  /**
-   * Omit specific fields from the QuestionOption
-   */
-  omit?: Prisma.QuestionOptionOmit<ExtArgs> | null;
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.QuestionOptionInclude<ExtArgs> | null;
-  where?: Prisma.QuestionOptionWhereInput;
-  orderBy?:
-    | Prisma.QuestionOptionOrderByWithRelationInput
-    | Prisma.QuestionOptionOrderByWithRelationInput[];
-  cursor?: Prisma.QuestionOptionWhereUniqueInput;
-  take?: number;
-  skip?: number;
-  distinct?:
-    | Prisma.QuestionOptionScalarFieldEnum
-    | Prisma.QuestionOptionScalarFieldEnum[];
 };
 
 /**

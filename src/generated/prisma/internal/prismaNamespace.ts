@@ -424,7 +424,6 @@ export const ModelName = {
   TeamMember: "TeamMember",
   Survey: "Survey",
   Question: "Question",
-  QuestionOption: "QuestionOption",
   SurveyResponse: "SurveyResponse",
   Answer: "Answer",
   SurveyTeam: "SurveyTeam",
@@ -456,7 +455,6 @@ export type TypeMap<
       | "teamMember"
       | "survey"
       | "question"
-      | "questionOption"
       | "surveyResponse"
       | "answer"
       | "surveyTeam";
@@ -919,82 +917,6 @@ export type TypeMap<
         };
       };
     };
-    QuestionOption: {
-      payload: Prisma.$QuestionOptionPayload<ExtArgs>;
-      fields: Prisma.QuestionOptionFieldRefs;
-      operations: {
-        findUnique: {
-          args: Prisma.QuestionOptionFindUniqueArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload> | null;
-        };
-        findUniqueOrThrow: {
-          args: Prisma.QuestionOptionFindUniqueOrThrowArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload>;
-        };
-        findFirst: {
-          args: Prisma.QuestionOptionFindFirstArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload> | null;
-        };
-        findFirstOrThrow: {
-          args: Prisma.QuestionOptionFindFirstOrThrowArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload>;
-        };
-        findMany: {
-          args: Prisma.QuestionOptionFindManyArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload>[];
-        };
-        create: {
-          args: Prisma.QuestionOptionCreateArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload>;
-        };
-        createMany: {
-          args: Prisma.QuestionOptionCreateManyArgs<ExtArgs>;
-          result: BatchPayload;
-        };
-        createManyAndReturn: {
-          args: Prisma.QuestionOptionCreateManyAndReturnArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload>[];
-        };
-        delete: {
-          args: Prisma.QuestionOptionDeleteArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload>;
-        };
-        update: {
-          args: Prisma.QuestionOptionUpdateArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload>;
-        };
-        deleteMany: {
-          args: Prisma.QuestionOptionDeleteManyArgs<ExtArgs>;
-          result: BatchPayload;
-        };
-        updateMany: {
-          args: Prisma.QuestionOptionUpdateManyArgs<ExtArgs>;
-          result: BatchPayload;
-        };
-        updateManyAndReturn: {
-          args: Prisma.QuestionOptionUpdateManyAndReturnArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload>[];
-        };
-        upsert: {
-          args: Prisma.QuestionOptionUpsertArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$QuestionOptionPayload>;
-        };
-        aggregate: {
-          args: Prisma.QuestionOptionAggregateArgs<ExtArgs>;
-          result: runtime.Types.Utils.Optional<Prisma.AggregateQuestionOption>;
-        };
-        groupBy: {
-          args: Prisma.QuestionOptionGroupByArgs<ExtArgs>;
-          result: runtime.Types.Utils.Optional<Prisma.QuestionOptionGroupByOutputType>[];
-        };
-        count: {
-          args: Prisma.QuestionOptionCountArgs<ExtArgs>;
-          result:
-            | runtime.Types.Utils.Optional<Prisma.QuestionOptionCountAggregateOutputType>
-            | number;
-        };
-      };
-    };
     SurveyResponse: {
       payload: Prisma.$SurveyResponsePayload<ExtArgs>;
       fields: Prisma.SurveyResponseFieldRefs;
@@ -1322,7 +1244,6 @@ export const SurveyScalarFieldEnum = {
   description: "description",
   status: "status",
   isGlobal: "isGlobal",
-  isAnonymous: "isAnonymous",
   startDate: "startDate",
   endDate: "endDate",
   createdAt: "createdAt",
@@ -1338,7 +1259,6 @@ export const QuestionScalarFieldEnum = {
   id: "id",
   title: "title",
   description: "description",
-  type: "type",
   required: "required",
   order: "order",
   createdAt: "createdAt",
@@ -1348,16 +1268,6 @@ export const QuestionScalarFieldEnum = {
 
 export type QuestionScalarFieldEnum =
   (typeof QuestionScalarFieldEnum)[keyof typeof QuestionScalarFieldEnum];
-
-export const QuestionOptionScalarFieldEnum = {
-  id: "id",
-  text: "text",
-  order: "order",
-  questionId: "questionId",
-} as const;
-
-export type QuestionOptionScalarFieldEnum =
-  (typeof QuestionOptionScalarFieldEnum)[keyof typeof QuestionOptionScalarFieldEnum];
 
 export const SurveyResponseScalarFieldEnum = {
   id: "id",
@@ -1372,6 +1282,7 @@ export type SurveyResponseScalarFieldEnum =
 
 export const AnswerScalarFieldEnum = {
   id: "id",
+  ratingValue: "ratingValue",
   createdAt: "createdAt",
   questionId: "questionId",
   responseId: "responseId",
@@ -1484,22 +1395,6 @@ export type ListEnumSurveyStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<
   $PrismaModel,
   "Boolean"
->;
-
-/**
- * Reference to a field of type 'QuestionType'
- */
-export type EnumQuestionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  "QuestionType"
->;
-
-/**
- * Reference to a field of type 'QuestionType[]'
- */
-export type ListEnumQuestionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  "QuestionType[]"
 >;
 
 /**
@@ -1631,7 +1526,6 @@ export type GlobalOmitConfig = {
   teamMember?: Prisma.TeamMemberOmit;
   survey?: Prisma.SurveyOmit;
   question?: Prisma.QuestionOmit;
-  questionOption?: Prisma.QuestionOptionOmit;
   surveyResponse?: Prisma.SurveyResponseOmit;
   answer?: Prisma.AnswerOmit;
   surveyTeam?: Prisma.SurveyTeamOmit;

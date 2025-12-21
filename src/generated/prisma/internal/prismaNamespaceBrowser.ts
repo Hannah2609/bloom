@@ -58,7 +58,6 @@ export const ModelName = {
   TeamMember: "TeamMember",
   Survey: "Survey",
   Question: "Question",
-  QuestionOption: "QuestionOption",
   SurveyResponse: "SurveyResponse",
   Answer: "Answer",
   SurveyTeam: "SurveyTeam",
@@ -140,7 +139,6 @@ export const SurveyScalarFieldEnum = {
   description: "description",
   status: "status",
   isGlobal: "isGlobal",
-  isAnonymous: "isAnonymous",
   startDate: "startDate",
   endDate: "endDate",
   createdAt: "createdAt",
@@ -156,7 +154,6 @@ export const QuestionScalarFieldEnum = {
   id: "id",
   title: "title",
   description: "description",
-  type: "type",
   required: "required",
   order: "order",
   createdAt: "createdAt",
@@ -166,16 +163,6 @@ export const QuestionScalarFieldEnum = {
 
 export type QuestionScalarFieldEnum =
   (typeof QuestionScalarFieldEnum)[keyof typeof QuestionScalarFieldEnum];
-
-export const QuestionOptionScalarFieldEnum = {
-  id: "id",
-  text: "text",
-  order: "order",
-  questionId: "questionId",
-} as const;
-
-export type QuestionOptionScalarFieldEnum =
-  (typeof QuestionOptionScalarFieldEnum)[keyof typeof QuestionOptionScalarFieldEnum];
 
 export const SurveyResponseScalarFieldEnum = {
   id: "id",
@@ -190,6 +177,7 @@ export type SurveyResponseScalarFieldEnum =
 
 export const AnswerScalarFieldEnum = {
   id: "id",
+  ratingValue: "ratingValue",
   createdAt: "createdAt",
   questionId: "questionId",
   responseId: "responseId",

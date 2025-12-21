@@ -13,7 +13,6 @@ export type * from "./models/Team";
 export type * from "./models/TeamMember";
 export type * from "./models/Survey";
 export type * from "./models/Question";
-export type * from "./models/QuestionOption";
 export type * from "./models/SurveyResponse";
 export type * from "./models/Answer";
 export type * from "./models/SurveyTeam";

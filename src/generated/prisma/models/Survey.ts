@@ -30,7 +30,6 @@ export type SurveyMinAggregateOutputType = {
   description: string | null;
   status: $Enums.SurveyStatus | null;
   isGlobal: boolean | null;
-  isAnonymous: boolean | null;
   startDate: Date | null;
   endDate: Date | null;
   createdAt: Date | null;
@@ -45,7 +44,6 @@ export type SurveyMaxAggregateOutputType = {
   description: string | null;
   status: $Enums.SurveyStatus | null;
   isGlobal: boolean | null;
-  isAnonymous: boolean | null;
   startDate: Date | null;
   endDate: Date | null;
   createdAt: Date | null;
@@ -60,7 +58,6 @@ export type SurveyCountAggregateOutputType = {
   description: number;
   status: number;
   isGlobal: number;
-  isAnonymous: number;
   startDate: number;
   endDate: number;
   createdAt: number;
@@ -76,7 +73,6 @@ export type SurveyMinAggregateInputType = {
   description?: true;
   status?: true;
   isGlobal?: true;
-  isAnonymous?: true;
   startDate?: true;
   endDate?: true;
   createdAt?: true;
@@ -91,7 +87,6 @@ export type SurveyMaxAggregateInputType = {
   description?: true;
   status?: true;
   isGlobal?: true;
-  isAnonymous?: true;
   startDate?: true;
   endDate?: true;
   createdAt?: true;
@@ -106,7 +101,6 @@ export type SurveyCountAggregateInputType = {
   description?: true;
   status?: true;
   isGlobal?: true;
-  isAnonymous?: true;
   startDate?: true;
   endDate?: true;
   createdAt?: true;
@@ -201,7 +195,6 @@ export type SurveyGroupByOutputType = {
   description: string | null;
   status: $Enums.SurveyStatus;
   isGlobal: boolean;
-  isAnonymous: boolean;
   startDate: Date | null;
   endDate: Date | null;
   createdAt: Date;
@@ -235,7 +228,6 @@ export type SurveyWhereInput = {
   description?: Prisma.StringNullableFilter<"Survey"> | string | null;
   status?: Prisma.EnumSurveyStatusFilter<"Survey"> | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFilter<"Survey"> | boolean;
-  isAnonymous?: Prisma.BoolFilter<"Survey"> | boolean;
   startDate?: Prisma.DateTimeNullableFilter<"Survey"> | Date | string | null;
   endDate?: Prisma.DateTimeNullableFilter<"Survey"> | Date | string | null;
   createdAt?: Prisma.DateTimeFilter<"Survey"> | Date | string;
@@ -257,7 +249,6 @@ export type SurveyOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
   isGlobal?: Prisma.SortOrder;
-  isAnonymous?: Prisma.SortOrder;
   startDate?: Prisma.SortOrderInput | Prisma.SortOrder;
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -280,7 +271,6 @@ export type SurveyWhereUniqueInput = Prisma.AtLeast<
     description?: Prisma.StringNullableFilter<"Survey"> | string | null;
     status?: Prisma.EnumSurveyStatusFilter<"Survey"> | $Enums.SurveyStatus;
     isGlobal?: Prisma.BoolFilter<"Survey"> | boolean;
-    isAnonymous?: Prisma.BoolFilter<"Survey"> | boolean;
     startDate?: Prisma.DateTimeNullableFilter<"Survey"> | Date | string | null;
     endDate?: Prisma.DateTimeNullableFilter<"Survey"> | Date | string | null;
     createdAt?: Prisma.DateTimeFilter<"Survey"> | Date | string;
@@ -304,7 +294,6 @@ export type SurveyOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
   isGlobal?: Prisma.SortOrder;
-  isAnonymous?: Prisma.SortOrder;
   startDate?: Prisma.SortOrderInput | Prisma.SortOrder;
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -334,7 +323,6 @@ export type SurveyScalarWhereWithAggregatesInput = {
     | Prisma.EnumSurveyStatusWithAggregatesFilter<"Survey">
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolWithAggregatesFilter<"Survey"> | boolean;
-  isAnonymous?: Prisma.BoolWithAggregatesFilter<"Survey"> | boolean;
   startDate?:
     | Prisma.DateTimeNullableWithAggregatesFilter<"Survey">
     | Date
@@ -361,7 +349,6 @@ export type SurveyCreateInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -379,7 +366,6 @@ export type SurveyUncheckedCreateInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -399,7 +385,6 @@ export type SurveyUpdateInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -431,7 +416,6 @@ export type SurveyUncheckedUpdateInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -461,7 +445,6 @@ export type SurveyCreateManyInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -478,7 +461,6 @@ export type SurveyUpdateManyMutationInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -506,7 +488,6 @@ export type SurveyUncheckedUpdateManyInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -543,7 +524,6 @@ export type SurveyCountOrderByAggregateInput = {
   description?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   isGlobal?: Prisma.SortOrder;
-  isAnonymous?: Prisma.SortOrder;
   startDate?: Prisma.SortOrder;
   endDate?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -558,7 +538,6 @@ export type SurveyMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   isGlobal?: Prisma.SortOrder;
-  isAnonymous?: Prisma.SortOrder;
   startDate?: Prisma.SortOrder;
   endDate?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -573,7 +552,6 @@ export type SurveyMinOrderByAggregateInput = {
   description?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   isGlobal?: Prisma.SortOrder;
-  isAnonymous?: Prisma.SortOrder;
   startDate?: Prisma.SortOrder;
   endDate?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -765,7 +743,6 @@ export type SurveyCreateWithoutCompanyInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -782,7 +759,6 @@ export type SurveyUncheckedCreateWithoutCompanyInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -845,7 +821,6 @@ export type SurveyScalarWhereInput = {
   description?: Prisma.StringNullableFilter<"Survey"> | string | null;
   status?: Prisma.EnumSurveyStatusFilter<"Survey"> | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFilter<"Survey"> | boolean;
-  isAnonymous?: Prisma.BoolFilter<"Survey"> | boolean;
   startDate?: Prisma.DateTimeNullableFilter<"Survey"> | Date | string | null;
   endDate?: Prisma.DateTimeNullableFilter<"Survey"> | Date | string | null;
   createdAt?: Prisma.DateTimeFilter<"Survey"> | Date | string;
@@ -860,7 +835,6 @@ export type SurveyCreateWithoutQuestionsInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -877,7 +851,6 @@ export type SurveyUncheckedCreateWithoutQuestionsInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -924,7 +897,6 @@ export type SurveyUpdateWithoutQuestionsInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -955,7 +927,6 @@ export type SurveyUncheckedUpdateWithoutQuestionsInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -984,7 +955,6 @@ export type SurveyCreateWithoutResponsesInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -1001,7 +971,6 @@ export type SurveyUncheckedCreateWithoutResponsesInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -1048,7 +1017,6 @@ export type SurveyUpdateWithoutResponsesInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1079,7 +1047,6 @@ export type SurveyUncheckedUpdateWithoutResponsesInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1108,7 +1075,6 @@ export type SurveyCreateWithoutTeamsInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -1125,7 +1091,6 @@ export type SurveyUncheckedCreateWithoutTeamsInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -1172,7 +1137,6 @@ export type SurveyUpdateWithoutTeamsInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1203,7 +1167,6 @@ export type SurveyUncheckedUpdateWithoutTeamsInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1232,7 +1195,6 @@ export type SurveyCreateManyCompanyInput = {
   description?: string | null;
   status?: $Enums.SurveyStatus;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: Date | string | null;
   endDate?: Date | string | null;
   createdAt?: Date | string;
@@ -1248,7 +1210,6 @@ export type SurveyUpdateWithoutCompanyInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1279,7 +1240,6 @@ export type SurveyUncheckedUpdateWithoutCompanyInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1310,7 +1270,6 @@ export type SurveyUncheckedUpdateManyWithoutCompanyInput = {
     | Prisma.EnumSurveyStatusFieldUpdateOperationsInput
     | $Enums.SurveyStatus;
   isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  isAnonymous?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   startDate?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1402,7 +1361,6 @@ export type SurveySelect<
     description?: boolean;
     status?: boolean;
     isGlobal?: boolean;
-    isAnonymous?: boolean;
     startDate?: boolean;
     endDate?: boolean;
     createdAt?: boolean;
@@ -1428,7 +1386,6 @@ export type SurveySelectCreateManyAndReturn<
     description?: boolean;
     status?: boolean;
     isGlobal?: boolean;
-    isAnonymous?: boolean;
     startDate?: boolean;
     endDate?: boolean;
     createdAt?: boolean;
@@ -1450,7 +1407,6 @@ export type SurveySelectUpdateManyAndReturn<
     description?: boolean;
     status?: boolean;
     isGlobal?: boolean;
-    isAnonymous?: boolean;
     startDate?: boolean;
     endDate?: boolean;
     createdAt?: boolean;
@@ -1468,7 +1424,6 @@ export type SurveySelectScalar = {
   description?: boolean;
   status?: boolean;
   isGlobal?: boolean;
-  isAnonymous?: boolean;
   startDate?: boolean;
   endDate?: boolean;
   createdAt?: boolean;
@@ -1486,7 +1441,6 @@ export type SurveyOmit<
   | "description"
   | "status"
   | "isGlobal"
-  | "isAnonymous"
   | "startDate"
   | "endDate"
   | "createdAt"
@@ -1536,7 +1490,6 @@ export type $SurveyPayload<
       description: string | null;
       status: $Enums.SurveyStatus;
       isGlobal: boolean;
-      isAnonymous: boolean;
       startDate: Date | null;
       endDate: Date | null;
       createdAt: Date;
@@ -2187,7 +2140,6 @@ export interface SurveyFieldRefs {
   readonly description: Prisma.FieldRef<"Survey", "String">;
   readonly status: Prisma.FieldRef<"Survey", "SurveyStatus">;
   readonly isGlobal: Prisma.FieldRef<"Survey", "Boolean">;
-  readonly isAnonymous: Prisma.FieldRef<"Survey", "Boolean">;
   readonly startDate: Prisma.FieldRef<"Survey", "DateTime">;
   readonly endDate: Prisma.FieldRef<"Survey", "DateTime">;
   readonly createdAt: Prisma.FieldRef<"Survey", "DateTime">;
