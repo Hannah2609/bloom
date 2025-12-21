@@ -8,3 +8,4 @@ storybook-static
 .env*
 *.md
 package-lock.json
+generated*

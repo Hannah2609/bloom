@@ -10,7 +10,7 @@ import {
 import { useSession } from "@/contexts/SessionContext";
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname } from "next/navigation";
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "@/types/user";
 import { isActive } from "@/lib/utils";
 import { SidebarCompanyHeader } from "./SidebarCompanyHeader";
 import { SidebarMenuItem } from "./SidebarMenuItem";
@@ -25,7 +25,9 @@ export function AppSidebar() {
 
   // Combine items based on user role
   const menuItems =
-    user?.role === Role.ADMIN ? [...MENU_ITEMS, ...ADMIN_ITEMS] : MENU_ITEMS;
+    user?.role === ("ADMIN" as Role)
+      ? [...MENU_ITEMS, ...ADMIN_ITEMS]
+      : MENU_ITEMS;
 
   return (
     <Sidebar collapsible="icon">

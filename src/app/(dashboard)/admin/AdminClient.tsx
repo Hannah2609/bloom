@@ -2,9 +2,7 @@
 
 import { ManageUsersTable } from "@/components/dashboard/tables/ManageUsersTable/ManageUsersTable";
 import { Heading } from "@/components/ui/heading/heading";
-import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
-import { Role } from "@/generated/prisma/enums";
-import { UserTableRow } from "@/types/user";
+import { UserTableRow, Role } from "@/types/user";
 import { useState } from "react";
 import { toast } from "sonner";
 // import { useRouter } from "next/navigation";

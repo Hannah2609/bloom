@@ -1,4 +1,4 @@
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "@/types/user";
 import { UserWithCompany } from "@/types/user";
 import { SessionOptions, getIronSession } from "iron-session";
 import { cookies } from "next/headers";

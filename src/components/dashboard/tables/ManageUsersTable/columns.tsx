@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button/button";
-import { Role } from "@/generated/prisma/enums";
+import { Role } from "@/types/user";
 import { UserTableRow } from "@/types/user";
 import { RoleSelect } from "./RoleSelect";
 import { DeleteUserButton } from "./DeleteUserButton";

@@ -50,7 +50,3 @@ node_modules/
 
 *storybook.log
 storybook-static
-
-/src/generated/prisma
-
-/src/generated/prisma
