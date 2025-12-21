@@ -9,6 +9,7 @@ import React, {
   useRef,
   useMemo,
 } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { SessionData } from "@/lib/session/session";
 
 type SessionContextType = {
@@ -28,6 +29,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<Error | null>(null);
   const isFetchingRef = useRef(false); // Use ref to prevent dependency loop
   const isLoggedInRef = useRef(false); // Track login state for focus handler
+  const router = useRouter();
+  const pathname = usePathname();
 
   const fetchSession = useCallback(async () => {
     // Prevent multiple simultaneous fetches
@@ -50,6 +53,17 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setIsLoggedIn(data.isLoggedIn);
       isLoggedInRef.current = data.isLoggedIn; // Update ref
       setUser(data.user);
+
+      // If logged out and on protected route, redirect to login
+      if (
+        !data.isLoggedIn &&
+        pathname &&
+        !pathname.startsWith("/login") &&
+        !pathname.startsWith("/signup") &&
+        pathname !== "/"
+      ) {
+        router.replace("/login");
+      }
     } catch (err) {
       const error = err instanceof Error ? err : new Error("Unknown error");
       setError(error);
@@ -60,7 +74,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
       isFetchingRef.current = false;
     }
-  }, []); // Empty dependency array - function never changes
+  }, [pathname, router]); // Add dependencies
 
   // Initial fetch on mount
   useEffect(() => {
@@ -71,9 +85,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   // This ensures session is updated if user logs in/out in another tab
   useEffect(() => {
     const handleFocus = () => {
-      // Only refetch on focus if we have a session (to catch logout in other tab)
-      // Use ref to avoid dependency on isLoggedIn state
-      if (!isFetchingRef.current && isLoggedInRef.current) {
+      // Always refetch on focus to catch session changes in other tabs
+      if (!isFetchingRef.current) {
         fetchSession();
       }
     };
