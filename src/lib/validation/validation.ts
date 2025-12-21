@@ -52,9 +52,29 @@ export const createTeamSchema = z.object({
   name: z.string().min(1, "Team name is required"),
 });
 
+export const editProfileSchema = z.object({
+  firstName: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .regex(/^[A-Za-zÆØÅæøå\s]+$/, "Name can only contain letters and spaces"),
+  lastName: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .regex(/^[A-Za-zÆØÅæøå\s]+$/, "Name can only contain letters and spaces"),
+  posistion: z
+    .string()
+    .min(2, "Position must be at least 2 characters")
+    .regex(
+      /^[A-Za-zÆØÅæøå\s]+$/,
+      "Position can only contain letters and spaces"
+    ),
+  avatar: z.string().url("Logo must be a valid URL").optional(),
+});
+
 export type SignupSchema = z.infer<typeof signupSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type CompanySignupSchema = z.infer<typeof companySignupSchema>;
 export type SetPendingCompanySchema = z.infer<typeof setPendingCompanySchema>;
 export type EmailSchema = z.infer<typeof emailSchema>;
 export type CreateTeamSchema = z.infer<typeof createTeamSchema>;
+export type EditProfileSchema = z.infer<typeof editProfileSchema>;

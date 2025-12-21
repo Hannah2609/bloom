@@ -17,10 +17,10 @@ import {
 } from "@/components/ui/sheet";
 import { Team } from "@/types/team";
 import { Role } from "@/types/user";
-
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
 
 interface ExtendedTeam extends Team {
   members: {
@@ -37,6 +37,7 @@ interface ExtendedTeam extends Team {
     leftAt: Date | null;
   }[];
 }
+
 interface TeamProps {
   team: ExtendedTeam;
   isAdmin: boolean;
@@ -47,12 +48,12 @@ export default function TeamClient({ team, isAdmin }: TeamProps) {
   const router = useRouter();
   return (
     <>
-      <section className="p-8">
-        <Heading level="h2">{team.name}</Heading>
+      <PageLayout>
+        <Heading level="h1">{team.name}</Heading>
 
         <div className="space-y-4 p-4 border rounded-lg bg-base-200 dark:bg-card mt-4 max-w-md">
           <div className="space-y-2 flex items-center justify-between">
-            <Heading level="h3">Members</Heading>
+            <Heading level="h2">Members</Heading>
             {isAdmin && (
               <Button size="sm" onClick={() => setIsOpen(true)}>
                 <PlusIcon className="size-4" />
@@ -90,7 +91,7 @@ export default function TeamClient({ team, isAdmin }: TeamProps) {
             </ul>
           )}
         </div>
-      </section>
+      </PageLayout>
       {isAdmin && (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetContent side="right" className="w-full sm:max-w-md">
