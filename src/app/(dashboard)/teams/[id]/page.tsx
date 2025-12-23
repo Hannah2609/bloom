@@ -1,8 +1,8 @@
-import React from "react";
-import TeamClient from "./TeamClient";
-import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session/session";
+import { getTeamById, canUserAccessTeam } from "@/lib/queries/teams";
+import { getActiveSurveysForTeam } from "@/lib/queries/surveys";
+import TeamClient from "./TeamClient";
 
 export default async function TeamPage({
   params,
@@ -11,80 +11,43 @@ export default async function TeamPage({
 }) {
   const session = await getSession();
 
-  // Check authentication
   if (!session.user) {
     redirect("/login");
   }
 
   const { id } = await params;
 
-  // Fetch team and check if it's deleted
-  const team = await prisma.team.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      name: true,
-      createdAt: true,
-      updatedAt: true,
-      companyId: true,
-      deletedAt: true,
-      members: {
-        select: {
-          id: true,
-          userId: true,
-          role: true,
-          joinedAt: true,
-          leftAt: true,
-          user: {
-            select: {
-              firstName: true,
-              lastName: true,
-              email: true,
-              avatar: true,
-            },
-          },
-        },
-        where: {
-          leftAt: null, // Only active members
-        },
-      },
-    },
-  });
+  // Check if user can access this team
+  const hasAccess = await canUserAccessTeam(
+    id,
+    session.user.id,
+    session.user.role,
+    session.user.companyId
+  );
 
-  // Check if team exists and is not deleted
-  if (!team || team.deletedAt) {
+  if (!hasAccess) {
     redirect("/teams");
   }
 
-  const user = session.user;
+  // Fetch team details
+  const team = await getTeamById(id);
 
-  // Check if team belongs to user's company
-  if (team.companyId !== user.companyId) {
+  if (!team) {
     redirect("/teams");
   }
 
-  // Check if user has access to this team
-  // Admin can see all teams in company, non-admin only teams they're members of
-  if (user.role !== "ADMIN") {
-    const isMember = team.members.some(
-      (member) => member.userId === user.id && !member.leftAt
-    );
-    if (!isMember) {
-      redirect("/teams");
-    }
-  }
-
-  const teamData = {
-    id: team.id,
-    name: team.name,
-    createdAt: team.createdAt,
-    updatedAt: team.updatedAt,
-    deletedAt: team.deletedAt,
-    companyId: team.companyId,
-    members: team.members,
-  };
+  // Fetch active surveys for this team (global or team-specific)
+  const activeSurveys = await getActiveSurveysForTeam(id);
 
   const isAdmin = session.user.role === "ADMIN";
+  const isManager = team.members.some(
+    (member) =>
+      member.userId === session.user.id && member.role === "MANAGER"
+  );
 
-  return <TeamClient team={teamData} isAdmin={isAdmin} />;
+  const isAdminOrManager = isAdmin || isManager;
+
+  return (
+    <TeamClient team={team} isAdminOrManager={isAdminOrManager} activeSurveys={activeSurveys} />
+  );
 }

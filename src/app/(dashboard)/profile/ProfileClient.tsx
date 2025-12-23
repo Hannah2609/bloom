@@ -56,11 +56,11 @@ export default function ProfileClient({ user }: ProfileClientProps) {
 
     try {
       const uploaded = await startUpload([file]);
-      if (!uploaded || uploaded.length === 0 || !uploaded[0]?.url) {
+      if (!uploaded || uploaded.length === 0 || !uploaded[0]?.ufsUrl) {
         throw new Error("Avatar upload failed. Please try again.");
       }
 
-      const avatarUrl = uploaded[0].url;
+      const avatarUrl = uploaded[0].ufsUrl;
 
       // Update avatar immediately
       const response = await fetch("/api/user/profile", {
@@ -104,7 +104,6 @@ export default function ProfileClient({ user }: ProfileClientProps) {
         body: JSON.stringify({
           firstName: formData.firstName,
           lastName: formData.lastName,
-          posistion: formData.posistion,
         }),
       });
 
@@ -158,8 +157,6 @@ export default function ProfileClient({ user }: ProfileClientProps) {
                               <AvatarFallback className="[&>svg]:size-18!" />
                             )}
                           </Avatar>
-
-                          {/* Upload Overlay - Always visible */}
                           <>
                             {avatarFile ? (
                               <div className="absolute inset-0 grid place-items-center rounded-full bg-black/60">
@@ -270,25 +267,6 @@ export default function ProfileClient({ user }: ProfileClientProps) {
                     )}
                   />
                 </div>
-
-                <FormField
-                  control={form.control}
-                  name="posistion"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Position</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={!isEditing}
-                          placeholder="e.g. Software Engineer"
-                          autoComplete="organization-title"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
                 <div className="space-y-2">
                   <FormLabel>Email</FormLabel>
