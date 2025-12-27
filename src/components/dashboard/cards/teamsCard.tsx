@@ -8,13 +8,10 @@ import { ArrowRight, UsersIcon } from "lucide-react";
 import { Heading } from "@/components/ui/heading/heading";
 import { Badge } from "@/components/ui/badge/badge";
 import Link from "next/link";
+import { Team } from "@/types/team";
 
 interface TeamsCardProps {
-  team: {
-    id: string;
-    name: string;
-    memberCount: number;
-  };
+  team: Team;
 }
 
 export function TeamsCard({ team }: TeamsCardProps) {

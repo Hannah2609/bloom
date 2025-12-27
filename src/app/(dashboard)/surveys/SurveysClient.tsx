@@ -4,9 +4,8 @@ import { useState } from "react";
 import { Heading } from "@/components/ui/heading/heading";
 import { Button } from "@/components/ui/button/button";
 import { PlusIcon } from "lucide-react";
-import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
+import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { SurveyListItem } from "@/types/survey";
-import CreateSurveyForm from "@/components/dashboard/forms/CreateSurveyForm";
 import {
   Sheet,
   SheetContent,
@@ -14,7 +13,9 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { SurveyCard } from "@/components/dashboard/cards/surveys/SurveyCard";
+import { SurveyGrid } from "@/components/dashboard/layout/SurveyGrid";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CreateSurveyForm from "@/components/dashboard/forms/CreateSurveyForm";
 import { useRouter } from "next/navigation";
 
 interface SurveysClientProps {
@@ -22,9 +23,14 @@ interface SurveysClientProps {
 }
 
 export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const surveys = initialSurveys;
+  const router = useRouter();
+
+  // Filter surveys by status
+  const draftSurveys = initialSurveys.filter((s) => s.status === "DRAFT");
+  const activeSurveys = initialSurveys.filter((s) => s.status === "ACTIVE");
+  const closedSurveys = initialSurveys.filter((s) => s.status === "CLOSED");
+  const archivedSurveys = initialSurveys.filter((s) => s.status === "ARCHIVED");
 
   // Refresh surveys after creating a new one
   const handleSurveyCreated = () => {
@@ -49,23 +55,42 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
           </Button>
         </div>
 
-        {surveys.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
-            <p className="mb-4 text-center text-muted-foreground">
-              No surveys yet. Create your first survey to get started.
-            </p>
-            <Button onClick={() => setIsOpen(true)}>
-              <PlusIcon className="size-4" />
-              Create Survey
-            </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {surveys.map((survey) => (
-              <SurveyCard key={survey.id} survey={survey} />
-            ))}
-          </div>
-        )}
+        <Tabs defaultValue="DRAFT">
+          <TabsList>
+            <TabsTrigger value="DRAFT">Draft</TabsTrigger>
+            <TabsTrigger value="ACTIVE">Active</TabsTrigger>
+            <TabsTrigger value="CLOSED">Closed</TabsTrigger>
+            <TabsTrigger value="ARCHIVED">Archived</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="DRAFT" className="mt-6">
+            <SurveyGrid
+              surveys={draftSurveys}
+              emptyMessage="No draft surveys."
+            />
+          </TabsContent>
+
+          <TabsContent value="ACTIVE" className="mt-6">
+            <SurveyGrid
+              surveys={activeSurveys}
+              emptyMessage="No active surveys."
+            />
+          </TabsContent>
+
+          <TabsContent value="CLOSED" className="mt-6">
+            <SurveyGrid
+              surveys={closedSurveys}
+              emptyMessage="No closed surveys."
+            />
+          </TabsContent>
+
+          <TabsContent value="ARCHIVED" className="mt-6">
+            <SurveyGrid
+              surveys={archivedSurveys}
+              emptyMessage="No archived surveys."
+            />
+          </TabsContent>
+        </Tabs>
       </PageLayout>
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -76,7 +101,7 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
               Fill in the details to create a new survey.
             </SheetDescription>
           </SheetHeader>
-          <div className="flex h-full items-center">
+          <div className="flex h-full">
             <CreateSurveyForm onSuccess={handleSurveyCreated} />
           </div>
         </SheetContent>

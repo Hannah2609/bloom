@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Heading } from "@/components/ui/heading/heading";
 import { Button } from "@/components/ui/button/button";
 import { PlusIcon } from "lucide-react";
-import { TeamsCard } from "@/components/dashboard/cards/teams/teamsCard";
+import { TeamsCard } from "@/components/dashboard/cards/teamsCard";
 import {
   Sheet,
   SheetContent,
@@ -14,33 +14,20 @@ import {
 } from "@/components/ui/sheet";
 import CreateTeamForm from "@/components/dashboard/forms/CreateTeamForm";
 import { useRouter } from "next/navigation";
-import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
-
-interface Team {
-  id: string;
-  name: string;
-  memberCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import { PageLayout } from "@/components/dashboard/layout/pageLayout";
+import { Team } from "@/types/team";
 
 interface TeamsClientProps {
-  initialTeams: Team[];
+  teams: Team[];
   isAdmin: boolean;
 }
 
-export default function TeamsClient({
-  initialTeams,
-  isAdmin,
-}: TeamsClientProps) {
+export default function TeamsClient({ teams, isAdmin }: TeamsClientProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const teams = initialTeams;
 
-  // Refresh teams after creating a new one
   const handleTeamCreated = () => {
     setIsOpen(false);
-    // Refresh the page to get updated data from server
     router.refresh();
   };
 
@@ -57,19 +44,11 @@ export default function TeamsClient({
           )}
         </div>
         {teams.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-muted-foreground mb-4 text-center">
-              {isAdmin
-                ? "No teams yet - create your first team now!"
-                : "Not a member of any teams yet - contact your manager if that is a mistake"}
-            </p>
-            {isAdmin && (
-              <Button onClick={() => setIsOpen(true)}>
-                <PlusIcon className="size-4" />
-                Create your first team
-              </Button>
-            )}
-          </div>
+          <p className="mt-12 text-muted-foreground">
+            {isAdmin
+              ? "No teams yet - create your first team now!"
+              : "Not a member of any teams yet - contact your manager if that is a mistake"}
+          </p>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {teams.map((team) => (

@@ -35,7 +35,7 @@ export const companySignupSchema = z.object({
       /^[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}$/,
       "Company domain must be a valid domain"
     ),
-  logo: z.string().url("Logo must be a valid URL").optional(),
+  logo: z.url("Logo must be a valid URL").optional(),
 });
 
 export const setPendingCompanySchema = z.object({
@@ -108,14 +108,7 @@ export const editProfileSchema = z.object({
     .string()
     .min(2, "Name must be at least 2 characters")
     .regex(/^[A-Za-zÆØÅæøå\s]+$/, "Name can only contain letters and spaces"),
-  posistion: z
-    .string()
-    .min(2, "Position must be at least 2 characters")
-    .regex(
-      /^[A-Za-zÆØÅæøå\s]+$/,
-      "Position can only contain letters and spaces"
-    ),
-  avatar: z.string().url("Logo must be a valid URL").optional(),
+  avatar: z.url("Logo must be a valid URL").optional(),
 });
 
 export type SignupSchema = z.infer<typeof signupSchema>;

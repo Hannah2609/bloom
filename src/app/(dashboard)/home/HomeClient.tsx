@@ -1,12 +1,14 @@
 "use client";
 
-import { SectionCards } from "@/components/ui/card/exampleCards";
 import { Heading } from "@/components/ui/heading/heading";
-import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
+import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { User } from "@/types/user";
+import { SurveyGrid } from "@/components/dashboard/layout/SurveyGrid";
+import { SurveyListItem } from "@/types/survey";
 
 interface HomeClientProps {
   user: User;
+  activeSurveys: SurveyListItem[];
 }
 
 // TODO: move to utils
@@ -17,7 +19,7 @@ const getGreeting = () => {
   return "Good evening";
 };
 
-export default function HomeClient({ user }: HomeClientProps) {
+export default function HomeClient({ user, activeSurveys }: HomeClientProps) {
   return (
     <PageLayout>
       <div>
@@ -26,8 +28,8 @@ export default function HomeClient({ user }: HomeClientProps) {
         </p>
         <Heading level="h1">{user.firstName}</Heading>
       </div>
-      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-        <SectionCards />
+      <div className="mt-10">
+        <SurveyGrid surveys={activeSurveys} emptyMessage="No active surveys" />
       </div>
     </PageLayout>
   );
