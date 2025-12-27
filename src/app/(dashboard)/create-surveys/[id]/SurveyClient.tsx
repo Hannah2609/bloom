@@ -24,7 +24,7 @@ export default function SurveyClient({ survey }: SurveyClientProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push("/surveys")}
+              onClick={() => router.push("/create-surveys")}
             >
               <ArrowLeft className="size-4" />
               Back to Surveys

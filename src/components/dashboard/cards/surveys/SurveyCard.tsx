@@ -14,7 +14,7 @@ interface SurveyCardProps {
 
 export function SurveyCard({ survey }: SurveyCardProps) {
   return (
-    <Link href={`/surveys/${survey.id}`}>
+    <Link href={`/create-surveys/${survey.id}`}>
       <Card className="cursor-pointer transition-shadow hover:shadow-lg">
         <CardHeader>
           <div className="flex items-start justify-between gap-2">

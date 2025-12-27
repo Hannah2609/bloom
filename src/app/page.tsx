@@ -21,7 +21,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col items-center gap-4 py-8 md:flex-row">
             <Button size="lg" asChild>
-              <Link href="/signup-company">
+              <Link href="/signup/company">
                 Get started with your company
                 <ArrowRight className="size-4" />
               </Link>

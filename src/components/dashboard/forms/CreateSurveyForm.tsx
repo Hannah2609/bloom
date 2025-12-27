@@ -76,7 +76,7 @@ export default function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
       }
 
       // Redirect to survey detail page to add questions
-      router.push(`/surveys/${result.survey.id}`);
+      router.push(`/create-surveys/${result.survey.id}`);
     } catch (error) {
       toast.dismiss();
       toast.error(
