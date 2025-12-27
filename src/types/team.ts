@@ -1,19 +1,29 @@
-import { Role, User } from "./user";
+import { Role } from "./user";
 
 export type Team = {
-  name: string;
   id: string;
+  name: string;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date | null;
   companyId: string;
+  deletedAt: Date | null;
+  memberCount?: number; // Optional for list views
 };
 
 export type TeamMember = {
   id: string;
   userId: string;
-  user: User;
   role: Role;
   joinedAt: Date;
   leftAt: Date | null;
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    avatar: string | null;
+  };
+};
+
+export type TeamWithMembers = Team & {
+  members: TeamMember[];
 };

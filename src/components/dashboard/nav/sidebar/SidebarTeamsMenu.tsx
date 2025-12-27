@@ -47,8 +47,6 @@ export function SidebarTeamsMenu({ pathname }: SidebarTeamsMenuProps) {
     isActive(pathname, `/teams/${team.id}`)
   );
 
-  if (teams.length === 0) return null;
-
   return (
     <SidebarMenu>
       <Collapsible
@@ -72,37 +70,43 @@ export function SidebarTeamsMenu({ pathname }: SidebarTeamsMenuProps) {
               </Link>
             </SidebarMenuButton>
 
-            <CollapsibleTrigger asChild>
-              <button
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-accent rounded-sm group-data-[collapsible=icon]:hidden"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-              </button>
-            </CollapsibleTrigger>
+            {/* Only show collapse toggle if there are teams */}
+            {teams.length > 0 && (
+              <CollapsibleTrigger asChild>
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-accent rounded-sm group-data-[collapsible=icon]:hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                </button>
+              </CollapsibleTrigger>
+            )}
           </div>
 
-          <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
-            <SidebarMenuSub>
-              {teams.map((team) => {
-                const subItemActive = isActive(pathname, `/teams/${team.id}`);
-                return (
-                  <SidebarMenuSubItem key={team.id}>
-                    <SidebarMenuSubButton
-                      size="sm"
-                      asChild
-                      isActive={subItemActive}
-                      className="group"
-                    >
-                      <Link href={`/teams/${team.id}`}>
-                        <span>{team.name}</span>
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                );
-              })}
-            </SidebarMenuSub>
-          </CollapsibleContent>
+          {/* Only show submenu if there are teams */}
+          {teams.length > 0 && (
+            <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
+              <SidebarMenuSub>
+                {teams.map((team) => {
+                  const subItemActive = isActive(pathname, `/teams/${team.id}`);
+                  return (
+                    <SidebarMenuSubItem key={team.id}>
+                      <SidebarMenuSubButton
+                        size="sm"
+                        asChild
+                        isActive={subItemActive}
+                        className="group"
+                      >
+                        <Link href={`/teams/${team.id}`}>
+                          <span>{team.name}</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  );
+                })}
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          )}
         </SidebarMenuItem>
       </Collapsible>
     </SidebarMenu>
