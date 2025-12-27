@@ -60,8 +60,8 @@ export default function Header() {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href="/signup-company"
-                data-active={isActive(pathname, "/signup-company")}
+                href="/signup/company"
+                data-active={isActive(pathname, "/signup/company")}
                 className="data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
               >
                 Company

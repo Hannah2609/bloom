@@ -59,14 +59,14 @@ export default function TeamsClient({ teams, isAdmin }: TeamsClientProps) {
       </PageLayout>
       {isAdmin && (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetContent side="right" className="w-full sm:max-w-md">
+          <SheetContent side="right" className="w-full sm:max-w-lg">
             <SheetHeader>
               <SheetTitle>Create New Team</SheetTitle>
               <SheetDescription>
                 Fill in the details to create a new team.
               </SheetDescription>
             </SheetHeader>
-            <div className="flex h-full items-center">
+            <div className="flex h-full items-center overflow-y-scroll">
               <CreateTeamForm onSuccess={handleTeamCreated} />
             </div>
           </SheetContent>

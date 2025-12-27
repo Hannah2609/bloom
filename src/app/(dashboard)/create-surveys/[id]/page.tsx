@@ -1,6 +1,7 @@
 import SurveyClient from "./SurveyClient";
 import { getSession } from "@/lib/session/session";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
+import { getSurveyById } from "@/lib/queries/surveys";
 
 export default async function SurveyPage({
   params,
@@ -20,7 +21,12 @@ export default async function SurveyPage({
     redirect("/home");
   }
 
-  // get survey based on id
+  // Fetch survey with questions and teams
+  const survey = await getSurveyById(id, session.user.companyId);
 
-  return <SurveyClient />;
+  if (!survey) {
+    notFound();
+  }
+
+  return <SurveyClient survey={survey} />;
 }

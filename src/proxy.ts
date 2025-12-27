@@ -1,26 +1,34 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { SessionData, sessionOptions } from "./lib/session/session";
+import { getIronSession } from "iron-session";
 
 // Routes from (auth) folder - no authentication required
-const authRoutes = ["/login", "/signup", "/signup-company"];
+// Using startsWith() so /signup matches both /signup and /signup/company
+const authRoutes = ["/login", "/signup"];
 
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isLoggedIn = !!request.cookies.get("bloom-session")?.value;
+
+  // Get session from cookies
+  const response = NextResponse.next();
+  const session = await getIronSession<SessionData>(
+    request,
+    response,
+    sessionOptions
+  );
+
+  // Check if user is actually logged in (has user object, not just pending company)
+  const isLoggedIn = !!session.user?.id;
 
   // whitelist logic
   // Public routes - accessible to everyone
   const isPublic = pathname === "/";
 
-  // Auth routes - accessible only when logged out
+  // Auth routes - accessible to unauthenticated users
   const isAuth = authRoutes.some((route) => pathname.startsWith(route));
 
   // Everything else requires authentication (all (dashboard) routes)
   const isProtected = !isPublic && !isAuth;
-
-  // Redirect logged-in users away from auth pages
-  if (isAuth && isLoggedIn) {
-    return NextResponse.redirect(new URL("/home", request.url));
-  }
 
   // Redirect unauthenticated users from protected pages to login
   if (isProtected && !isLoggedIn) {

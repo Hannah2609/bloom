@@ -21,6 +21,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import TeamSearch, { Team } from "./TeamSearch";
+import { useRouter } from "next/navigation";
 
 type CreateSurveyFormProps = {
   onSuccess?: () => void; // Callback to refresh surveys list after creation
@@ -31,6 +32,7 @@ type CreateSurveyFormData = z.infer<typeof createSurveySchema>;
 export default function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
+  const router = useRouter();
 
   const form = useForm<CreateSurveyFormData>({
     resolver: zodResolver(createSurveySchema),
@@ -63,7 +65,7 @@ export default function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
       }
 
       toast.dismiss();
-      toast.success(`Survey created!`, { duration: 3000 });
+      toast.success(`Survey created! Redirecting...`, { duration: 2000 });
 
       form.reset();
       setSelectedTeams([]);
@@ -72,6 +74,9 @@ export default function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
       if (onSuccess) {
         onSuccess();
       }
+
+      // Redirect to survey detail page to add questions
+      router.push(`/create-surveys/${result.survey.id}`);
     } catch (error) {
       toast.dismiss();
       toast.error(
@@ -117,97 +122,100 @@ export default function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
             )}
           />
 
-          <div className="py-6 space-y-6">
-            {/* isGlobal Toggle */}
+          {/* isGlobal Toggle */}
+          <FormField
+            control={form.control}
+            name="isGlobal"
+            render={({ field }) => (
+              <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel>Send to entire company</FormLabel>
+                  <p className="text-sm text-muted-foreground">
+                    Make this survey available to all employees
+                  </p>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={(checked) => {
+                      field.onChange(checked);
+                      if (checked) {
+                        setSelectedTeams([]);
+                        form.setValue("teamIds", []);
+                      }
+                    }}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          {/* Team Selection - Only show when not global */}
+          {!form.watch("isGlobal") && (
+            <div>
+              <TeamSearch
+                selectedTeams={selectedTeams}
+                onTeamsChange={(teams) => {
+                  setSelectedTeams(teams);
+                  form.setValue(
+                    "teamIds",
+                    teams.map((t) => t.id)
+                  );
+                }}
+                label="Select Teams"
+              />
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-6">
             <FormField
               control={form.control}
-              name="isGlobal"
+              name="startDate"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel>Send to entire company</FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      Make this survey available to all employees
-                    </p>
-                  </div>
+                <FormItem>
+                  <FormLabel>
+                    Start Date
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="inline-block size-4 ml-1 cursor-pointer" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>You can always set dates later</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </FormLabel>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={(checked) => {
-                        field.onChange(checked);
-                        if (checked) {
-                          setSelectedTeams([]);
-                          form.setValue("teamIds", []);
-                        }
-                      }}
-                    />
+                    <Input type="date" {...field} />
                   </FormControl>
                 </FormItem>
               )}
             />
-
-            {/* Team Selection - Only show when not global */}
-            {!form.watch("isGlobal") && (
-              <div>
-                <TeamSearch
-                  selectedTeams={selectedTeams}
-                  onTeamsChange={(teams) => {
-                    setSelectedTeams(teams);
-                    form.setValue(
-                      "teamIds",
-                      teams.map((t) => t.id)
-                    );
-                  }}
-                  label="Select Teams"
-                />
-              </div>
-            )}
+            <FormField
+              control={form.control}
+              name="endDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>End Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </div>
 
-          <div>
-            <div className="flex items-center pb-4">
-              <FormLabel>Active dates</FormLabel>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="inline-block size-4 ml-1 cursor-pointer" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>You can always set dates later</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <div className="flex items-center gap-6">
-              <FormField
-                control={form.control}
-                name="startDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Start Date</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="endDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>End Date</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
+          <div className="pt-4">
+            <Button variant="outline" type="submit" className="w-full mb-4">
+              Add survey questions
+              <ArrowRight className="size-4" />
+            </Button>
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Create survey"}
-            <ArrowRight className="size-4" />
-          </Button>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting
+                ? "Creating..."
+                : "Create survey, add questions later"}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

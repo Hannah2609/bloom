@@ -12,6 +12,27 @@ export type SurveyListItem = {
   responseCount: number;
 };
 
+// Survey detail type for displaying full survey with questions and teams
+export type SurveyDetail = {
+  id: string;
+  title: string;
+  description: string | null;
+  status: SurveyStatus;
+  isGlobal: boolean;
+  startDate: string | null;
+  endDate: string | null;
+  createdAt: string;
+  teams: {
+    team: {
+      id: string;
+      name: string;
+    };
+  }[];
+  questions: Question[];
+  questionCount: number;
+  responseCount: number;
+};
+
 export type Survey = {
   id: string;
   title: string;
