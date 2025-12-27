@@ -82,6 +82,7 @@ export async function getSurveyById(
           description: true,
           required: true,
           order: true,
+          answerType: true,
           surveyId: true,
           createdAt: true,
           updatedAt: true,
@@ -119,6 +120,7 @@ export async function getSurveyById(
       description: q.description,
       required: q.required,
       order: q.order,
+      answerType: q.answerType,
       surveyId: q.surveyId,
       createdAt: q.createdAt,
       updatedAt: q.updatedAt,
@@ -254,4 +256,77 @@ export async function getActiveSurveysForTeam(
     questionCount: survey._count.questions,
     responseCount: survey._count.responses,
   }));
+}
+
+/**
+ * Create a new question for a survey
+ */
+export async function createQuestion(
+  surveyId: string,
+  data: {
+    title: string;
+    description?: string;
+    answerType: "SATISFACTION" | "AGREEMENT" | "SCALE";
+    required: boolean;
+  },
+  companyId: string
+) {
+  // Verify survey exists and belongs to company
+  const survey = await prisma.survey.findFirst({
+    where: {
+      id: surveyId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!survey) {
+    throw new Error("Survey not found");
+  }
+
+  // Get the current max order number
+  const maxOrder = await prisma.question.aggregate({
+    where: { surveyId },
+    _max: { order: true },
+  });
+
+  const nextOrder = (maxOrder._max.order || 0) + 1;
+
+  // Create the question
+  return await prisma.question.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      answerType: data.answerType,
+      required: data.required,
+      order: nextOrder,
+      surveyId,
+    },
+  });
+}
+
+/**
+ * Get all questions for a survey
+ */
+export async function getQuestionsBySurveyId(
+  surveyId: string,
+  companyId: string
+) {
+  // Verify survey belongs to company
+  const survey = await prisma.survey.findFirst({
+    where: {
+      id: surveyId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!survey) {
+    throw new Error("Survey not found");
+  }
+
+  return await prisma.question.findMany({
+    where: { surveyId },
+    orderBy: { order: "asc" },
+  });
 }

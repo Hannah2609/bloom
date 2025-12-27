@@ -29,7 +29,7 @@ type CreateSurveyFormProps = {
 
 type CreateSurveyFormData = z.infer<typeof createSurveySchema>;
 
-export default function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
+export function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
   const router = useRouter();

@@ -7,6 +7,9 @@ import { ArrowLeft, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge/badge";
 import { SurveyDetail } from "@/types/survey";
+import { EditQuestionCard } from "@/components/dashboard/cards/EditQuestionCard";
+import { useState } from "react";
+import { AddQuestionForm } from "@/components/dashboard/survey/AddQuestionForm";
 
 interface SurveyClientProps {
   survey: SurveyDetail;
@@ -14,6 +17,7 @@ interface SurveyClientProps {
 
 export default function SurveyClient({ survey }: SurveyClientProps) {
   const router = useRouter();
+  const [showAddQuestionForm, setShowAddQuestionForm] = useState(false);
 
   return (
     <PageLayout>
@@ -73,11 +77,19 @@ export default function SurveyClient({ survey }: SurveyClientProps) {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <Heading level={"h2"}>Questions ({survey.questionCount})</Heading>
-            <Button>
+            <Button onClick={() => setShowAddQuestionForm(true)}>
               <Plus className="size-4" />
               Add Question
             </Button>
           </div>
+
+          {showAddQuestionForm && (
+            <AddQuestionForm
+              surveyId={survey.id}
+              onSuccess={() => setShowAddQuestionForm(false)}
+              onCancel={() => setShowAddQuestionForm(false)}
+            />
+          )}
 
           {survey.questions.length === 0 ? (
             <div className="border rounded-lg p-8 text-center">
@@ -88,31 +100,7 @@ export default function SurveyClient({ survey }: SurveyClientProps) {
           ) : (
             <div className="space-y-2">
               {survey.questions.map((question) => (
-                <div
-                  key={question.id}
-                  className="border rounded-lg p-4 hover:bg-accent transition-colors"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex gap-3 flex-1">
-                      <span className="font-medium text-muted-foreground">
-                        {question.order}.
-                      </span>
-                      <div className="flex-1">
-                        <p className="font-medium">{question.title}</p>
-                        {question.description && (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {question.description}
-                          </p>
-                        )}
-                        {question.required && (
-                          <span className="text-xs text-muted-foreground">
-                            * Required
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <EditQuestionCard key={question.id} question={question} />
               ))}
             </div>
           )}

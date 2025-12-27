@@ -54,6 +54,7 @@ export type Question = {
   description: string | null;
   required: boolean;
   order: number;
+  answerType: "SATISFACTION" | "AGREEMENT" | "SCALE";
   surveyId: string;
   createdAt: Date;
   updatedAt: Date | null;
