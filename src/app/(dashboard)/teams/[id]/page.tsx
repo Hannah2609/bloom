@@ -41,13 +41,16 @@ export default async function TeamPage({
 
   const isAdmin = session.user.role === "ADMIN";
   const isManager = team.members.some(
-    (member) =>
-      member.userId === session.user.id && member.role === "MANAGER"
+    (member) => member.userId === session.user.id && member.role === "MANAGER"
   );
 
   const isAdminOrManager = isAdmin || isManager;
 
   return (
-    <TeamClient team={team} isAdminOrManager={isAdminOrManager} activeSurveys={activeSurveys} />
+    <TeamClient
+      team={team}
+      isAdminOrManager={isAdminOrManager}
+      activeSurveys={activeSurveys}
+    />
   );
 }
