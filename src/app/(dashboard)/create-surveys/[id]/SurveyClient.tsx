@@ -1,6 +1,6 @@
 "use client";
 
-import { PageLayout } from "@/components/ui/layout/dashboard/pageLayout/pageLayout";
+import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { Heading } from "@/components/ui/heading/heading";
 import { Button } from "@/components/ui/button/button";
 import { ArrowLeft, Plus } from "lucide-react";
