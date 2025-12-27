@@ -9,96 +9,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// **User Model**
-// Represents a user in the system (admin, manager, or employee)
-// - Belongs to ONE company
-// - Can be member of MULTIPLE teams (via TeamMember)
-// - Can submit survey responses
 model User {
   id              String           @id @default(uuid())
-  firstName       String
-  lastName        String
   email           String           @unique
-  avatar          String?
   password        String
-  role            Role             @default(EMPLOYEE)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   deletedAt       DateTime?
-  company         Company          @relation(fields: [companyId], references: [id])
+  avatar          String?
   companyId       String
-  memberships     TeamMember[]
+  firstName       String
+  lastName        String
+  role            Role             @default(EMPLOYEE)
   surveyResponses SurveyResponse[]
+  memberships     TeamMember[]
+  company         Company          @relation(fields: [companyId], references: [id])
 }
 
-enum Role {
-  ADMIN
-  MANAGER
-  EMPLOYEE
-}
-
-// **Company Model**
-// Organization that owns users, teams, and surveys
-// - Has MANY users
-// - Has MANY teams
-// - Has MANY surveys
-// - Root level entity - everything belongs to a company
 model Company {
   id        String    @id @default(uuid())
   name      String
-  domain    String    @unique
-  logo      String?
-  users     User[]
-  teams     Team[]
-  surveys   Survey[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+  domain    String    @unique
+  logo      String?
+  surveys   Survey[]
+  teams     Team[]
+  users     User[]
 }
 
-// **Team Model**
-// Group of users within a company
-// - Belongs to ONE company
-// - Has MANY members (via TeamMember)
-// - Can be assigned to surveys (for targeted surveys)
 model Team {
   id        String       @id @default(uuid())
   name      String
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   deletedAt DateTime?
-  company   Company      @relation(fields: [companyId], references: [id])
   companyId String
-  members   TeamMember[]
   surveys   SurveyTeam[]
+  company   Company      @relation(fields: [companyId], references: [id])
+  members   TeamMember[]
 }
 
-// **TeamMember Model**
-// Junction table for User <-> Team relationship
-// - Links ONE user to ONE team
-// - Tracks team-specific role and membership period
-// - Allows users to be in multiple teams
-// - Unique constraint prevents duplicate memberships
 model TeamMember {
   id       String    @id @default(uuid())
   role     Role      @default(EMPLOYEE)
+  teamId   String
+  userId   String
   joinedAt DateTime  @default(now())
   leftAt   DateTime?
   team     Team      @relation(fields: [teamId], references: [id])
-  teamId   String
   user     User      @relation(fields: [userId], references: [id])
-  userId   String
 
   @@unique([teamId, userId])
 }
 
-// **Survey Model**
-// Questionnaire for employee feedback
-// - Belongs to ONE company
-// - Has MANY questions (all RATING type)
-// - Has MANY responses
-// - Can be global (all teams) or targeted (specific teams)
-// - Always anonymous
 model Survey {
   id          String           @id @default(uuid())
   title       String
@@ -110,11 +75,67 @@ model Survey {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   deletedAt   DateTime?
-  company     Company          @relation(fields: [companyId], references: [id])
   companyId   String
   questions   Question[]
+  company     Company          @relation(fields: [companyId], references: [id])
   responses   SurveyResponse[]
   teams       SurveyTeam[]
+}
+
+model Question {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  required    Boolean    @default(true)
+  order       Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  surveyId    String
+  answerType  AnswerType @default(SCALE)
+  answers     Answer[]
+  survey      Survey     @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+}
+
+model SurveyResponse {
+  id          String   @id @default(uuid())
+  submittedAt DateTime @default(now())
+  surveyId    String
+  userId      String
+  teamId      String?
+  answers     Answer[]
+  survey      Survey   @relation(fields: [surveyId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([surveyId, userId])
+  @@index([surveyId, teamId])
+}
+
+model Answer {
+  id          String         @id @default(uuid())
+  createdAt   DateTime       @default(now())
+  questionId  String
+  responseId  String
+  ratingValue Int
+  question    Question       @relation(fields: [questionId], references: [id])
+  response    SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  @@unique([responseId, questionId])
+}
+
+model SurveyTeam {
+  id       String @id @default(uuid())
+  surveyId String
+  teamId   String
+  survey   Survey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  team     Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([surveyId, teamId])
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
 }
 
 enum SurveyStatus {
@@ -124,74 +145,8 @@ enum SurveyStatus {
   ARCHIVED
 }
 
-// **Question Model**
-// Single RATING question in a survey (always 1-5 scale)
-// - Belongs to ONE survey
-// - Order determines display sequence
-// - Required flag determines if user must answer
-model Question {
-  id          String   @id @default(uuid())
-  title       String // E.g., "How satisfied are you with work-life balance?"
-  description String? // Optional explanation
-  required    Boolean  @default(true)
-  order       Int // Display order (1, 2, 3...)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  survey      Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
-  surveyId    String
-  answers     Answer[]
-}
-
-// **SurveyResponse Model**
-// A user's submission of a survey
-// - Belongs to ONE survey
-// - Belongs to ONE user (for personal tracking)
-// - Has MANY answers (one per question)
-// - TeamId tracked for aggregation but not exposed in anonymous views
-// - Unique constraint: user can only submit once per survey
-model SurveyResponse {
-  id          String   @id @default(uuid())
-  submittedAt DateTime @default(now())
-  survey      Survey   @relation(fields: [surveyId], references: [id])
-  surveyId    String
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String
-  teamId      String? // For team aggregation (anonymous)
-  answers     Answer[]
-
-  @@unique([surveyId, userId])
-  @@index([surveyId, teamId])
-}
-
-// **Answer Model**
-// Single rating answer (1-5) to a question
-// - Belongs to ONE response
-// - Belongs to ONE question
-// - Rating value is always between 1-5
-// - Unique constraint: one answer per question per response
-model Answer {
-  id          String         @id @default(uuid())
-  ratingValue Int // 1-5 scale
-  createdAt   DateTime       @default(now())
-  question    Question       @relation(fields: [questionId], references: [id])
-  questionId  String
-  response    SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
-  responseId  String
-
-  @@unique([responseId, questionId])
-}
-
-// **SurveyTeam Model**
-// Junction table for Survey <-> Team relationship
-// - Links surveys to specific teams (if not global)
-// - Allows targeted surveys for specific teams
-// - Unique constraint prevents duplicate assignments
-model SurveyTeam {
-  id       String @id @default(uuid())
-  survey   Survey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
-  surveyId String
-  team     Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId   String
-
-  @@unique([surveyId, teamId])
+enum AnswerType {
+  SATISFACTION
+  AGREEMENT
+  SCALE
 }

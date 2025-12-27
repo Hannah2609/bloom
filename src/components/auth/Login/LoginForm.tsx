@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { ArrowRight, Loader2Icon } from "lucide-react";
 import { Heading } from "@/components/ui/heading/heading";
+import { ResetPassword } from "../resetPassword/ResetPassword";
 
 const LoginForm = () => {
   const { login, isLoading } = useAuth();
@@ -31,8 +32,6 @@ const LoginForm = () => {
   const onSubmit = (data: LoginSchema) => {
     login(data);
   };
-
-  // TODO: Kig på reset password + husk disabled if is loading + create route and hook (useAuth)
 
   return (
     <Form {...form}>
@@ -74,7 +73,10 @@ const LoginForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Adgangskode</FormLabel>
+              <div className="relative flex justify-between">
+                <FormLabel>Adgangskode</FormLabel>
+                <ResetPassword />
+              </div>
               <FormControl>
                 <PasswordInput
                   autoComplete="current-password"
@@ -82,10 +84,7 @@ const LoginForm = () => {
                   disabled={isLoading}
                 />
               </FormControl>
-              <div className="relative">
-                <FormMessage />
-                {/* <ResetPassword /> */}
-              </div>
+              <FormMessage />
             </FormItem>
           )}
         />
