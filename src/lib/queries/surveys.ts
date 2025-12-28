@@ -411,3 +411,100 @@ export async function createQuestion(
     },
   });
 }
+
+/**
+ * Update an existing question
+ */
+export async function updateQuestion(
+  questionId: string,
+  surveyId: string,
+  data: {
+    title: string;
+    description?: string;
+    answerType: "SATISFACTION" | "AGREEMENT" | "SCALE";
+    required: boolean;
+  },
+  companyId: string
+) {
+  // Verify survey exists and belongs to company
+  const survey = await prisma.survey.findFirst({
+    where: {
+      id: surveyId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!survey) {
+    throw new Error("Survey not found");
+  }
+
+  // Verify question exists and belongs to survey
+  const question = await prisma.question.findFirst({
+    where: {
+      id: questionId,
+      surveyId,
+    },
+  });
+
+  if (!question) {
+    throw new Error("Question not found");
+  }
+
+  // Update the question
+  return await prisma.question.update({
+    where: { id: questionId },
+    data: {
+      title: data.title,
+      description: data.description,
+      answerType: data.answerType,
+      required: data.required,
+    },
+  });
+}
+
+/**
+ * Reorder questions in a survey
+ * Updates all question orders atomically in a transaction
+ */
+export async function reorderQuestions(
+  surveyId: string,
+  questionOrders: { questionId: string; order: number }[],
+  companyId: string
+) {
+  // Verify survey exists and belongs to company
+  const survey = await prisma.survey.findFirst({
+    where: {
+      id: surveyId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!survey) {
+    throw new Error("Survey not found");
+  }
+
+  // Verify all questions belong to this survey
+  const questionIds = questionOrders.map((q) => q.questionId);
+  const questions = await prisma.question.findMany({
+    where: {
+      id: { in: questionIds },
+      surveyId,
+    },
+  });
+
+  if (questions.length !== questionIds.length) {
+    throw new Error("One or more questions not found");
+  }
+
+  // Update all orders in a transaction (atomic operation)
+  return await prisma.$transaction(
+    questionOrders.map(({ questionId, order }) =>
+      prisma.question.update({
+        where: { id: questionId },
+        data: { order },
+      })
+    )
+  );
+}

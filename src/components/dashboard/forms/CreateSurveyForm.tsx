@@ -102,7 +102,9 @@ export function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Survey Title*</FormLabel>
+                <FormLabel>
+                  Survey Title<span className="text-destructive">*</span>
+                </FormLabel>
                 <FormControl>
                   <Input type="text" {...field} />
                 </FormControl>
@@ -127,12 +129,19 @@ export function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
             control={form.control}
             name="isGlobal"
             render={({ field }) => (
-              <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel>Send to entire company</FormLabel>
-                  <p className="text-sm text-muted-foreground">
-                    Make this survey available to all employees
-                  </p>
+              <FormItem className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FormLabel className="text-base font-medium">
+                    Global survey<span className="text-destructive">*</span>
+                  </FormLabel>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="inline-block size-4 ml-1 cursor-pointer" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Make this survey available to all employees</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
                 <FormControl>
                   <Switch

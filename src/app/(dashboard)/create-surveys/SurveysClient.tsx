@@ -98,12 +98,12 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
         <SheetContent side="right" className="w-full sm:max-w-lg">
           <SheetHeader>
             <SheetTitle>Create New Survey</SheetTitle>
-            <SheetDescription>
-              <div className="flex justify-between items-baseline">
-                Fill in the details to create a new survey.
-                <Badge>DRAFT</Badge>
-              </div>
-            </SheetDescription>
+            <div className="flex justify-between items-baseline">
+              <SheetDescription>
+                Fill in the details to create a new survey
+              </SheetDescription>
+              <Badge>DRAFT</Badge>
+            </div>
           </SheetHeader>
           <div className="overflow-y-auto px-4 ">
             <CreateSurveyForm onSuccess={handleSurveyCreated} />

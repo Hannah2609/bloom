@@ -1,19 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button/button";
 import { Input } from "@/components/ui/forms/input";
 import { Label } from "@/components/ui/forms/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/forms/radio-group";
 import { Switch } from "@/components/ui/switch/switch";
 import { toast } from "sonner";
+import { Question } from "@/types/survey";
 
 type AnswerType = "SATISFACTION" | "AGREEMENT" | "SCALE";
 
 type AddQuestionFormProps = {
   surveyId: string;
-  onSuccess?: () => void;
+  question?: Question;
+  onSuccess?: (question: Question) => void;
   onCancel?: () => void;
 };
 
@@ -21,7 +22,7 @@ const ANSWER_TYPE_OPTIONS = [
   {
     value: "SATISFACTION" as AnswerType,
     label: "Satisfaction",
-    description: "Not sasti → Meget tilfreds",
+    description: "Not satisfied → Very satisfied",
   },
   {
     value: "AGREEMENT" as AnswerType,
@@ -37,16 +38,17 @@ const ANSWER_TYPE_OPTIONS = [
 
 export function AddQuestionForm({
   surveyId,
+  question,
   onSuccess,
   onCancel,
 }: AddQuestionFormProps) {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const isEditMode = !!question;
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    answerType: "SCALE" as AnswerType,
-    required: true,
+    title: question?.title || "",
+    description: question?.description || "",
+    answerType: (question?.answerType || "SCALE") as AnswerType,
+    required: question?.required ?? true,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,36 +56,52 @@ export function AddQuestionForm({
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        `/api/dashboard/surveys/${surveyId}/questions`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+      const url = `/api/dashboard/surveys/${surveyId}/questions`;
+      const method = isEditMode ? "PUT" : "POST";
+      const body = isEditMode
+        ? { ...formData, questionId: question!.id }
+        : formData;
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Failed to create question");
+        throw new Error(
+          error.message ||
+            `Failed to ${isEditMode ? "update" : "create"} question`
+        );
       }
 
-      toast.success("Question created");
+      const result = await response.json();
+      const savedQuestion = result.question;
 
-      // Reset form
-      setFormData({
-        title: "",
-        description: "",
-        answerType: "SCALE",
-        required: true,
-      });
+      toast.success(`Question ${isEditMode ? "updated" : "created"}`);
 
-      onSuccess?.();
-      router.refresh();
+      // Reset form only if creating new question
+      if (!isEditMode) {
+        setFormData({
+          title: "",
+          description: "",
+          answerType: "SCALE",
+          required: true,
+        });
+      }
+
+      // Pass the saved question to onSuccess callback for optimistic update
+      onSuccess?.(savedQuestion);
     } catch (error) {
-      console.error("Error creating question:", error);
+      console.error(
+        `Error ${isEditMode ? "updating" : "creating"} question:`,
+        error
+      );
       toast.error(
-        error instanceof Error ? error.message : "Could not create question"
+        error instanceof Error
+          ? error.message
+          : `Could not ${isEditMode ? "update" : "create"} question`
       );
     } finally {
       setIsLoading(false);
@@ -100,13 +118,13 @@ export function AddQuestionForm({
           id="title"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          placeholder="E.g. How satisfied are you with your work environment?"
+          placeholder="How satisfied are you with your work environment?"
           required
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description (optional)</Label>
+        <Label htmlFor="description">Description</Label>
         <Input
           type="textarea"
           id="description"
@@ -114,7 +132,7 @@ export function AddQuestionForm({
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
           }
-          placeholder="Add extra context or explanation..."
+          placeholder="Add extra context or explanation"
         />
       </div>
 
@@ -139,11 +157,11 @@ export function AddQuestionForm({
                   htmlFor={option.value}
                   className="font-medium cursor-pointer"
                 >
-                  {option.label}
+                  {option.label}:
+                  <p className="text-sm text-muted-foreground">
+                    {option.description}
+                  </p>
                 </Label>
-                <p className="text-sm text-muted-foreground">
-                  {option.description}
-                </p>
               </div>
             </div>
           ))}
@@ -178,7 +196,13 @@ export function AddQuestionForm({
           Cancel
         </Button>
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Creating..." : "Create Question"}
+          {isLoading
+            ? isEditMode
+              ? "Saving..."
+              : "Adding..."
+            : isEditMode
+              ? "Save question"
+              : "Add question"}
         </Button>
       </div>
     </form>
