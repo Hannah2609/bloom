@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { prisma as prismaClient } from "@/lib/prisma";
 import { companySignupSchema } from "@/lib/validation/validation";
 import { z } from "zod";
 import { Prisma as PrismaError } from "@/generated/prisma/client"; //TODO
 import { getSession } from "@/lib/session/session";
 import { Role } from "@/types/user";
+import { createCompany } from "@/lib/queries/companies";
 
 export async function POST(req: Request) {
   try {
@@ -14,12 +14,10 @@ export async function POST(req: Request) {
     const validatedData = companySignupSchema.parse(body);
 
     // Create the company
-    const company = await prismaClient.company.create({
-      data: {
-        name: validatedData.companyName,
-        domain: validatedData.companyDomain,
-        logo: validatedData.logo,
-      },
+    const company = await createCompany({
+      name: validatedData.companyName,
+      domain: validatedData.companyDomain,
+      logo: validatedData.logo,
     });
 
     const session = await getSession();

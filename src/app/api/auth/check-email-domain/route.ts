@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { emailSchema } from "@/lib/validation/validation";
+import { userExistsByEmail } from "@/lib/queries/users";
+import { getCompanyByDomain } from "@/lib/queries/companies";
 
 export async function POST(req: Request) {
   try {
@@ -9,12 +10,9 @@ export async function POST(req: Request) {
     const { email } = emailSchema.parse(body);
 
     // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-      select: { id: true },
-    });
+    const userExists = await userExistsByEmail(email);
 
-    if (existingUser) {
+    if (userExists) {
       return NextResponse.json({
         userExists: true,
       });
@@ -30,10 +28,7 @@ export async function POST(req: Request) {
     }
 
     // Check if a company exists with this domain
-    const company = await prisma.company.findUnique({
-      where: { domain },
-      select: { id: true, name: true, domain: true },
-    });
+    const company = await getCompanyByDomain(domain);
 
     if (company) {
       return NextResponse.json({

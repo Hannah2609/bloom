@@ -32,6 +32,7 @@ export async function POST(
     const body = await req.json();
     const validatedData = createQuestionSchema.parse(body);
 
+    // Create question query function
     const question = await createQuestion(
       surveyId,
       validatedData,
@@ -68,6 +69,8 @@ export async function GET(
     }
 
     const surveyId = (await params).id;
+
+    // Get questions by survey ID query function
     const questions = await getQuestionsBySurveyId(
       surveyId,
       session.user.companyId

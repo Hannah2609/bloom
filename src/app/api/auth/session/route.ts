@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/session/session";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getUserById } from "@/lib/queries/users";
 
 export async function GET() {
   try {
@@ -21,15 +21,7 @@ export async function GET() {
 
     if (shouldVerify) {
       // Verify user still exists and is not deleted
-      const userExists = await prisma.user.findUnique({
-        where: {
-          id: session.user.id,
-        },
-        select: {
-          id: true,
-          deletedAt: true,
-        },
-      });
+      const userExists = await getUserById(session.user.id);
 
       // If user does not exist or is deleted, clear session
       if (!userExists || userExists.deletedAt) {

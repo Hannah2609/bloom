@@ -1,7 +1,7 @@
 import { getSession } from "@/lib/session/session";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { createTeamSchema } from "@/lib/validation/validation";
+import { getAllTeams, getUserTeams, createTeam } from "@/lib/queries/teams";
 import { z } from "zod";
 
 // Create a new team (admin access)
@@ -26,19 +26,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create the team
-    const team = await prisma.team.create({
-      data: {
-        name: validatedData.name,
-        companyId: session.user.companyId,
-      },
-      select: {
-        id: true,
-        name: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    // Create the team using query function
+    const team = await createTeam(session.user.companyId, validatedData.name);
 
     return NextResponse.json(
       {
@@ -78,89 +67,21 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Use query functions based on user role
     let teams;
-
     if (session.user.role === "ADMIN") {
-      // Admin: Fetch all teams in the company
-      teams = await prisma.team.findMany({
-        where: {
-          companyId: session.user.companyId,
-          deletedAt: null,
-        },
-        select: {
-          id: true,
-          name: true,
-          createdAt: true,
-          updatedAt: true,
-          members: {
-            select: {
-              id: true,
-              role: true,
-              joinedAt: true,
-              leftAt: true,
-              user: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
+      teams = await getAllTeams(session.user.companyId);
     } else {
-      // Non-admin: Fetch only teams the user is a member of
-      teams = await prisma.team.findMany({
-        where: {
-          companyId: session.user.companyId,
-          deletedAt: null,
-          members: {
-            some: {
-              userId: session.user.id,
-              leftAt: null, // Only active memberships
-            },
-          },
-        },
-        select: {
-          id: true,
-          name: true,
-          createdAt: true,
-          updatedAt: true,
-          members: {
-            where: {
-              leftAt: null, // Only active members
-            },
-            select: {
-              id: true,
-              role: true,
-              joinedAt: true,
-              leftAt: true,
-              user: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
+      teams = await getUserTeams(session.user.companyId, session.user.id);
     }
 
-    // Map teams to include member count
+    // Map teams to include member count (already included in query functions)
     const teamsWithMemberCount = teams.map((team) => ({
-      ...team,
-      memberCount: team.members.length,
+      id: team.id,
+      name: team.name,
+      createdAt: team.createdAt,
+      updatedAt: team.updatedAt,
+      memberCount: team.memberCount,
     }));
 
     return NextResponse.json({ teams: teamsWithMemberCount });

@@ -1,7 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { SurveyListItem, SurveyDetail } from "@/types/survey";
 
-// Admin: Get all surveys for company
+/**
+ * GET
+ */
+/**
+ * Get all surveys for a company (admin)
+ */
 export async function getAllSurveys(
   companyId: string
 ): Promise<SurveyListItem[]> {
@@ -45,7 +50,9 @@ export async function getAllSurveys(
   }));
 }
 
-// Fetch a single survey by ID with full details (questions, teams, responses)
+/**
+ * Fetch a single survey by ID with full details (questions, teams, responses)
+ */
 export async function getSurveyById(
   surveyId: string,
   companyId: string
@@ -130,12 +137,31 @@ export async function getSurveyById(
   };
 }
 
-// Employee: Get active surveys for user (global OR user's teams)
+/**
+ * Get active surveys for user (global OR user's teams)
+ */
 export async function getActiveSurveysForUser(
   companyId: string,
   userId: string
 ): Promise<SurveyListItem[]> {
   const now = new Date();
+
+  // Get user's team IDs first (avoid complex nested query)
+  const userTeamMemberships = await prisma.teamMember.findMany({
+    where: {
+      userId,
+      leftAt: null, // Only active memberships
+      team: {
+        companyId,
+        deletedAt: null,
+      },
+    },
+    select: {
+      teamId: true,
+    },
+  });
+
+  const userTeamIds = userTeamMemberships.map((m) => m.teamId);
 
   const surveys = await prisma.survey.findMany({
     where: {
@@ -147,20 +173,20 @@ export async function getActiveSurveysForUser(
       },
       OR: [
         { isGlobal: true }, // Global surveys
-        {
-          // Team-specific surveys where user is a member
-          teams: {
-            some: {
-              team: {
-                members: {
+        ...(userTeamIds.length > 0
+          ? [
+              {
+                // Team-specific surveys for user's teams
+                teams: {
                   some: {
-                    userId,
+                    teamId: {
+                      in: userTeamIds,
+                    },
                   },
                 },
               },
-            },
-          },
-        },
+            ]
+          : []),
       ],
     },
     select: {
@@ -198,7 +224,9 @@ export async function getActiveSurveysForUser(
   }));
 }
 
-// Get active surveys for a specific team
+/**
+ * Get active surveys for a specific team
+ */
 export async function getActiveSurveysForTeam(
   teamId: string
 ): Promise<SurveyListItem[]> {
@@ -259,6 +287,85 @@ export async function getActiveSurveysForTeam(
 }
 
 /**
+ * Get all questions for a survey
+ */
+export async function getQuestionsBySurveyId(
+  surveyId: string,
+  companyId: string
+) {
+  // Verify survey belongs to company
+  const survey = await prisma.survey.findFirst({
+    where: {
+      id: surveyId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!survey) {
+    throw new Error("Survey not found");
+  }
+
+  return await prisma.question.findMany({
+    where: { surveyId },
+    orderBy: { order: "asc" },
+  });
+}
+
+/**
+ * POST
+ */
+
+/**
+ * Create a new survey
+ */
+export async function createSurvey(
+  companyId: string,
+  data: {
+    title: string;
+    description?: string;
+    isGlobal: boolean;
+    startDate?: Date;
+    endDate?: Date;
+    teamIds?: string[];
+  }
+) {
+  const survey = await prisma.survey.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      isGlobal: data.isGlobal,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      companyId,
+      // Create SurveyTeam junction records if teams are specified
+      teams:
+        data.teamIds && data.teamIds.length > 0
+          ? {
+              create: data.teamIds.map((teamId) => ({
+                teamId,
+              })),
+            }
+          : undefined,
+    },
+    include: {
+      teams: {
+        include: {
+          team: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return survey;
+}
+
+/**
  * Create a new question for a survey
  */
 export async function createQuestion(
@@ -302,31 +409,5 @@ export async function createQuestion(
       order: nextOrder,
       surveyId,
     },
-  });
-}
-
-/**
- * Get all questions for a survey
- */
-export async function getQuestionsBySurveyId(
-  surveyId: string,
-  companyId: string
-) {
-  // Verify survey belongs to company
-  const survey = await prisma.survey.findFirst({
-    where: {
-      id: surveyId,
-      companyId,
-      deletedAt: null,
-    },
-  });
-
-  if (!survey) {
-    throw new Error("Survey not found");
-  }
-
-  return await prisma.question.findMany({
-    where: { surveyId },
-    orderBy: { order: "asc" },
   });
 }

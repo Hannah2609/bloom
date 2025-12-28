@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session/session";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import { setPendingCompanySchema } from "@/lib/validation/validation";
+import { getCompanyById } from "@/lib/queries/companies";
 
 export async function POST(req: Request) {
   try {
@@ -10,10 +10,7 @@ export async function POST(req: Request) {
     const { companyId, role, email } = setPendingCompanySchema.parse(body);
 
     // Verify company exists
-    const company = await prisma.company.findUnique({
-      where: { id: companyId },
-      select: { id: true },
-    });
+    const company = await getCompanyById(companyId);
 
     if (!company) {
       return NextResponse.json({ error: "Company not found" }, { status: 404 });

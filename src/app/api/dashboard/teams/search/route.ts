@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session/session";
-import { prisma } from "@/lib/prisma";
+import { searchTeams } from "@/lib/queries/teams";
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,41 +11,12 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const query = searchParams.get("query");
+    const query = searchParams.get("query") || "";
 
-    if (!query || query.trim() === "") {
-      return NextResponse.json({ teams: [] });
-    }
+    // search for teams query function
+    const teams = await searchTeams(session.user.companyId, query);
 
-    const teams = await prisma.team.findMany({
-      where: {
-        companyId: session.user.companyId,
-        deletedAt: null,
-        name: {
-          contains: query,
-          mode: "insensitive",
-        },
-      },
-      include: {
-        _count: {
-          select: {
-            members: true,
-          },
-        },
-      },
-      take: 10,
-      orderBy: {
-        name: "asc",
-      },
-    });
-
-    const teamsWithCount = teams.map((team) => ({
-      id: team.id,
-      name: team.name,
-      memberCount: team._count.members,
-    }));
-
-    return NextResponse.json({ teams: teamsWithCount });
+    return NextResponse.json({ teams });
   } catch (error) {
     console.error("Error searching teams:", error);
     return NextResponse.json(
