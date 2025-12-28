@@ -18,7 +18,7 @@ import { ArrowRight, Loader2Icon } from "lucide-react";
 import { Heading } from "@/components/ui/heading/heading";
 import { ResetPassword } from "../resetPassword/ResetPassword";
 
-const LoginForm = () => {
+export const LoginForm = () => {
   const { login, isLoading } = useAuth();
 
   const form = useForm<LoginSchema>({
@@ -113,5 +113,3 @@ const LoginForm = () => {
     </Form>
   );
 };
-
-export default LoginForm;
