@@ -11,21 +11,28 @@ import {
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/forms/input";
 import { Button } from "@/components/ui/button/button";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function ResetPassword() {
+  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [resetLink, setResetLink] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    if (!email) {
+      toast.error("Please enter your email");
+      return;
+    }
+
     setIsLoading(true);
     setResetLink(null);
 
     try {
-      const response = await fetch("/api/auth/forgot-password", {
+      const response = await fetch("/api/auth/send-reset-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -38,7 +45,8 @@ export function ResetPassword() {
       }
 
       toast.success(data.message);
-      // We show the reset link only for development purposes
+
+      // Development only - show reset link
       if (data.resetLink) {
         setResetLink(data.resetLink);
       }
@@ -51,25 +59,42 @@ export function ResetPassword() {
     }
   };
 
+  const handleResetClick = () => {
+    if (resetLink) {
+      setOpen(false);
+      router.push(resetLink);
+    }
+  };
+
+  // So you can submit the form by pressing Enter in the email input
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <p className="absolute right-0 top-0 hover:underline text-xs cursor-pointer">
+        <p className="absolute right-0 top-0 cursor-pointer text-xs hover:underline">
           Forgot password?
         </p>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-sm">
-        <DialogHeader className="text-left">
+      <DialogContent className="sm:max-w-md p-8">
+        <DialogHeader className="text-left mt-2">
           <DialogTitle>Reset your password</DialogTitle>
           <DialogDescription>
-            Enter your email and we will send you a reset link.
+            Enter your email and we will send you a link to reset your password.
           </DialogDescription>
         </DialogHeader>
 
-        <div onSubmit={handleSubmit} className="space-y-4" role="form">
-          <div className="grid gap-3">
-            <Label htmlFor="email">Email</Label>
+        <div className="space-y-6">
+          <div className="grid gap-2">
+            <Label htmlFor="email" className="text-sm font-medium">
+              Email
+            </Label>
             <Input
               id="email"
               type="email"
@@ -77,20 +102,33 @@ export function ResetPassword() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={handleKeyDown}
               disabled={isLoading}
             />
           </div>
-          <Button className="w-full" onClick={handleSubmit}>
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            className="w-full"
+            disabled={isLoading}
+          >
             {isLoading ? "Sending..." : "Send Reset Link"}
           </Button>
         </div>
 
         {resetLink && (
-          <div className="mt-4 text-sm text-green-600">
-            Reset link (development only):
-            <a href={resetLink} className="underline break-all" target="_blank">
-              Click here to reset
-            </a>
+          <div className="mt-4 space-y-3 rounded-lg border border-green-500/20 bg-green-500/10 p-4">
+            <p className="text-sm font-medium text-green-600">
+              Development mode: Click button to reset password
+            </p>
+            <Button
+              type="button"
+              onClick={handleResetClick}
+              variant="outline"
+              className="w-full"
+            >
+              Go to Reset Password
+            </Button>
           </div>
         )}
       </DialogContent>

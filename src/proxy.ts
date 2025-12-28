@@ -4,7 +4,7 @@ import { getIronSession } from "iron-session";
 
 // Routes from (auth) folder - no authentication required
 // Using startsWith() so /signup matches both /signup and /signup/company
-const authRoutes = ["/login", "/signup"];
+const authRoutes = ["/login", "/signup", "/reset-password"];
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
