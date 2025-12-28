@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import LoginForm from "@/components/auth/Login/LoginForm";
+import { LoginForm } from "@/components/auth/Login/LoginForm";
 
 function Page() {
   return (

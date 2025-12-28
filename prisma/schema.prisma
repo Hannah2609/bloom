@@ -25,6 +25,8 @@ model User {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   deletedAt       DateTime?
+  resetToken      String? // Password reset token
+  resetExpires    DateTime? // Token expiration timestamp
   company         Company          @relation(fields: [companyId], references: [id])
   companyId       String
   memberships     TeamMember[]
@@ -130,16 +132,43 @@ enum SurveyStatus {
 // - Order determines display sequence
 // - Required flag determines if user must answer
 model Question {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   title       String // E.g., "How satisfied are you with work-life balance?"
   description String? // Optional explanation
-  required    Boolean  @default(true)
+  required    Boolean    @default(true)
+  answerType  AnswerType @default(SCALE) // Type of rating scale
   order       Int // Display order (1, 2, 3...)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  survey      Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  survey      Survey     @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   surveyId    String
   answers     Answer[]
+}
+
+// ***AnswerType Enum**
+// Types of rating scales for questions
+enum AnswerType {
+  SATISFACTION // "Ikke tilfreds" → "Meget tilfreds"
+  AGREEMENT // "Uenig" → "Enig"
+  SCALE // "1" → "10"
+}
+
+// **Answer Model**
+// Single rating answer (1-10) to a question
+// - Belongs to ONE response
+// - Belongs to ONE question
+// - Rating value is always between 1-10
+// - Unique constraint: one answer per question per response
+model Answer {
+  id          String         @id @default(uuid())
+  ratingValue Int // 1-10 scale
+  createdAt   DateTime       @default(now())
+  question    Question       @relation(fields: [questionId], references: [id])
+  questionId  String
+  response    SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  responseId  String
+
+  @@unique([responseId, questionId])
 }
 
 // **SurveyResponse Model**
@@ -161,24 +190,6 @@ model SurveyResponse {
 
   @@unique([surveyId, userId])
   @@index([surveyId, teamId])
-}
-
-// **Answer Model**
-// Single rating answer (1-5) to a question
-// - Belongs to ONE response
-// - Belongs to ONE question
-// - Rating value is always between 1-5
-// - Unique constraint: one answer per question per response
-model Answer {
-  id          String         @id @default(uuid())
-  ratingValue Int // 1-5 scale
-  createdAt   DateTime       @default(now())
-  question    Question       @relation(fields: [questionId], references: [id])
-  questionId  String
-  response    SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
-  responseId  String
-
-  @@unique([responseId, questionId])
 }
 
 // **SurveyTeam Model**

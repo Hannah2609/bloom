@@ -9,7 +9,6 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import { SessionData } from "@/lib/session/session";
 
 type SessionContextType = {
@@ -27,10 +26,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<SessionData["user"] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const isFetchingRef = useRef(false); // Use ref to prevent dependency loop
-  const isLoggedInRef = useRef(false); // Track login state for focus handler
-  const router = useRouter();
-  const pathname = usePathname();
+  const isFetchingRef = useRef(false);
 
   const fetchSession = useCallback(async () => {
     // Prevent multiple simultaneous fetches
@@ -42,7 +38,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setError(null);
 
       const response = await fetch("/api/auth/session", {
-        cache: "no-store", // Ensure we always get fresh data
+        cache: "no-store",
       });
 
       if (!response.ok) {
@@ -51,41 +47,26 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
       const data = await response.json();
       setIsLoggedIn(data.isLoggedIn);
-      isLoggedInRef.current = data.isLoggedIn; // Update ref
       setUser(data.user);
-
-      // If logged out and on protected route, redirect to login
-      if (
-        !data.isLoggedIn &&
-        pathname &&
-        !pathname.startsWith("/login") &&
-        !pathname.startsWith("/signup") &&
-        pathname !== "/"
-      ) {
-        router.replace("/login");
-      }
     } catch (err) {
       const error = err instanceof Error ? err : new Error("Unknown error");
       setError(error);
       setIsLoggedIn(false);
-      isLoggedInRef.current = false;
       setUser(null);
     } finally {
       setIsLoading(false);
       isFetchingRef.current = false;
     }
-  }, [pathname, router]); // Add dependencies
+  }, []); // No dependencies needed
 
   // Initial fetch on mount
   useEffect(() => {
     fetchSession();
   }, [fetchSession]);
 
-  // Refetch when window gains focus (e.g., user switches tabs)
-  // This ensures session is updated if user logs in/out in another tab
+  // Refetch when window gains focus
   useEffect(() => {
     const handleFocus = () => {
-      // Always refetch on focus to catch session changes in other tabs
       if (!isFetchingRef.current) {
         fetchSession();
       }
@@ -93,10 +74,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
     window.addEventListener("focus", handleFocus);
     return () => window.removeEventListener("focus", handleFocus);
-  }, [fetchSession]); // Only depend on fetchSession
+  }, [fetchSession]);
 
   // Listen for custom 'session-change' events
-  // This allows us to trigger refetch from other parts of the app
   useEffect(() => {
     const handleSessionChange = () => {
       if (!isFetchingRef.current) {
