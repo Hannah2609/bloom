@@ -25,6 +25,8 @@ model User {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   deletedAt       DateTime?
+  resetToken      String? // Password reset token
+  resetExpires    DateTime? // Token expiration timestamp
   company         Company          @relation(fields: [companyId], references: [id])
   companyId       String
   memberships     TeamMember[]
@@ -130,15 +132,15 @@ enum SurveyStatus {
 // - Order determines display sequence
 // - Required flag determines if user must answer
 model Question {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   title       String // E.g., "How satisfied are you with work-life balance?"
   description String? // Optional explanation
-  required    Boolean  @default(true)
-  answerType AnswerType @default(SCALE)  // Type of rating scale
+  required    Boolean    @default(true)
+  answerType  AnswerType @default(SCALE) // Type of rating scale
   order       Int // Display order (1, 2, 3...)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  survey      Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  survey      Survey     @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   surveyId    String
   answers     Answer[]
 }
@@ -146,9 +148,9 @@ model Question {
 // ***AnswerType Enum**
 // Types of rating scales for questions
 enum AnswerType {
-  SATISFACTION    // "Ikke tilfreds" → "Meget tilfreds"
-  AGREEMENT       // "Uenig" → "Enig"
-  SCALE       // "1" → "10"
+  SATISFACTION // "Ikke tilfreds" → "Meget tilfreds"
+  AGREEMENT // "Uenig" → "Enig"
+  SCALE // "1" → "10"
 }
 
 // **Answer Model**

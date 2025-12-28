@@ -131,6 +131,37 @@ export const editProfileSchema = z.object({
   avatar: z.url("Logo must be a valid URL").optional(),
 });
 
+// forgot password (email) validation
+export const forgotPasswordSchema = z.object({
+  email: z
+    .email("Invalid email address")
+    .min(1, "Email is required")
+    .toLowerCase()
+    .trim(),
+});
+// reset password validation
+export const resetPasswordSchema = z
+  .object({
+    token: z.string(),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/,
+        "Password must contain at least one letter, one number, and can include special characters (@$!%*#?&)"
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+// validate reset token
+export const validateTokenSchema = z.object({
+  token: z.string(),
+});
+
 export type SignupSchema = z.infer<typeof signupSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type CompanySignupSchema = z.infer<typeof companySignupSchema>;
@@ -139,3 +170,6 @@ export type EmailSchema = z.infer<typeof emailSchema>;
 export type CreateTeamSchema = z.infer<typeof createTeamSchema>;
 export type CreateSurveySchema = z.infer<typeof createSurveySchema>;
 export type EditProfileSchema = z.infer<typeof editProfileSchema>;
+export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
+export type ValidateTokenSchema = z.infer<typeof validateTokenSchema>;
