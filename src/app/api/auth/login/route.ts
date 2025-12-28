@@ -1,7 +1,7 @@
 import { loginSchema } from "@/lib/validation/validation";
 import { getSession } from "@/lib/session/session";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getUserByEmail } from "@/lib/queries/users";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
@@ -10,18 +10,7 @@ export async function POST(req: Request) {
     const validatedData = loginSchema.parse(body);
 
     // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email: validatedData.email },
-      include: {
-        company: {
-          select: {
-            id: true,
-            name: true,
-            logo: true,
-          },
-        },
-      },
-    });
+    const user = await getUserByEmail(validatedData.email);
 
     // Check if user exist
     if (!user) {

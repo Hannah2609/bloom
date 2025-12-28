@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sheet";
 import { SurveyGrid } from "@/components/dashboard/layout/SurveyGrid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import CreateSurveyForm from "@/components/dashboard/forms/CreateSurveyForm";
+import { CreateSurveyForm } from "@/components/dashboard/forms/CreateSurveyForm";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge/badge";
 
@@ -98,14 +98,14 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
         <SheetContent side="right" className="w-full sm:max-w-lg">
           <SheetHeader>
             <SheetTitle>Create New Survey</SheetTitle>
-            <SheetDescription>
-              <div className="flex justify-between items-baseline">
-                Fill in the details to create a new survey.
-                <Badge>DRAFT</Badge>
-              </div>
-            </SheetDescription>
+            <div className="flex justify-between items-baseline">
+              <SheetDescription>
+                Fill in the details to create a new survey
+              </SheetDescription>
+              <Badge>DRAFT</Badge>
+            </div>
           </SheetHeader>
-          <div className="overflow-y-scroll px-4 flex h-full items-center">
+          <div className="overflow-y-auto px-4 ">
             <CreateSurveyForm onSuccess={handleSurveyCreated} />
           </div>
         </SheetContent>

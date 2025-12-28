@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-import { prisma as prismaClient } from "@/lib/prisma";
 import { signupSchema } from "@/lib/validation/validation";
 import { z } from "zod";
 import { Prisma as PrismaError } from "@/generated/prisma/client"; //TODO
 import { getSession } from "@/lib/session/session";
 import { Role } from "@/types/user";
+import { createUser } from "@/lib/queries/users";
 
 export async function POST(req: Request) {
   try {
@@ -27,28 +27,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Company not found" }, { status: 400 });
     }
 
-    // Create the user
-    const user = await prismaClient.user.create({
-      data: {
-        firstName: validatedData.firstName,
-        lastName: validatedData.lastName,
-        email: validatedData.email,
-        password: hashedPassword,
-        role: userRole,
-        companyId: userCompanyId, // Now TypeScript knows this is string, not undefined
-      },
+    // Create the user using query function
+    const sanitizedUser = await createUser({
+      firstName: validatedData.firstName,
+      lastName: validatedData.lastName,
+      email: validatedData.email,
+      password: hashedPassword,
+      role: userRole,
+      companyId: userCompanyId,
     });
-
-    const sanitizedUser = {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      avatar: user.avatar,
-      role: user.role,
-      companyId: user.companyId,
-      createdAt: user.createdAt,
-    };
 
     if (pendingCompany) {
       delete session.pendingCompany;

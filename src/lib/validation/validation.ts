@@ -99,6 +99,26 @@ export const createSurveySchema = z
     }
   );
 
+export const createQuestionSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  answerType: z.enum(["SATISFACTION", "AGREEMENT", "SCALE"]),
+  required: z.boolean().default(true),
+});
+
+export const updateQuestionSchema = createQuestionSchema.extend({
+  questionId: z.uuid(),
+});
+
+export const reorderQuestionsSchema = z.object({
+  questionOrders: z.array(
+    z.object({
+      questionId: z.uuid(),
+      order: z.number().int().positive(),
+    })
+  ),
+});
+
 export const editProfileSchema = z.object({
   firstName: z
     .string()

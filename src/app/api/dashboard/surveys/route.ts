@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session/session";
-import { prisma } from "@/lib/prisma";
 import { createSurveySchema } from "@/lib/validation/validation";
+import { getAllSurveys, createSurvey } from "@/lib/queries/surveys";
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,37 +41,14 @@ export async function POST(req: NextRequest) {
       ? new Date(validatedData.endDate)
       : undefined;
 
-    // Create the survey
-    const survey = await prisma.survey.create({
-      data: {
-        title: validatedData.title,
-        description: validatedData.description,
-        isGlobal: validatedData.isGlobal,
-        startDate,
-        endDate,
-        companyId: session.user.companyId,
-        // Create SurveyTeam junction records if teams are specified
-        teams:
-          validatedData.teamIds && validatedData.teamIds.length > 0
-            ? {
-                create: validatedData.teamIds.map((teamId) => ({
-                  teamId,
-                })),
-              }
-            : undefined,
-      },
-      include: {
-        teams: {
-          include: {
-            team: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
+    // Create the survey using query function
+    const survey = await createSurvey(session.user.companyId, {
+      title: validatedData.title,
+      description: validatedData.description,
+      isGlobal: validatedData.isGlobal,
+      startDate,
+      endDate,
+      teamIds: validatedData.teamIds,
     });
 
     return NextResponse.json({
@@ -100,34 +77,8 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get all surveys for the user's company
-    const surveys = await prisma.survey.findMany({
-      where: {
-        companyId: session.user.companyId,
-        deletedAt: null,
-      },
-      include: {
-        teams: {
-          include: {
-            team: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        _count: {
-          select: {
-            questions: true,
-            responses: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    // Get all surveys query function
+    const surveys = await getAllSurveys(session.user.companyId);
 
     return NextResponse.json({ surveys });
   } catch (error) {
