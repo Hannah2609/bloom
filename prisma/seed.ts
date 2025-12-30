@@ -195,7 +195,16 @@ async function seedTeams(
   return createdTeams;
 }
 
-async function seedSurveys(companyId: string, teamIds: string[]) {
+// Helper function to generate random rating (1-5)
+function getRandomRating() {
+  return Math.floor(Math.random() * 5) + 1;
+}
+
+async function seedSurveys(
+  companyId: string,
+  teamIds: string[],
+  allUsers: { id: string }[]
+) {
   console.log("📋 Seeding surveys...");
 
   // 1. DRAFT Survey
@@ -213,11 +222,13 @@ async function seedSurveys(companyId: string, teamIds: string[]) {
             description: "Rate your enthusiasm for Q2 initiatives",
             order: 1,
             required: true,
+            answerType: "SATISFACTION",
           },
           {
             title: "How confident are you in our Q2 goals?",
             order: 2,
             required: true,
+            answerType: "AGREEMENT",
           },
         ],
       },
@@ -225,15 +236,15 @@ async function seedSurveys(companyId: string, teamIds: string[]) {
   });
   console.log(`  ✓ DRAFT: ${draftSurvey.title}`);
 
-  // 2. ACTIVE Survey - Global
+  // 2. ACTIVE Survey - Global (Updated dates)
   const activeSurvey = await prisma.survey.create({
     data: {
       title: "Q1 2025 Employee Engagement Survey",
       description: "Help us understand your experience at the company",
       status: "ACTIVE" as SurveyStatus,
       isGlobal: true,
-      startDate: new Date("2025-01-01"),
-      endDate: new Date("2025-01-31"),
+      startDate: new Date("2025-12-15"),
+      endDate: new Date("2026-01-31"),
       companyId,
       questions: {
         create: [
@@ -242,26 +253,31 @@ async function seedSurveys(companyId: string, teamIds: string[]) {
             description: "Consider flexibility, workload, and time off",
             order: 1,
             required: true,
+            answerType: "SATISFACTION",
           },
           {
             title: "How valued do you feel at work?",
             order: 2,
             required: true,
+            answerType: "SATISFACTION",
           },
           {
             title: "How clear are your career growth opportunities?",
             order: 3,
             required: true,
+            answerType: "SATISFACTION",
           },
           {
             title: "How satisfied are you with team collaboration?",
             order: 4,
             required: true,
+            answerType: "SATISFACTION",
           },
           {
             title: "How would you rate company communication?",
             order: 5,
             required: true,
+            answerType: "SCALE",
           },
         ],
       },
@@ -269,15 +285,15 @@ async function seedSurveys(companyId: string, teamIds: string[]) {
   });
   console.log(`  ✓ ACTIVE (global): ${activeSurvey.title}`);
 
-  // 3. ACTIVE Survey - Team Specific (Frontend + Backend)
+  // 3. ACTIVE Survey - Team Specific (Frontend + Backend) (Updated dates)
   const teamSurvey = await prisma.survey.create({
     data: {
       title: "Engineering Team Feedback",
       description: "Share your thoughts on our engineering practices",
       status: "ACTIVE" as SurveyStatus,
       isGlobal: false,
-      startDate: new Date("2025-01-15"),
-      endDate: new Date("2025-02-15"),
+      startDate: new Date("2025-12-20"),
+      endDate: new Date("2026-01-20"),
       companyId,
       teams: {
         create: [
@@ -291,16 +307,19 @@ async function seedSurveys(companyId: string, teamIds: string[]) {
             title: "How satisfied are you with our development tools?",
             order: 1,
             required: true,
+            answerType: "SATISFACTION",
           },
           {
             title: "How clear are technical requirements?",
             order: 2,
             required: true,
+            answerType: "SATISFACTION",
           },
           {
             title: "How effective is our code review process?",
             order: 3,
             required: true,
+            answerType: "AGREEMENT",
           },
         ],
       },
@@ -308,7 +327,7 @@ async function seedSurveys(companyId: string, teamIds: string[]) {
   });
   console.log(`  ✓ ACTIVE (Frontend + Backend): ${teamSurvey.title}`);
 
-  // 4. CLOSED Survey
+  // 4. CLOSED Survey with 20 responses
   const closedSurvey = await prisma.survey.create({
     data: {
       title: "Q4 2024 Year-End Reflection",
@@ -324,22 +343,60 @@ async function seedSurveys(companyId: string, teamIds: string[]) {
             title: "How satisfied were you with 2024 overall?",
             order: 1,
             required: true,
+            answerType: "SATISFACTION",
           },
           {
             title: "How well did we achieve our 2024 goals?",
             order: 2,
             required: true,
+            answerType: "AGREEMENT",
           },
           {
             title: "How prepared do you feel for 2025?",
             order: 3,
             required: true,
+            answerType: "SCALE",
           },
         ],
       },
     },
+    include: {
+      questions: true,
+    },
   });
   console.log(`  ✓ CLOSED: ${closedSurvey.title}`);
+
+  // Add 20 responses to the closed survey
+  console.log("  📝 Adding 20 responses to closed survey...");
+  const selectedUsers = allUsers.slice(0, 20); // First 20 users
+
+  for (const user of selectedUsers) {
+    // Get user's team (if they have one)
+    const teamMember = await prisma.teamMember.findFirst({
+      where: { userId: user.id },
+      select: { teamId: true },
+    });
+
+    await prisma.surveyResponse.create({
+      data: {
+        surveyId: closedSurvey.id,
+        userId: user.id,
+        teamId: teamMember?.teamId,
+        submittedAt: new Date(
+          2024,
+          11, // December
+          Math.floor(Math.random() * 28) + 1 // Random day between 1-28
+        ),
+        answers: {
+          create: closedSurvey.questions.map((question) => ({
+            questionId: question.id,
+            ratingValue: getRandomRating(),
+          })),
+        },
+      },
+    });
+  }
+  console.log(`  ✓ Added 20 responses`);
 
   // 5. ARCHIVED Survey
   const archivedSurvey = await prisma.survey.create({
@@ -357,6 +414,7 @@ async function seedSurveys(companyId: string, teamIds: string[]) {
             title: "How satisfied were you with H1 2024 progress?",
             order: 1,
             required: true,
+            answerType: "SATISFACTION",
           },
         ],
       },
@@ -364,7 +422,7 @@ async function seedSurveys(companyId: string, teamIds: string[]) {
   });
   console.log(`  ✓ ARCHIVED: ${archivedSurvey.title}`);
 
-  console.log(`✅ Surveys: 5 (1 per status)`);
+  console.log(`✅ Surveys: 5 (1 per status) + 20 responses on closed survey`);
 }
 
 async function main() {
@@ -387,7 +445,7 @@ async function main() {
     const users = await seedUsers(company.id);
     const teams = await seedTeams(company.id, users);
     const teamIds = teams.map((t) => t.id);
-    await seedSurveys(company.id, teamIds);
+    await seedSurveys(company.id, teamIds, users);
 
     console.log("\n✨ Seed completed successfully!");
     console.log("\n📊 Summary:");
@@ -396,7 +454,9 @@ async function main() {
       `  • ${users.length} users (${coreUsers.length} in teams, ${additionalEmployees.length} without teams)`
     );
     console.log(`  • ${teams.length} teams`);
-    console.log(`  • 5 surveys (DRAFT, ACTIVE x2, CLOSED, ARCHIVED)`);
+    console.log(
+      `  • 5 surveys (DRAFT, ACTIVE x2, CLOSED with 20 responses, ARCHIVED)`
+    );
   } catch (error) {
     console.error("\n❌ Seed error:", error);
     throw error;

@@ -37,7 +37,7 @@ export default function HomeClient({
         {activeSurveys.length === 0 ? (
           <p className="text-muted-foreground">No active surveys</p>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2">
             {activeSurveys.map((survey) => (
               <UserSurveyCard
                 key={survey.id}
