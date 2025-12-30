@@ -6,6 +6,7 @@ import { User } from "@/types/user";
 import { SurveyListItem } from "@/types/survey";
 import { UserSurveyCard } from "@/components/dashboard/cards/UserSurveyCard";
 import { getHours } from "date-fns";
+import { HappinessCard } from "@/components/dashboard/happiness/HappinessCard";
 
 interface HomeClientProps {
   user: User;
@@ -33,6 +34,12 @@ export default function HomeClient({
         </p>
         <Heading level="h1">{user.firstName}</Heading>
       </div>
+      
+      {/* Happiness Card */}
+      <div className="mt-6">
+        <HappinessCard userId={user.id} companyId={user.companyId} />
+      </div>
+
       <div className="mt-10">
         {activeSurveys.length === 0 ? (
           <p className="text-muted-foreground">No active surveys</p>
