@@ -106,7 +106,7 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
       }
 
       toast.success("Survey submitted successfully!");
-      router.push("/home?success=survey_completed");
+      router.push("/home");
     } catch (error) {
       console.error("Error submitting survey:", error);
       toast.error(
@@ -118,7 +118,7 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
 
   return (
     <PageLayout>
-      <div className="max-w-3xl mx-auto space-y-8">
+      <div className="space-y-8 max-w-5xl mx-auto">
         {/* Header */}
         <div className="space-y-2">
           <Heading level="h1">{survey.title}</Heading>
@@ -131,7 +131,7 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
         <Card className="shadow-lg">
           <CardContent className="p-8 md:p-12 space-y-10">
             {/* Progress */}
-            <div className="flex flex-col items-center space-y-2 -mt-8 md:-mt-12">
+            <div className="flex flex-col items-center space-y-2">
               <p className="text-sm font-medium text-muted-foreground">
                 {currentQuestionIndex + 1}/{questions.length}
               </p>
@@ -140,7 +140,7 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
 
             {/* Question */}
             <div className="flex justify-center">
-              <div className="w-full pt-2 md:pt-10 max-w-2xl">
+              <div className="w-full max-w-5xl">
                 <QuestionRenderer
                   question={currentQuestion}
                   value={answers[currentQuestion.id]}

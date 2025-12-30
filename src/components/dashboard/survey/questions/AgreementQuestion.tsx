@@ -29,9 +29,9 @@ export function AgreementQuestion({
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <Label className="text-lg font-medium">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col justify-center items-center pb-4">
+        <Label className="text-xl font-medium">
           {title}
           {required && <span className="text-destructive ml-1">*</span>}
         </Label>
@@ -65,7 +65,9 @@ export function AgreementQuestion({
                 {option.label && (
                   <Label
                     htmlFor={`${questionId}-${option.value}`}
-                    className="cursor-pointer text-xs md:text-sm font-medium text-bg text-center pt-2"
+                    className={`cursor-pointer text-xs md:text-sm font-medium text-bg text-center pt-2 ${
+                      index !== 0 && index !== 4 ? "hidden md:block" : ""
+                    }`}
                   >
                     {option.label}
                   </Label>

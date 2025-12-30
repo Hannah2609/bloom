@@ -29,9 +29,9 @@ export function ScaleQuestion({
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <Label className="text-lg font-medium">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col justify-center items-center pb-4">
+        <Label className="text-xl font-medium">
           {title}
           {required && <span className="text-destructive ml-1">*</span>}
         </Label>
