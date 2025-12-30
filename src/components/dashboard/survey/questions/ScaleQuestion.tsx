@@ -20,10 +20,16 @@ export function ScaleQuestion({
   value,
   onChange,
 }: ScaleQuestionProps) {
-  const options = [1, 2, 3, 4, 5];
+  const options = [
+    { value: 1, label: "1" },
+    { value: 2, label: "2" },
+    { value: 3, label: "3" },
+    { value: 4, label: "4" },
+    { value: 5, label: "5" },
+  ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
         <Label className="text-lg font-medium">
           {title}
@@ -38,29 +44,39 @@ export function ScaleQuestion({
         value={value?.toString()}
         onValueChange={(val) => onChange(parseInt(val))}
       >
-        <div className="flex justify-between gap-2">
-          {options.map((option) => (
-            <div
-              key={option}
-              className="flex flex-col items-center gap-2 flex-1"
-            >
-              <RadioGroupItem
-                value={option.toString()}
-                id={`${questionId}-${option}`}
-                className="size-6"
-              />
-              <Label
-                htmlFor={`${questionId}-${option}`}
-                className="cursor-pointer text-sm font-normal"
+        <div className="relative">
+          {/* Radio buttons */}
+          <div className="relative flex justify-between gap-2">
+            {options.map((option, index) => (
+              <div
+                key={option.value}
+                className="flex flex-col items-center gap-2 flex-1 relative"
               >
-                {option}
-              </Label>
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-between text-xs text-muted-foreground mt-2">
-          <span>Low</span>
-          <span>High</span>
+                {/* Connecting line (only between dots) */}
+                {index > 0 && (
+                  <div className="absolute top-3 right-1/2 w-full h-0.5 bg-border" />
+                )}
+
+                <RadioGroupItem
+                  value={option.value.toString()}
+                  id={`${questionId}-${option.value}`}
+                  className="size-6 bg-background z-10"
+                />
+                {option.label && (
+                  <Label
+                    htmlFor={`${questionId}-${option.value}`}
+                    className="cursor-pointer text-xs md:text-sm font-medium text-bg text-center pt-2"
+                  >
+                    {option.label}
+                  </Label>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between text-xs md:text-sm text-muted-foreground mt-8">
+            <span>Low</span>
+            <span>High</span>
+          </div>
         </div>
       </RadioGroup>
     </div>

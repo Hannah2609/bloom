@@ -29,7 +29,7 @@ export function AgreementQuestion({
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
         <Label className="text-lg font-medium">
           {title}
@@ -43,25 +43,41 @@ export function AgreementQuestion({
       <RadioGroup
         value={value?.toString()}
         onValueChange={(val) => onChange(parseInt(val))}
-        className="space-y-3"
       >
-        {options.map((option) => (
-          <div
-            key={option.value}
-            className="flex items-center space-x-3 rounded-lg border p-4 hover:bg-accent transition-colors"
-          >
-            <RadioGroupItem
-              value={option.value.toString()}
-              id={`${questionId}-${option.value}`}
-            />
-            <Label
-              htmlFor={`${questionId}-${option.value}`}
-              className="flex-1 cursor-pointer font-normal"
-            >
-              {option.label}
-            </Label>
+        <div className="relative">
+          {/* Radio buttons */}
+          <div className="relative flex justify-between gap-2">
+            {options.map((option, index) => (
+              <div
+                key={option.value}
+                className="flex flex-col items-center gap-2 flex-1 relative"
+              >
+                {/* Connecting line (only between dots) */}
+                {index > 0 && (
+                  <div className="absolute top-3 right-1/2 w-full h-0.5 bg-border" />
+                )}
+
+                <RadioGroupItem
+                  value={option.value.toString()}
+                  id={`${questionId}-${option.value}`}
+                  className="size-6 bg-background z-10"
+                />
+                {option.label && (
+                  <Label
+                    htmlFor={`${questionId}-${option.value}`}
+                    className="cursor-pointer text-xs md:text-sm font-medium text-bg text-center pt-2"
+                  >
+                    {option.label}
+                  </Label>
+                )}
+              </div>
+            ))}
           </div>
-        ))}
+          <div className="flex justify-between text-xs md:text-sm text-muted-foreground mt-8">
+            <span>Low</span>
+            <span>High</span>
+          </div>
+        </div>
       </RadioGroup>
     </div>
   );
