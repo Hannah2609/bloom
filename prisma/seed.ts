@@ -431,6 +431,8 @@ async function main() {
   try {
     // ✅ Clean ALL data first (avoid duplicates)
     console.log("🧹 Cleaning existing data...");
+    await prisma.happinessScore.deleteMany({});
+    await prisma.happinessScoreSubmission.deleteMany({});
     await prisma.surveyResponse.deleteMany({});
     await prisma.answer.deleteMany({});
     await prisma.question.deleteMany({});
