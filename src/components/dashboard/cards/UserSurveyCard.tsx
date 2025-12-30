@@ -44,7 +44,7 @@ export function UserSurveyCard({
           </div>
         )}
 
-        <CardHeader className="pb-3">
+        <CardHeader className="md:pb-3">
           <div className="space-y-2">
             <CardTitle className="line-clamp-2 text-xl md:text-2xl pr-24 font-medium">
               {survey.title}
