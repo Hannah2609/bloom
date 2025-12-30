@@ -29,14 +29,14 @@ export function ScaleQuestion({
   ];
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-12">
       <div className="flex flex-col justify-center items-center pb-4">
         <Label className="text-xl md:text-2xl font-medium">
           {title}
           {required && <span className="text-destructive ml-1">*</span>}
         </Label>
         {description && (
-          <p className="text-sm text-muted-foreground mt-2">{description}</p>
+          <p className="text-sm md:text-base text-bg mt-2">{description}</p>
         )}
       </div>
 
