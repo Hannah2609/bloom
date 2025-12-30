@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { SurveyDetail } from "@/types/survey";
 import { Button } from "@/components/ui/button/button";
 import { QuestionRenderer } from "@/components/dashboard/survey/questions/QuestionRenderer";
-import { Card, CardContent, CardHeader } from "@/components/ui/card/card";
+import { Card, CardContent } from "@/components/ui/card/card";
 import { Heading } from "@/components/ui/heading/heading";
 import { Progress } from "@/components/ui/progress/progress";
 import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -118,72 +118,71 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
 
   return (
     <PageLayout>
-      <div className="space-y-6">
+      <div className="max-w-3xl mx-auto space-y-8">
         {/* Header */}
-        <div>
+        <div className="space-y-2">
           <Heading level="h1">{survey.title}</Heading>
           {survey.description && (
-            <p className="text-muted-foreground mt-2">{survey.description}</p>
+            <p className="text-muted-foreground">{survey.description}</p>
           )}
         </div>
 
-        {/* Progress */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>
-              Question {currentQuestionIndex + 1} of {questions.length}
-            </span>
-            <span>{Math.round(progress)}% Complete</span>
-          </div>
-          <Progress value={progress} />
-        </div>
-
-        {/* Question Card */}
-        <Card>
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="font-medium">
+        {/* Main Card */}
+        <Card className="shadow-lg">
+          <CardContent className="p-8 md:p-12 space-y-10">
+            {/* Progress */}
+            <div className="flex flex-col items-center space-y-2 -mt-8 md:-mt-12">
+              <p className="text-sm font-medium text-muted-foreground">
                 {currentQuestionIndex + 1}/{questions.length}
-              </span>
+              </p>
+              <Progress value={progress} className="h-1.5 w-48" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <QuestionRenderer
-              question={currentQuestion}
-              value={answers[currentQuestion.id]}
-              onChange={handleAnswerChange}
-            />
+
+            {/* Question */}
+            <div className="flex justify-center">
+              <div className="w-full pt-2 md:pt-10 max-w-2xl">
+                <QuestionRenderer
+                  question={currentQuestion}
+                  value={answers[currentQuestion.id]}
+                  onChange={handleAnswerChange}
+                />
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <div className="flex justify-between items-center pt-6">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={isFirstQuestion}
+                size="lg"
+              >
+                <ArrowLeft className="size-4 mr-2" />
+                Previous
+              </Button>
+
+              <Button
+                onClick={handleNext}
+                disabled={
+                  currentQuestion.required && !isCurrentQuestionAnswered
+                }
+                size="lg"
+              >
+                {isLastQuestion ? (
+                  <>
+                    Submit
+                    <CheckCircle2 className="size-4 ml-2" />
+                  </>
+                ) : (
+                  <>
+                    Next
+                    <ArrowRight className="size-4 ml-2" />
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
-
-        {/* Navigation */}
-        <div className="flex justify-between items-center pt-4">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={isFirstQuestion}
-          >
-            <ArrowLeft className="size-4 mr-2" />
-            Previous
-          </Button>
-
-          <Button
-            onClick={handleNext}
-            disabled={currentQuestion.required && !isCurrentQuestionAnswered}
-          >
-            {isLastQuestion ? (
-              <>
-                <CheckCircle2 className="size-4 mr-2" />
-                Review & Submit
-              </>
-            ) : (
-              <>
-                Next
-                <ArrowRight className="size-4 ml-2" />
-              </>
-            )}
-          </Button>
-        </div>
       </div>
 
       {/* Confirm Submit Dialog */}
