@@ -1,4 +1,4 @@
-import { House, MessageCircleHeart, Settings, LucideEdit } from "lucide-react";
+import { House, Settings, LucideEdit } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
 
 export interface MenuItem {
@@ -15,11 +15,6 @@ export const MENU_ITEMS: MenuItem[] = [
     title: "Home",
     url: "/home",
     icon: House,
-  },
-  {
-    title: "Survey",
-    url: "/survey",
-    icon: MessageCircleHeart,
   },
 ];
 

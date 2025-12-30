@@ -1,3 +1,4 @@
+// src/app/(dashboard)/teams/[id]/TeamClient.tsx
 "use client";
 
 import AddTeamMemberForm from "@/components/dashboard/forms/AddTeamMemberForm";
@@ -21,18 +22,20 @@ import { PlusIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PageLayout } from "@/components/dashboard/layout/pageLayout";
-import { SurveyCard } from "@/components/dashboard/cards/SurveyCard";
+import { UserSurveyCard } from "@/components/dashboard/cards/UserSurveyCard";
 
 interface TeamClientProps {
   team: TeamWithMembers;
   isAdminOrManager: boolean;
   activeSurveys: SurveyListItem[];
+  completedSurveyIds: string[];
 }
 
 export default function TeamClient({
   team,
   isAdminOrManager,
   activeSurveys,
+  completedSurveyIds,
 }: TeamClientProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -110,7 +113,11 @@ export default function TeamClient({
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {activeSurveys.map((survey) => (
-                    <SurveyCard key={survey.id} survey={survey} />
+                    <UserSurveyCard
+                      key={survey.id}
+                      survey={survey}
+                      hasCompleted={completedSurveyIds.includes(survey.id)}
+                    />
                   ))}
                 </div>
               </div>

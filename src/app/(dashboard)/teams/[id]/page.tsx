@@ -1,7 +1,9 @@
+// src/app/(dashboard)/teams/[id]/page.tsx
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session/session";
 import { getTeamById, canUserAccessTeam } from "@/lib/queries/teams";
 import { getActiveSurveysForTeam } from "@/lib/queries/surveys";
+import { getUserCompletedSurveys } from "@/lib/queries/responses";
 import TeamClient from "./TeamClient";
 
 export default async function TeamPage({
@@ -37,7 +39,12 @@ export default async function TeamPage({
   }
 
   // Fetch active surveys for this team (global or team-specific)
-  const activeSurveys = await getActiveSurveysForTeam(id);
+  const [activeSurveys, completedResponses] = await Promise.all([
+    getActiveSurveysForTeam(id),
+    getUserCompletedSurveys(session.user.id),
+  ]);
+
+  const completedSurveyIds = completedResponses.map((r) => r.surveyId);
 
   const isAdmin = session.user.role === "ADMIN";
   const isManager = team.members.some(
@@ -51,6 +58,7 @@ export default async function TeamPage({
       team={team}
       isAdminOrManager={isAdminOrManager}
       activeSurveys={activeSurveys}
+      completedSurveyIds={completedSurveyIds}
     />
   );
 }

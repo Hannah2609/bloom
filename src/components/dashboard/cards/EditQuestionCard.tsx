@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Question } from "@/types/survey";
-import { RatingScale } from "../survey/RatingScale";
+import { RatingScale } from "../create-survey/RatingScale";
 import { Button } from "@/components/ui/button/button";
 import { Pencil, GripVertical } from "lucide-react";
 
