@@ -2,6 +2,51 @@ import { prisma } from "@/lib/prisma";
 import { SurveyListItem, SurveyDetail } from "@/types/survey";
 
 /**
+ * Update survey statuses based on current date
+ * Should be called before fetching surveys to ensure DB is in sync
+ */
+async function syncSurveyStatuses(companyId: string) {
+  const now = new Date();
+
+  try {
+    // Activate surveys that have reached start date
+    await prisma.survey.updateMany({
+      where: {
+        companyId,
+        status: "DRAFT",
+        startDate: {
+          lte: now,
+        },
+        deletedAt: null,
+      },
+      data: {
+        status: "ACTIVE",
+      },
+    });
+
+    // Close surveys that have reached end date
+    await prisma.survey.updateMany({
+      where: {
+        companyId,
+        status: "ACTIVE",
+        endDate: {
+          lte: now,
+        },
+        deletedAt: null,
+      },
+      data: {
+        status: "CLOSED",
+      },
+    });
+  } catch (error) {
+    console.error("Error syncing survey statuses:", error);
+    // Don't throw - continue with fetching even if sync fails
+    // If sync fails, statuses will be updated on next call, and surveys won't be missing, just possibly outdated
+    // Preventing user-facing errors is more important here
+  }
+}
+
+/**
  * GET
  */
 /**
@@ -10,6 +55,9 @@ import { SurveyListItem, SurveyDetail } from "@/types/survey";
 export async function getAllSurveys(
   companyId: string
 ): Promise<SurveyListItem[]> {
+  // Sync statuses before fetching
+  await syncSurveyStatuses(companyId);
+
   const surveys = await prisma.survey.findMany({
     where: {
       companyId,
@@ -57,6 +105,9 @@ export async function getSurveyById(
   surveyId: string,
   companyId: string
 ): Promise<SurveyDetail | null> {
+  // Sync statuses before fetching
+  await syncSurveyStatuses(companyId);
+
   const survey = await prisma.survey.findFirst({
     where: {
       id: surveyId,
@@ -144,6 +195,9 @@ export async function getActiveSurveysForUser(
   companyId: string,
   userId: string
 ): Promise<SurveyListItem[]> {
+  // Sync statuses before fetching
+  await syncSurveyStatuses(companyId);
+
   const now = new Date();
 
   // Get user's team IDs first (avoid complex nested query)
@@ -230,6 +284,16 @@ export async function getActiveSurveysForUser(
 export async function getActiveSurveysForTeam(
   teamId: string
 ): Promise<SurveyListItem[]> {
+  // Get team's companyId first to sync statuses
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+    select: { companyId: true },
+  });
+
+  if (team) {
+    await syncSurveyStatuses(team.companyId);
+  }
+
   const now = new Date();
 
   const surveys = await prisma.survey.findMany({
