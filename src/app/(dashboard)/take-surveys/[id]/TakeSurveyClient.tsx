@@ -129,13 +129,13 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
 
         {/* Main Card */}
         <Card className="shadow-lg">
-          <CardContent className="p-8 md:p-12 space-y-10">
+          <CardContent className="p-6 md:p-12 space-y-10">
             {/* Progress */}
-            <div className="flex flex-col items-center space-y-2">
+            <div className="flex flex-col items-center -mt-6 space-y-2">
               <p className="text-sm font-medium text-muted-foreground">
                 {currentQuestionIndex + 1}/{questions.length}
               </p>
-              <Progress value={progress} className="h-1.5 w-48" />
+              <Progress value={progress} className="h-1.5 w-40 md:w-48" />
             </div>
 
             {/* Question */}
@@ -150,7 +150,7 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
             </div>
 
             {/* Navigation */}
-            <div className="flex justify-between items-center pt-6">
+            <div className="flex justify-between items-center pt-2 md:pt-6">
               <Button
                 variant="outline"
                 onClick={handlePrevious}

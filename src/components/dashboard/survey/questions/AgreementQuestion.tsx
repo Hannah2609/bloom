@@ -31,7 +31,7 @@ export function AgreementQuestion({
   return (
     <div className="space-y-4 md:space-y-6">
       <div className="flex flex-col justify-center items-center pb-4">
-        <Label className="text-xl font-medium">
+        <Label className="text-xl md:text-2xl font-medium">
           {title}
           {required && <span className="text-destructive ml-1">*</span>}
         </Label>
@@ -60,13 +60,15 @@ export function AgreementQuestion({
                 <RadioGroupItem
                   value={option.value.toString()}
                   id={`${questionId}-${option.value}`}
-                  className="size-6 bg-background z-10"
+                  className="size-7! md:size-8! bg-background z-10"
                 />
                 {option.label && (
                   <Label
                     htmlFor={`${questionId}-${option.value}`}
-                    className={`cursor-pointer text-xs md:text-sm font-medium text-bg text-center pt-2 ${
-                      index !== 0 && index !== 4 ? "hidden md:block" : ""
+                    className={`cursor-pointer text-xs md:text-base font-medium text-bg text-center pt-2 ${
+                      index !== 0 && index !== 2 && index !== 4
+                        ? "hidden md:block"
+                        : ""
                     }`}
                   >
                     {option.label}
@@ -75,7 +77,7 @@ export function AgreementQuestion({
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-xs md:text-sm text-muted-foreground mt-8">
+          <div className="flex justify-between text-sm md:text-base text-muted-foreground mt-8">
             <span>Low</span>
             <span>High</span>
           </div>
