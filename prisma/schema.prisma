@@ -126,7 +126,6 @@ enum SurveyStatus {
   DRAFT
   ACTIVE
   CLOSED
-  ARCHIVED
 }
 
 // **Question Model**

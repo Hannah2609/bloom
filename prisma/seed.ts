@@ -397,32 +397,7 @@ async function seedSurveys(
     });
   }
   console.log(`  ✓ Added 20 responses`);
-
-  // 5. ARCHIVED Survey
-  const archivedSurvey = await prisma.survey.create({
-    data: {
-      title: "Q3 2024 Mid-Year Check-in",
-      description: "Archived feedback from mid-2024",
-      status: "ARCHIVED" as SurveyStatus,
-      isGlobal: true,
-      startDate: new Date("2024-07-01"),
-      endDate: new Date("2024-07-31"),
-      companyId,
-      questions: {
-        create: [
-          {
-            title: "How satisfied were you with H1 2024 progress?",
-            order: 1,
-            required: true,
-            answerType: "SATISFACTION",
-          },
-        ],
-      },
-    },
-  });
-  console.log(`  ✓ ARCHIVED: ${archivedSurvey.title}`);
-
-  console.log(`✅ Surveys: 5 (1 per status) + 20 responses on closed survey`);
+  console.log(`✅ Surveys: 4 (1 per status) + 20 responses on closed survey`);
 }
 
 async function main() {
@@ -457,7 +432,7 @@ async function main() {
     );
     console.log(`  • ${teams.length} teams`);
     console.log(
-      `  • 5 surveys (DRAFT, ACTIVE x2, CLOSED with 20 responses, ARCHIVED)`
+      `  • 5 surveys (DRAFT, ACTIVE x2, CLOSED with 20 responses)`
     );
   } catch (error) {
     console.error("\n❌ Seed error:", error);

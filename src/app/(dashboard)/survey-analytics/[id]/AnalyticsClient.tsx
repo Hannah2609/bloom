@@ -81,18 +81,20 @@ export default function AnalyticsClient({ analytics }: AnalyticsClientProps) {
         </div>
 
         {/* Questions Analytics */}
-        <div className="space-y-6">
+        <div>
           {analytics.questions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               No responses yet for this survey.
             </div>
           ) : (
-            analytics.questions.map((question) => (
-              <QuestionAnalyticsCard
-                key={question.questionId}
-                data={question}
-              />
-            ))
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {analytics.questions.map((question) => (
+                <QuestionAnalyticsCard
+                  key={question.questionId}
+                  data={question}
+                />
+              ))}
+            </div>
           )}
         </div>
       </div>

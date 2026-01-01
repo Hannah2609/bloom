@@ -9,29 +9,53 @@ import {
 import type { QuestionAnalytics } from "@/types/analytics";
 
 const COLORS = [
-  "hsl(var(--destructive))", // Rating 1 - Red
-  "hsl(var(--orange))", // Rating 2 - Orange
-  "hsl(var(--warning))", // Rating 3 - Yellow
-  "hsl(var(--success))", // Rating 4 - Light Green
-  "hsl(var(--primary))", // Rating 5 - Primary Green
+  "#dc2626", // Rating 1 - Deeper Red
+  "#f59e0b", // Rating 2 - Amber
+  "#fbbf24", // Rating 3 - Warm Yellow
+  "#a3e635", // Rating 4 - Lime
+  "#22c55e", // Rating 5 - Emerald Green
 ];
 
+const LABELS = {
+  SATISFACTION: [
+    "Very dissatisfied",
+    "Dissatisfied",
+    "Neutral",
+    "Satisfied",
+    "Very satisfied",
+  ],
+  AGREEMENT: [
+    "Strongly disagree",
+    "Disagree",
+    "Neutral",
+    "Agree",
+    "Strongly agree",
+  ],
+  SCALE: ["1", "2", "3", "4", "5"],
+};
+
 export function PieChartView({ data }: { data: QuestionAnalytics }) {
+  const labels = LABELS[data.answerType];
+
   const chartData = data.distribution
     .filter((d) => d.count > 0) // Only show ratings with responses
     .map((d) => ({
-      name: `Rating ${d.rating}`,
+      name: labels[d.rating - 1],
       value: d.count,
       percentage: d.percentage,
+      fill: COLORS[d.rating - 1],
     }));
 
-  const chartConfig = chartData.reduce((acc, item, index) => {
-    acc[item.name] = {
-      label: item.name,
-      color: COLORS[index] || "hsl(var(--primary))",
-    };
-    return acc;
-  }, {} as Record<string, { label: string; color: string }>);
+  const chartConfig = chartData.reduce(
+    (acc, item) => {
+      acc[item.name] = {
+        label: item.name,
+        color: item.fill,
+      };
+      return acc;
+    },
+    {} as Record<string, { label: string; color: string }>
+  );
 
   return (
     <ChartContainer config={chartConfig} className="h-[300px] w-full">
@@ -45,14 +69,10 @@ export function PieChartView({ data }: { data: QuestionAnalytics }) {
             labelLine={false}
             label={({ percentage }) => `${percentage.toFixed(1)}%`}
             outerRadius={100}
-            fill="#8884d8"
             dataKey="value"
           >
             {chartData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
+              <Cell key={`cell-${index}`} fill={entry.fill} />
             ))}
           </Pie>
           <Legend />

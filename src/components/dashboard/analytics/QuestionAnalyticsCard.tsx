@@ -9,10 +9,9 @@ import {
   CardTitle,
 } from "@/components/ui/card/card";
 import { Button } from "@/components/ui/button/button";
-import { BarChart3, PieChart, ActivitySquare } from "lucide-react";
+import { BarChart3, PieChart } from "lucide-react";
 import { BarChartView } from "./charts/BarChartView";
 import { PieChartView } from "./charts/PieChartView";
-import { RadialChartView } from "./charts/RadialChartView";
 import type { QuestionAnalytics, ChartType } from "@/types/analytics";
 
 interface QuestionAnalyticsCardProps {
@@ -53,14 +52,6 @@ export function QuestionAnalyticsCard({ data }: QuestionAnalyticsCardProps) {
             >
               <PieChart className="size-4" />
             </Button>
-            <Button
-              variant={chartType === "radial" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setChartType("radial")}
-              title="Radial Chart"
-            >
-              <ActivitySquare className="size-4" />
-            </Button>
           </div>
         </div>
 
@@ -82,7 +73,6 @@ export function QuestionAnalyticsCard({ data }: QuestionAnalyticsCardProps) {
         {/* Render selected chart type */}
         {chartType === "bar" && <BarChartView data={data} />}
         {chartType === "pie" && <PieChartView data={data} />}
-        {chartType === "radial" && <RadialChartView data={data} />}
       </CardContent>
     </Card>
   );

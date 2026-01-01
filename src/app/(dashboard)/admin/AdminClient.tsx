@@ -80,7 +80,7 @@ export default function AdminClient({ initialUsers }: AdminClientProps) {
     <PageLayout>
       <div className="mb-6">
         <Heading level="h1">Manage Users</Heading>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-muted-foreground text-lg md:text-xl mt-1">
           Manage users and their roles
         </p>
       </div>

@@ -23,21 +23,13 @@ export function SurveyCard({ survey }: SurveyCardProps) {
         return "bg-gray-500/10 text-gray-700 dark:text-gray-400 border-gray-200 dark:border-gray-800";
       case "CLOSED":
         return "bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800";
-      case "ARCHIVED":
-        return "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800";
       default:
         return "";
     }
   };
-
-  // Link to analytics if CLOSED, otherwise to edit page
-  const href =
-    survey.status === "CLOSED"
-      ? `/survey-analytics/${survey.id}`
-      : `/create-surveys/${survey.id}`;
-
+  
   return (
-    <Link href={href}>
+    <Link href={`/create-surveys/${survey.id}`}>
       <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden group h-80">
         <CardHeader className="relative">
           <div className="flex items-start justify-between gap-4 h-12">
