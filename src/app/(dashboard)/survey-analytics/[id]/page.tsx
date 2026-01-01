@@ -1,4 +1,3 @@
-// app/(dashboard)/survey-analytics/[id]/page.tsx
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session/session";
 import { getSurveyAnalytics } from "@/lib/queries/responses";

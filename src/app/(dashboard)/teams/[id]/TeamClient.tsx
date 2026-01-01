@@ -1,4 +1,3 @@
-// src/app/(dashboard)/teams/[id]/TeamClient.tsx
 "use client";
 
 import AddTeamMemberForm from "@/components/dashboard/forms/AddTeamMemberForm";

@@ -123,7 +123,7 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
         <div className="space-y-2">
           <Heading level="h1">{survey.title}</Heading>
           {survey.description && (
-            <p className="text-muted-foreground">{survey.description}</p>
+            <p className="text-muted-foreground text-lg md:text-xl">{survey.description}</p>
           )}
         </div>
 

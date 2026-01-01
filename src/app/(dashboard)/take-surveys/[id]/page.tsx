@@ -1,4 +1,3 @@
-// src/app/(dashboard)/take-surveys/[id]/page.tsx
 import { redirect } from "next/navigation";
 import { getSurveyById } from "@/lib/queries/surveys";
 import TakeSurveyClient from "./TakeSurveyClient";

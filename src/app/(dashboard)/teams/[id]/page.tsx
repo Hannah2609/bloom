@@ -1,4 +1,3 @@
-// src/app/(dashboard)/teams/[id]/page.tsx
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session/session";
 import { getTeamById, canUserAccessTeam } from "@/lib/queries/teams";

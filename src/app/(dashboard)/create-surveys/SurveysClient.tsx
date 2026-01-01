@@ -42,9 +42,9 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
   return (
     <>
       <PageLayout>
-        <div className="mb-8 space-y-6 flex flex-col md:flex-row md:items-center md:justify-between">
+        <div className="mb-8 space-y-6 md:space-y-0 flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
-            <Heading level="h1">Surveys</Heading>
+            <Heading level="h1">Create Surveys</Heading>
             <p className="mt-1 text-lg md:text-xl text-muted-foreground">
               Create and edit surveys
             </p>

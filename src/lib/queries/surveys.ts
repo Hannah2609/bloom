@@ -279,7 +279,7 @@ export async function getActiveSurveysForUser(
 }
 
 /**
- * Get active surveys for a specific team
+ * Get active surveys for a specific team (only team-specific, not global)
  */
 export async function getActiveSurveysForTeam(
   teamId: string
@@ -303,17 +303,12 @@ export async function getActiveSurveysForTeam(
       startDate: {
         lte: now,
       },
-      OR: [
-        { isGlobal: true }, // Global surveys
-        {
-          // Team-specific surveys for this team
-          teams: {
-            some: {
-              teamId,
-            },
-          },
+      isGlobal: false, // Only team-specific surveys
+      teams: {
+        some: {
+          teamId,
         },
-      ],
+      },
     },
     select: {
       id: true,

@@ -1,4 +1,4 @@
-import { House, Settings, LucideEdit } from "lucide-react";
+import { House, Settings, LucideEdit, ChartColumn } from "lucide-react";
 import { type LucideIcon } from "lucide-react";
 
 export interface MenuItem {
@@ -28,5 +28,10 @@ export const ADMIN_ITEMS: MenuItem[] = [
     title: "Create surveys",
     url: "/create-surveys",
     icon: LucideEdit,
+  },
+  {
+    title: "Survey analytics",
+    url: "/survey-analytics",
+    icon: ChartColumn,
   },
 ];
