@@ -1,25 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
 /**
- * Check if user has completed a survey
- */
-export async function hasUserCompletedSurvey(
-  surveyId: string,
-  userId: string
-): Promise<boolean> {
-  const response = await prisma.surveyResponse.findUnique({
-    where: {
-      surveyId_userId: {
-        surveyId,
-        userId,
-      },
-    },
-  });
-
-  return !!response;
-}
-
-/**
  * Submit survey response with answers
  */
 export async function submitSurveyResponse(data: {
@@ -43,11 +24,6 @@ export async function submitSurveyResponse(data: {
           required: true,
         },
       },
-      teams: {
-        select: {
-          teamId: true,
-        },
-      },
     },
   });
 
@@ -69,39 +45,11 @@ export async function submitSurveyResponse(data: {
     throw new Error("All required questions must be answered");
   }
 
-  // Determine teamId based on survey type
-  let teamId: string | null = null;
-
-  if (survey.isGlobal) {
-    // Global survey: teamId is null
-    teamId = null;
-  } else {
-    // Targeted survey: Find which of the survey's target teams the user belongs to
-    const surveyTeamIds = survey.teams.map((t) => t.teamId);
-
-    const userTeamMembership = await prisma.teamMember.findFirst({
-      where: {
-        userId: data.userId,
-        teamId: { in: surveyTeamIds },
-        leftAt: null,
-      },
-      orderBy: {
-        joinedAt: "asc", // Use oldest membership if user is in multiple target teams
-      },
-      select: {
-        teamId: true,
-      },
-    });
-
-    teamId = userTeamMembership?.teamId || null;
-  }
-
-  // Create response with answers in a transaction
+  // Create response with answers
   const response = await prisma.surveyResponse.create({
     data: {
       surveyId: data.surveyId,
       userId: data.userId,
-      teamId,
       answers: {
         create: data.answers.map((answer) => ({
           questionId: answer.questionId,
@@ -139,7 +87,6 @@ export async function getUserCompletedSurveys(userId: string) {
 
 /**
  * Get survey analytics data (admin only)
- * Returns aggregated anonymous data per question
  */
 export async function getSurveyAnalytics(surveyId: string, companyId: string) {
   // Verify survey exists and belongs to company
@@ -172,7 +119,7 @@ export async function getSurveyAnalytics(surveyId: string, companyId: string) {
     throw new Error("Survey not found");
   }
 
-  // Get all answers grouped by question
+  // Get all answers
   const answers = await prisma.answer.findMany({
     where: {
       response: {
@@ -189,7 +136,7 @@ export async function getSurveyAnalytics(surveyId: string, companyId: string) {
   const questionAnalytics = survey.questions.map((question) => {
     const questionAnswers = answers.filter((a) => a.questionId === question.id);
 
-    // Count distribution (1-5) with percentages
+    // Distribution (1-5) with percentages
     const distribution = [1, 2, 3, 4, 5].map((rating) => {
       const count = questionAnswers.filter(
         (a) => a.ratingValue === rating
@@ -204,7 +151,7 @@ export async function getSurveyAnalytics(surveyId: string, companyId: string) {
       };
     });
 
-    // Calculate average
+    // Average
     const total = questionAnswers.reduce((sum, a) => sum + a.ratingValue, 0);
     const average =
       questionAnswers.length > 0 ? total / questionAnswers.length : 0;

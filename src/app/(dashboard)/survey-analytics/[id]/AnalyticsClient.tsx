@@ -38,7 +38,7 @@ export default function AnalyticsClient({ analytics }: AnalyticsClientProps) {
             onClick={() => router.push("/create-surveys")}
           >
             <ArrowLeft className="size-4 mr-2" />
-            Back to Surveys
+            Back to analytics overview
           </Button>
 
           <div className="flex items-start justify-between gap-4">
@@ -58,7 +58,7 @@ export default function AnalyticsClient({ analytics }: AnalyticsClientProps) {
           </div>
 
           {/* Summary Stats */}
-          <div className="flex gap-6 text-sm">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 text-sm">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">Total Responses:</span>
               <span className="font-bold text-lg">

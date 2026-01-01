@@ -56,7 +56,7 @@ export function QuestionAnalyticsCard({ data }: QuestionAnalyticsCardProps) {
         </div>
 
         {/* Stats Summary */}
-        <div className="flex gap-6 text-sm pt-2">
+        <div className="flex items-baseline gap-6 text-sm pt-2">
           <div>
             <span className="text-muted-foreground">Average: </span>
             <span className="font-bold text-lg">{data.average.toFixed(2)}</span>

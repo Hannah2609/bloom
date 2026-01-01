@@ -31,7 +31,7 @@ export function UserSurveyCard({
 
   return (
     <Link href={`/take-surveys/${survey.id}`} onClick={handleClick}>
-      <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden min-h-55 md:min-h-60 group">
+      <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden h-full group">
         <div className="absolute -right-8 -top-8 opacity-[0.08] group-hover:opacity-[0.1] transition-opacity">
           <ChartNoAxesCombined className="size-42 md:size-48" strokeWidth={1.5} />
         </div>
@@ -45,7 +45,7 @@ export function UserSurveyCard({
         )}
 
         <CardHeader className="md:pb-3">
-          <div className="space-y-2">
+          <div className="space-y-2 min-h-26">
             <CardTitle className="line-clamp-2 text-xl md:text-2xl pr-24 font-medium">
               {survey.title}
             </CardTitle>
