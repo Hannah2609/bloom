@@ -8,7 +8,7 @@ import { QuestionRenderer } from "@/components/dashboard/survey-questions/Questi
 import { Card, CardContent } from "@/components/ui/card/card";
 import { Heading } from "@/components/ui/heading/heading";
 import { Progress } from "@/components/ui/progress/progress";
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -24,11 +24,15 @@ import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 
 interface TakeSurveyClientProps {
   survey: SurveyDetail;
+  isAdmin?: boolean;
 }
 
 type AnswersState = Record<string, number>;
 
-export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
+export default function TakeSurveyClient({
+  survey,
+  isAdmin = false,
+}: TakeSurveyClientProps) {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswersState>({});
@@ -119,11 +123,25 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
   return (
     <PageLayout>
       <div className="space-y-8 max-w-5xl mx-auto">
+        {/* Admin Preview Banner */}
+        {isAdmin && (
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="size-5 text-amber-600" />
+              <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                Preview Mode: You can navigate through the survey but cannot
+                submit responses as an admin.
+              </p>
+            </div>
+          </div>
+        )}
         {/* Header */}
         <div className="space-y-2">
           <Heading level="h1">{survey.title}</Heading>
           {survey.description && (
-            <p className="text-muted-foreground text-lg md:text-xl">{survey.description}</p>
+            <p className="text-muted-foreground text-lg md:text-xl">
+              {survey.description}
+            </p>
           )}
         </div>
 
@@ -164,13 +182,14 @@ export default function TakeSurveyClient({ survey }: TakeSurveyClientProps) {
               <Button
                 onClick={handleNext}
                 disabled={
-                  currentQuestion.required && !isCurrentQuestionAnswered
+                  (currentQuestion.required && !isCurrentQuestionAnswered) ||
+                  isAdmin
                 }
                 size="lg"
               >
                 {isLastQuestion ? (
                   <>
-                    Submit
+                    {isAdmin ? "Preview Only" : "Submit"}
                     <CheckCircle2 className="size-4 ml-2" />
                   </>
                 ) : (

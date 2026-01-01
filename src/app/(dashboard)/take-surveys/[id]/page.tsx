@@ -21,5 +21,7 @@ export default async function TakeSurveyPage({ params }: TakeSurveyPageProps) {
     redirect("/home");
   }
 
-  return <TakeSurveyClient survey={survey} />;
+  const isAdmin = session.user.role === "ADMIN";
+
+  return <TakeSurveyClient survey={survey} isAdmin={isAdmin} />;
 }
