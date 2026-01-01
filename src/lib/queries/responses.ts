@@ -1,4 +1,3 @@
-// src/lib/queries/responses.ts
 import { prisma } from "@/lib/prisma";
 
 /**
@@ -136,4 +135,99 @@ export async function getUserCompletedSurveys(userId: string) {
   });
 
   return responses;
+}
+
+/**
+ * Get survey analytics data (admin only)
+ * Returns aggregated anonymous data per question
+ */
+export async function getSurveyAnalytics(surveyId: string, companyId: string) {
+  // Verify survey exists and belongs to company
+  const survey = await prisma.survey.findFirst({
+    where: {
+      id: surveyId,
+      companyId,
+      deletedAt: null,
+    },
+    include: {
+      questions: {
+        orderBy: { order: "asc" },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          answerType: true,
+          order: true,
+        },
+      },
+      _count: {
+        select: {
+          responses: true,
+        },
+      },
+    },
+  });
+
+  if (!survey) {
+    throw new Error("Survey not found");
+  }
+
+  // Get all answers grouped by question
+  const answers = await prisma.answer.findMany({
+    where: {
+      response: {
+        surveyId,
+      },
+    },
+    select: {
+      questionId: true,
+      ratingValue: true,
+    },
+  });
+
+  // Aggregate data per question
+  const questionAnalytics = survey.questions.map((question) => {
+    const questionAnswers = answers.filter((a) => a.questionId === question.id);
+
+    // Count distribution (1-5) with percentages
+    const distribution = [1, 2, 3, 4, 5].map((rating) => {
+      const count = questionAnswers.filter(
+        (a) => a.ratingValue === rating
+      ).length;
+      const percentage =
+        questionAnswers.length > 0 ? (count / questionAnswers.length) * 100 : 0;
+
+      return {
+        rating,
+        count,
+        percentage,
+      };
+    });
+
+    // Calculate average
+    const total = questionAnswers.reduce((sum, a) => sum + a.ratingValue, 0);
+    const average =
+      questionAnswers.length > 0 ? total / questionAnswers.length : 0;
+
+    return {
+      questionId: question.id,
+      title: question.title,
+      description: question.description,
+      answerType: question.answerType,
+      order: question.order,
+      responseCount: questionAnswers.length,
+      average,
+      distribution,
+    };
+  });
+
+  return {
+    surveyId: survey.id,
+    title: survey.title,
+    description: survey.description,
+    status: survey.status,
+    isGlobal: survey.isGlobal,
+    totalResponses: survey._count.responses,
+    questions: questionAnalytics,
+  };
 }

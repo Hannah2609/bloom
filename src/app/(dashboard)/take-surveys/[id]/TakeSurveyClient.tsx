@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SurveyDetail } from "@/types/survey";
 import { Button } from "@/components/ui/button/button";
-import { QuestionRenderer } from "@/components/dashboard/survey/questions/QuestionRenderer";
+import { QuestionRenderer } from "@/components/dashboard/survey-questions/QuestionRenderer";
 import { Card, CardContent } from "@/components/ui/card/card";
 import { Heading } from "@/components/ui/heading/heading";
 import { Progress } from "@/components/ui/progress/progress";

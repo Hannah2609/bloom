@@ -30,8 +30,14 @@ export function SurveyCard({ survey }: SurveyCardProps) {
     }
   };
 
+  // Link to analytics if CLOSED, otherwise to edit page
+  const href =
+    survey.status === "CLOSED"
+      ? `/survey-analytics/${survey.id}`
+      : `/create-surveys/${survey.id}`;
+
   return (
-    <Link href={`/create-surveys/${survey.id}`}>
+    <Link href={href}>
       <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden group h-80">
         <CardHeader className="relative">
           <div className="flex items-start justify-between gap-4 h-12">
