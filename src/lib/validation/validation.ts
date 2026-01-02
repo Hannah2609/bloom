@@ -165,6 +165,23 @@ export const validateTokenSchema = z.object({
   token: z.string(),
 });
 
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/,
+        "Password must contain at least one letter and one number"
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
 export type SignupSchema = z.infer<typeof signupSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type CompanySignupSchema = z.infer<typeof companySignupSchema>;
@@ -177,3 +194,4 @@ export type EditProfileAvatarSchema = z.infer<typeof editProfileAvatarSchema>;
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 export type ValidateTokenSchema = z.infer<typeof validateTokenSchema>;
+export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;

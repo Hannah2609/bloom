@@ -1,7 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session/session";
 import { NextResponse } from "next/server";
-import { editProfileAvatarSchema, editProfileNameSchema } from "@/lib/validation/validation";
+import {
+  editProfileAvatarSchema,
+  editProfileNameSchema,
+  changePasswordSchema,
+} from "@/lib/validation/validation";
+import { compare, hash } from "bcryptjs";
 
 // Update user profile
 export async function PATCH(
@@ -25,6 +30,53 @@ export async function PATCH(
     }
 
     const body = await request.json();
+
+    // Check if it's a password change
+    if ("currentPassword" in body) {
+      const result = changePasswordSchema.safeParse(body);
+      if (!result.success) {
+        return NextResponse.json(
+          { error: "Validation error", details: result.error.issues },
+          { status: 400 }
+        );
+      }
+
+      const { currentPassword, newPassword } = result.data;
+
+      // Get user with password
+      const user = await prisma.user.findUnique({
+        where: { id },
+        select: { password: true },
+      });
+
+      if (!user) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+
+      // Verify current password
+      const isValid = await compare(currentPassword, user.password);
+
+      if (!isValid) {
+        return NextResponse.json(
+          { error: "Current password is incorrect" },
+          { status: 400 }
+        );
+      }
+
+      // Hash new password
+      const hashedPassword = await hash(newPassword, 12);
+
+      // Update password
+      await prisma.user.update({
+        where: { id },
+        data: { password: hashedPassword },
+      });
+
+      return NextResponse.json(
+        { message: "Password changed successfully" },
+        { status: 200 }
+      );
+    }
 
     // Check if it's an avatar update or name update
     const isAvatarUpdate =
