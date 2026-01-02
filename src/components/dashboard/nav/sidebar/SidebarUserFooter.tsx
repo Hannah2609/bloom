@@ -1,10 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { EllipsisVertical, LogOut, UserRound } from "lucide-react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar/avatar";
 import {
   SidebarMenu,
   SidebarMenuItem,
@@ -39,7 +36,16 @@ export function SidebarUserFooter({
             <SidebarMenuButton size="lg">
               <Avatar className="h-8 w-8">
                 {avatar ? (
-                  <AvatarImage src={avatar} alt={firstName} />
+                  <div className="relative h-full w-full">
+                    {/* Image for better rendering performance */}
+                    <Image
+                      src={avatar}
+                      alt={firstName || "User"}
+                      fill
+                      className="rounded-full object-cover"
+                      sizes="32px"
+                    />
+                  </div>
                 ) : (
                   <AvatarFallback />
                 )}

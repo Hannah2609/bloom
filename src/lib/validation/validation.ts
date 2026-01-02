@@ -119,7 +119,7 @@ export const reorderQuestionsSchema = z.object({
   ),
 });
 
-export const editProfileSchema = z.object({
+export const editProfileNameSchema = z.object({
   firstName: z
     .string()
     .min(2, "Name must be at least 2 characters")
@@ -128,7 +128,10 @@ export const editProfileSchema = z.object({
     .string()
     .min(2, "Name must be at least 2 characters")
     .regex(/^[A-Za-zÆØÅæøå\s]+$/, "Name can only contain letters and spaces"),
-  avatar: z.url("Logo must be a valid URL").optional(),
+});
+
+export const editProfileAvatarSchema = z.object({
+  avatar: z.url("Avatar must be a valid URL").nullable(),
 });
 
 // forgot password (email) validation
@@ -162,6 +165,23 @@ export const validateTokenSchema = z.object({
   token: z.string(),
 });
 
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/,
+        "Password must contain at least one letter and one number"
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
 export type SignupSchema = z.infer<typeof signupSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type CompanySignupSchema = z.infer<typeof companySignupSchema>;
@@ -169,7 +189,9 @@ export type SetPendingCompanySchema = z.infer<typeof setPendingCompanySchema>;
 export type EmailSchema = z.infer<typeof emailSchema>;
 export type CreateTeamSchema = z.infer<typeof createTeamSchema>;
 export type CreateSurveySchema = z.infer<typeof createSurveySchema>;
-export type EditProfileSchema = z.infer<typeof editProfileSchema>;
+export type EditProfileNameSchema = z.infer<typeof editProfileNameSchema>;
+export type EditProfileAvatarSchema = z.infer<typeof editProfileAvatarSchema>;
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 export type ValidateTokenSchema = z.infer<typeof validateTokenSchema>;
+export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
