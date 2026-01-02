@@ -31,7 +31,6 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
   const draftSurveys = initialSurveys.filter((s) => s.status === "DRAFT");
   const activeSurveys = initialSurveys.filter((s) => s.status === "ACTIVE");
   const closedSurveys = initialSurveys.filter((s) => s.status === "CLOSED");
-  const archivedSurveys = initialSurveys.filter((s) => s.status === "ARCHIVED");
 
   // Refresh surveys after creating a new one
   const handleSurveyCreated = () => {
@@ -43,11 +42,11 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
   return (
     <>
       <PageLayout>
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 space-y-6 md:space-y-0 flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
-            <Heading level="h1">Surveys</Heading>
-            <p className="mt-1 text-muted-foreground">
-              Create and manage surveys
+            <Heading level="h1">Create Surveys</Heading>
+            <p className="mt-1 text-lg md:text-xl text-muted-foreground">
+              Create and edit surveys
             </p>
           </div>
           <Button size="lg" onClick={() => setIsOpen(true)}>
@@ -61,7 +60,6 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
             <TabsTrigger value="DRAFT">Draft</TabsTrigger>
             <TabsTrigger value="ACTIVE">Active</TabsTrigger>
             <TabsTrigger value="CLOSED">Closed</TabsTrigger>
-            <TabsTrigger value="ARCHIVED">Archived</TabsTrigger>
           </TabsList>
 
           <TabsContent value="DRAFT" className="mt-6">
@@ -82,13 +80,6 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
             <SurveyGrid
               surveys={closedSurveys}
               emptyMessage="No closed surveys."
-            />
-          </TabsContent>
-
-          <TabsContent value="ARCHIVED" className="mt-6">
-            <SurveyGrid
-              surveys={archivedSurveys}
-              emptyMessage="No archived surveys."
             />
           </TabsContent>
         </Tabs>

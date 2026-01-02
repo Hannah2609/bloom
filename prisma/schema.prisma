@@ -15,22 +15,23 @@ datasource db {
 // - Can be member of MULTIPLE teams (via TeamMember)
 // - Can submit survey responses
 model User {
-  id              String           @id @default(uuid())
-  firstName       String
-  lastName        String
-  email           String           @unique
-  avatar          String?
-  password        String
-  role            Role             @default(EMPLOYEE)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  deletedAt       DateTime?
-  resetToken      String? // Password reset token
-  resetExpires    DateTime? // Token expiration timestamp
-  company         Company          @relation(fields: [companyId], references: [id])
-  companyId       String
-  memberships     TeamMember[]
-  surveyResponses SurveyResponse[]
+  id                   String                     @id @default(uuid())
+  firstName            String
+  lastName             String
+  email                String                     @unique
+  avatar               String?
+  password             String
+  role                 Role                       @default(EMPLOYEE)
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
+  deletedAt            DateTime?
+  resetToken           String? // Password reset token
+  resetExpires         DateTime? // Token expiration timestamp
+  company              Company                    @relation(fields: [companyId], references: [id])
+  companyId            String
+  memberships          TeamMember[]
+  surveyResponses      SurveyResponse[]
+  happinessSubmissions HappinessScoreSubmission[]
 }
 
 enum Role {
@@ -46,16 +47,17 @@ enum Role {
 // - Has MANY surveys
 // - Root level entity - everything belongs to a company
 model Company {
-  id        String    @id @default(uuid())
-  name      String
-  domain    String    @unique
-  logo      String?
-  users     User[]
-  teams     Team[]
-  surveys   Survey[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id              String           @id @default(uuid())
+  name            String
+  domain          String           @unique
+  logo            String?
+  users           User[]
+  teams           Team[]
+  surveys         Survey[]
+  happinessScores HappinessScore[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
 }
 
 // **Team Model**
@@ -64,15 +66,16 @@ model Company {
 // - Has MANY members (via TeamMember)
 // - Can be assigned to surveys (for targeted surveys)
 model Team {
-  id        String       @id @default(uuid())
-  name      String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  deletedAt DateTime?
-  company   Company      @relation(fields: [companyId], references: [id])
-  companyId String
-  members   TeamMember[]
-  surveys   SurveyTeam[]
+  id              String           @id @default(uuid())
+  name            String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+  company         Company          @relation(fields: [companyId], references: [id])
+  companyId       String
+  members         TeamMember[]
+  surveys         SurveyTeam[]
+  happinessScores HappinessScore[]
 }
 
 // **TeamMember Model**
@@ -123,7 +126,6 @@ enum SurveyStatus {
   DRAFT
   ACTIVE
   CLOSED
-  ARCHIVED
 }
 
 // **Question Model**
@@ -205,4 +207,40 @@ model SurveyTeam {
   teamId   String
 
   @@unique([surveyId, teamId])
+}
+
+// **HappinessScoreSubmission Model**
+// Tracks if a user has submitted (for hiding the card)
+// - NO score stored here - only tracking
+// - Used only to check if card should be visible
+model HappinessScoreSubmission {
+  id            String   @id @default(uuid())
+  weekStartDate DateTime // Monday of the week (ISO week)
+  submittedAt   DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+
+  @@unique([userId, weekStartDate])
+  @@index([userId])
+}
+
+// **HappinessScore Model**
+// ANONYMOUS happiness scores - team level only
+// - NO userId stored - completely anonymous
+// - Only teamId + companyId for aggregation
+// - Admin can never see who said what, even with database access
+model HappinessScore {
+  id            String   @id @default(uuid())
+  score         Int // 1-10 (represents 0.5-5.0 in 0.5 increments)
+  weekStartDate DateTime // Monday of the week (ISO week)
+  submittedAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  team          Team     @relation(fields: [teamId], references: [id])
+  teamId        String
+  company       Company  @relation(fields: [companyId], references: [id])
+  companyId     String
+
+  @@index([companyId, weekStartDate])
+  @@index([teamId, weekStartDate])
 }

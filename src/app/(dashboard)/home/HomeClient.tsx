@@ -3,23 +3,29 @@
 import { Heading } from "@/components/ui/heading/heading";
 import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { User } from "@/types/user";
-import { SurveyGrid } from "@/components/dashboard/layout/SurveyGrid";
 import { SurveyListItem } from "@/types/survey";
+import { UserSurveyCard } from "@/components/dashboard/cards/UserSurveyCard";
+import { getHours } from "date-fns";
+import { HappinessCard } from "@/components/dashboard/happiness/HappinessCard";
 
 interface HomeClientProps {
   user: User;
   activeSurveys: SurveyListItem[];
+  completedSurveyIds: string[];
 }
 
-// TODO: move to utils
 const getGreeting = () => {
-  const hour = new Date().getHours();
+  const hour = getHours(new Date());
   if (hour >= 5 && hour < 12) return "Good morning";
   if (hour >= 12 && hour < 18) return "Good afternoon";
   return "Good evening";
 };
 
-export default function HomeClient({ user, activeSurveys }: HomeClientProps) {
+export default function HomeClient({
+  user,
+  activeSurveys,
+  completedSurveyIds,
+}: HomeClientProps) {
   return (
     <PageLayout>
       <div>
@@ -28,8 +34,26 @@ export default function HomeClient({ user, activeSurveys }: HomeClientProps) {
         </p>
         <Heading level="h1">{user.firstName}</Heading>
       </div>
+
+      {/* Happiness Card */}
+      <div className="mt-6">
+        <HappinessCard userId={user.id} companyId={user.companyId} />
+      </div>
+
       <div className="mt-10">
-        <SurveyGrid surveys={activeSurveys} emptyMessage="No active surveys" />
+        {activeSurveys.length === 0 ? (
+          <p className="text-muted-foreground">No active surveys</p>
+        ) : (
+          <div className="grid gap-6 lg:grid-cols-2">
+            {activeSurveys.map((survey) => (
+              <UserSurveyCard
+                key={survey.id}
+                survey={survey}
+                hasCompleted={completedSurveyIds.includes(survey.id)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </PageLayout>
   );

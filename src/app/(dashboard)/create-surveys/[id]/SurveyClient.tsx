@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge/badge";
 import { SurveyDetail, Question } from "@/types/survey";
 import { useState } from "react";
-import { AddQuestionForm } from "@/components/dashboard/survey/AddQuestionForm";
-import { DragAndDropQuestions } from "@/components/dashboard/survey/DragAndDropQuestions";
+import { AddQuestionForm } from "@/components/dashboard/create-survey/AddQuestionForm";
+import { DragAndDropQuestions } from "@/components/dashboard/create-survey/DragAndDropQuestions";
 
 interface SurveyClientProps {
   survey: SurveyDetail;

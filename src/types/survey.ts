@@ -46,7 +46,7 @@ export type Survey = {
   companyId: string;
 };
 
-export type SurveyStatus = "DRAFT" | "ACTIVE" | "CLOSED" | "ARCHIVED";
+export type SurveyStatus = "DRAFT" | "ACTIVE" | "CLOSED";
 
 export type Question = {
   id: string;
