@@ -82,7 +82,6 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
               emptyMessage="No closed surveys."
             />
           </TabsContent>
-
         </Tabs>
       </PageLayout>
 

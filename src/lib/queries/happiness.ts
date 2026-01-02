@@ -19,7 +19,7 @@ export async function hasUserSubmittedThisWeek(
   userId: string
 ): Promise<boolean> {
   const weekStart = getWeekStart();
-  
+
   const submission = await prisma.happinessScoreSubmission.findUnique({
     where: {
       userId_weekStartDate: {
@@ -35,7 +35,9 @@ export async function hasUserSubmittedThisWeek(
 /**
  * Get user's primary team (first active team membership)
  */
-export async function getUserPrimaryTeam(userId: string): Promise<string | null> {
+export async function getUserPrimaryTeam(
+  userId: string
+): Promise<string | null> {
   const teamMember = await prisma.teamMember.findFirst({
     where: {
       userId,
@@ -65,7 +67,7 @@ export async function submitHappinessScore(
 
   // Get user's primary team
   const teamId = await getUserPrimaryTeam(userId);
-  
+
   if (!teamId) {
     throw new Error("User must be in a team to submit happiness score");
   }
@@ -88,7 +90,7 @@ export async function submitHappinessScore(
         weekStartDate: weekStart,
       },
     }),
-    
+
     // 2. Store anonymous score (team level only - NO userId)
     prisma.happinessScore.create({
       data: {
@@ -111,7 +113,7 @@ export async function getHappinessAnalytics(
 ) {
   const endDate = new Date();
   const startDate = new Date();
-  startDate.setDate(startDate.getDate() - (weeks * 7));
+  startDate.setDate(startDate.getDate() - weeks * 7);
 
   // Query ONLY team-level data - no userId ever exposed
   const scores = await prisma.happinessScore.findMany({
@@ -136,30 +138,36 @@ export async function getHappinessAnalytics(
   });
 
   // Aggregate by week and team
-  const weeklyData = scores.reduce((acc, score) => {
-    const weekKey = score.weekStartDate.toISOString().split("T")[0];
-    const teamKey = score.teamId;
-    
-    if (!acc[weekKey]) {
-      acc[weekKey] = {};
-    }
-    if (!acc[weekKey][teamKey]) {
-      acc[weekKey][teamKey] = {
-        teamName: score.team.name,
-        total: 0,
-        count: 0,
-      };
-    }
-    
-    acc[weekKey][teamKey].total += score.score / 2; // Convert to 0.5-5.0
-    acc[weekKey][teamKey].count += 1;
-    return acc;
-  }, {} as Record<string, Record<string, { teamName: string; total: number; count: number }>>);
+  const weeklyData = scores.reduce(
+    (acc, score) => {
+      const weekKey = score.weekStartDate.toISOString().split("T")[0];
+      const teamKey = score.teamId;
+
+      if (!acc[weekKey]) {
+        acc[weekKey] = {};
+      }
+      if (!acc[weekKey][teamKey]) {
+        acc[weekKey][teamKey] = {
+          teamName: score.team.name,
+          total: 0,
+          count: 0,
+        };
+      }
+
+      acc[weekKey][teamKey].total += score.score / 2; // Convert to 0.5-5.0
+      acc[weekKey][teamKey].count += 1;
+      return acc;
+    },
+    {} as Record<
+      string,
+      Record<string, { teamName: string; total: number; count: number }>
+    >
+  );
 
   // Format response
   const aggregated = Object.entries(weeklyData).map(([weekStart, teams]) => ({
     weekStart,
-    teams: Object.values(teams).map(team => ({
+    teams: Object.values(teams).map((team) => ({
       teamName: team.teamName,
       average: team.count > 0 ? team.total / team.count : 0,
       count: team.count,
@@ -168,4 +176,3 @@ export async function getHappinessAnalytics(
 
   return aggregated;
 }
-

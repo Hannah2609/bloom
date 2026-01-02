@@ -15,11 +15,14 @@ import type { QuestionAnalytics, ChartType } from "@/types/analytics";
 
 interface QuestionAnalyticsCardProps {
   data: QuestionAnalytics;
+  defaultChartType?: ChartType;
 }
 
-export function QuestionAnalyticsCard({ data }: QuestionAnalyticsCardProps) {
-  const [chartType, setChartType] = useState<ChartType>("bar");
-
+export function QuestionAnalyticsCard({
+  data,
+  defaultChartType = "bar",
+}: QuestionAnalyticsCardProps) {
+  const [chartType, setChartType] = useState<ChartType>(defaultChartType);
   return (
     <Card>
       <CardHeader>

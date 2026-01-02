@@ -34,7 +34,7 @@ export default function HomeClient({
         </p>
         <Heading level="h1">{user.firstName}</Heading>
       </div>
-      
+
       {/* Happiness Card */}
       <div className="mt-6">
         <HappinessCard userId={user.id} companyId={user.companyId} />

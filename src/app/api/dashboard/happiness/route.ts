@@ -15,7 +15,7 @@ export async function GET() {
 
     const hasSubmitted = await hasUserSubmittedThisWeek(session.user.id);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       hasSubmitted,
     });
   } catch (error) {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { score } = await req.json();
-    
+
     // Validate score (0.5-5.0)
     if (!score || typeof score !== "number" || score < 0.5 || score > 5.0) {
       return NextResponse.json(
@@ -45,23 +45,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await submitHappinessScore(
-      session.user.id,
-      session.user.companyId,
-      score
-    );
+    await submitHappinessScore(session.user.id, session.user.companyId, score);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
     });
   } catch (error) {
     console.error("Error submitting happiness score:", error);
-    
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json(
@@ -70,4 +63,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

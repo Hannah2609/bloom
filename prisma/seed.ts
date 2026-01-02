@@ -431,9 +431,7 @@ async function main() {
       `  • ${users.length} users (${coreUsers.length} in teams, ${additionalEmployees.length} without teams)`
     );
     console.log(`  • ${teams.length} teams`);
-    console.log(
-      `  • 5 surveys (DRAFT, ACTIVE x2, CLOSED with 20 responses)`
-    );
+    console.log(`  • 5 surveys (DRAFT, ACTIVE x2, CLOSED with 20 responses)`);
   } catch (error) {
     console.error("\n❌ Seed error:", error);
     throw error;

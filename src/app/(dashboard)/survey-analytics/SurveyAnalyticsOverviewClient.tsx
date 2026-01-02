@@ -30,11 +30,27 @@ export default function SurveyAnalyticsOverviewClient({
         </p>
       </div>
 
-      <Tabs defaultValue="ACTIVE">
+      <Tabs defaultValue="CLOSED">
         <TabsList>
-          <TabsTrigger value="ACTIVE">Active</TabsTrigger>
           <TabsTrigger value="CLOSED">Closed</TabsTrigger>
+          <TabsTrigger value="ACTIVE">Active</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="CLOSED" className="mt-6">
+          {closedSurveys.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
+              <p className="text-center text-muted-foreground">
+                No closed surveys with responses.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {closedSurveys.map((survey) => (
+                <SurveyAnalyticsCard key={survey.id} survey={survey} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
 
         <TabsContent value="ACTIVE" className="mt-6">
           {activeSurveys.length === 0 ? (
@@ -47,22 +63,6 @@ export default function SurveyAnalyticsOverviewClient({
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {activeSurveys.map((survey) => (
-                <SurveyAnalyticsCard key={survey.id} survey={survey} />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="CLOSED" className="mt-6">
-          {closedSurveys.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
-              <p className="text-center text-muted-foreground">
-                No closed surveys with responses.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {closedSurveys.map((survey) => (
                 <SurveyAnalyticsCard key={survey.id} survey={survey} />
               ))}
             </div>

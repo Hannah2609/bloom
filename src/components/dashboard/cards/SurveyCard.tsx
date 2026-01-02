@@ -27,7 +27,7 @@ export function SurveyCard({ survey }: SurveyCardProps) {
         return "";
     }
   };
-  
+
   return (
     <Link href={`/create-surveys/${survey.id}`}>
       <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden group h-80">

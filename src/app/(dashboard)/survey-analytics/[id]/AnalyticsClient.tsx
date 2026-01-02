@@ -88,10 +88,12 @@ export default function AnalyticsClient({ analytics }: AnalyticsClientProps) {
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {analytics.questions.map((question) => (
+              {analytics.questions.map((question, index) => (
                 <QuestionAnalyticsCard
                   key={question.questionId}
                   data={question}
+                  // Every other chart type as default for variety
+                  defaultChartType={index % 2 === 0 ? "bar" : "pie"}
                 />
               ))}
             </div>

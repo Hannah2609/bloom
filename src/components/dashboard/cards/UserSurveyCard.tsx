@@ -33,12 +33,18 @@ export function UserSurveyCard({
     <Link href={`/take-surveys/${survey.id}`} onClick={handleClick}>
       <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden h-full group">
         <div className="absolute -right-8 -top-8 opacity-[0.08] group-hover:opacity-[0.1] transition-opacity">
-          <ChartNoAxesCombined className="size-42 md:size-48" strokeWidth={1.5} />
+          <ChartNoAxesCombined
+            className="size-42 md:size-48"
+            strokeWidth={1.5}
+          />
         </div>
 
         {hasCompleted && (
           <div className="absolute top-4 right-4 z-10">
-            <Badge icon={<CheckCircle2 />} className="bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800">
+            <Badge
+              icon={<CheckCircle2 />}
+              className="bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800"
+            >
               Completed
             </Badge>
           </div>
@@ -71,9 +77,7 @@ export function UserSurveyCard({
 
           {survey.endDate && (
             <div className="border-t pt-5 flex items-center justify-between">
-              <span className="text-xs md:text-sm font-semibold">
-                Closes:
-              </span>
+              <span className="text-xs md:text-sm font-semibold">Closes:</span>
               <span className="text-xs md:text-sm font-semibold">
                 {format(new Date(survey.endDate), "d MMM, yyyy")}
               </span>
