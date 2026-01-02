@@ -63,7 +63,10 @@ export function BarChartView({ data }: { data: QuestionAnalytics }) {
   );
 
   return (
-    <ChartContainer config={chartConfig} className="h-[300px] w-full">
+    <ChartContainer
+      config={chartConfig}
+      className="h-[350px] w-full"
+    >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />

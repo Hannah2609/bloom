@@ -58,7 +58,7 @@ export function PieChartView({ data }: { data: QuestionAnalytics }) {
   );
 
   return (
-    <ChartContainer config={chartConfig} className="h-[310px] w-full">
+    <ChartContainer config={chartConfig} className="h-[350px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <ChartTooltip content={<ChartTooltipContent />} />
