@@ -164,6 +164,7 @@ export default function TakeSurveyClient({
             <div className="flex justify-center">
               <div className="w-full max-w-5xl">
                 <QuestionRenderer
+                  key={currentQuestion.id}
                   question={currentQuestion}
                   value={answers[currentQuestion.id]}
                   onChange={handleAnswerChange}

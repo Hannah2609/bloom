@@ -1,4 +1,3 @@
-// components/dashboard/analytics/QuestionAnalyticsCard.tsx
 "use client";
 
 import { useState } from "react";
