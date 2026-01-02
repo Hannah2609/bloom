@@ -58,9 +58,34 @@ test.describe("Authentication", () => {
     // Click "Sign out" option in the dropdown menu
     await page.getByRole("menuitem", { name: /sign out/i }).click();
 
-    // ASSERT: Verify successful logout
-    // User should be redirected back to login page
+    // Verify successful logout - user should be redirected back to login page
     await expect(page).toHaveURL("/login");
+  });
+
+  test("should not allow access to protected routes after logout", async ({
+    page,
+  }) => {
+    // Login first to establish session
+    await page.goto("/login");
+    await page.fill('input[type="email"]', process.env.TEST_USER_EMAIL!);
+    await page.fill('input[type="password"]', process.env.TEST_USER_PASSWORD!);
+    await page.click('button[type="submit"]');
+    await expect(page).toHaveURL("/home");
+
+    // Logout to destroy session
+    await page.waitForLoadState("networkidle");
+    await page.getByTestId("sidebar-menu-button").click();
+    await page.getByRole("menuitem", { name: /sign out/i }).click();
+    await expect(page).toHaveURL("/login");
+
+    // Try to access protected route - should redirect to login
+    // This verifies session is properly destroyed
+    await page.goto("/home");
+    await expect(page).toHaveURL("/login?redirect=%2Fhome");
+
+    // Try another protected route to be thorough
+    await page.goto("/profile");
+    await expect(page).toHaveURL("/login?redirect=%2Fprofile");
   });
 
   test("should show validation errors for empty fields", async ({ page }) => {
