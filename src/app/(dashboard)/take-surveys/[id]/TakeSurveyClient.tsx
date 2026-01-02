@@ -67,6 +67,10 @@ export default function TakeSurveyClient({
     }
 
     if (isLastQuestion) {
+      if (isAdmin) {
+        toast.info("Preview mode: You cannot submit as an admin");
+        return;
+      }
       setShowConfirmDialog(true);
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -182,8 +186,7 @@ export default function TakeSurveyClient({
               <Button
                 onClick={handleNext}
                 disabled={
-                  (currentQuestion.required && !isCurrentQuestionAnswered) ||
-                  isAdmin
+                  currentQuestion.required && !isCurrentQuestionAnswered
                 }
                 size="lg"
               >
