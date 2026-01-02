@@ -50,6 +50,27 @@ export async function userExistsByEmail(email: string): Promise<boolean> {
 }
 
 /**
+ * Get user by ID with company for profile page where info changes are allowed
+ */
+export async function getUserWithCompanyById(userId: string) {
+  return await prisma.user.findUnique({
+    where: {
+      id: userId,
+      deletedAt: null,
+    },
+    include: {
+      company: {
+        select: {
+          id: true,
+          name: true,
+          logo: true,
+        },
+      },
+    },
+  });
+}
+
+/**
  * POST
  */
 /**
