@@ -10,6 +10,7 @@ import { SurveyDetail, Question } from "@/types/survey";
 import { useState } from "react";
 import { AddQuestionForm } from "@/components/dashboard/create-survey/AddQuestionForm";
 import { DragAndDropQuestions } from "@/components/dashboard/create-survey/DragAndDropQuestions";
+import { toast } from "sonner";
 
 interface SurveyClientProps {
   survey: SurveyDetail;
@@ -28,6 +29,9 @@ export default function SurveyClient({
   );
   const [questionCount, setQuestionCount] = useState(
     initialSurvey.questionCount
+  );
+  const [deletingQuestionId, setDeletingQuestionId] = useState<string | null>(
+    null
   );
 
   const handleQuestionSuccess = (
@@ -76,6 +80,53 @@ export default function SurveyClient({
     setShowAddQuestionForm(false);
   };
 
+  const handleDeleteQuestion = async (question: Question) => {
+    // Prevent multiple clicks
+    if (deletingQuestionId) return;
+
+    setDeletingQuestionId(question.id);
+    const deletingToast = toast.loading("Deleting...");
+
+    try {
+      const response = await fetch(
+        `/api/dashboard/surveys/${initialSurvey.id}/questions?questionId=${question.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to delete question");
+      }
+
+      // Optimistically remove question from list
+      const updatedQuestions = questions.filter((q) => q.id !== question.id);
+      // Reorder remaining questions
+      const reorderedQuestions = updatedQuestions.map((q, index) => ({
+        ...q,
+        order: index + 1,
+      }));
+      setQuestions(reorderedQuestions);
+      setQuestionCount(questionCount - 1);
+
+      toast.success("Question deleted", { id: deletingToast });
+
+      // Refresh in background to ensure consistency
+      setTimeout(() => router.refresh(), 100);
+    } catch (error) {
+      console.error("Error deleting question:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete question",
+        { id: deletingToast }
+      );
+      // Refresh to revert optimistic update
+      router.refresh();
+    } finally {
+      setDeletingQuestionId(null);
+    }
+  };
+
   const handleCancel = () => {
     setShowAddQuestionForm(false);
     setEditingQuestionId(null);
@@ -106,6 +157,8 @@ export default function SurveyClient({
   const editingQuestion = editingQuestionId
     ? questions.find((q) => q.id === editingQuestionId)
     : null;
+
+  const isDraft = initialSurvey.status === "DRAFT";
 
   return (
     <PageLayout>
@@ -167,7 +220,7 @@ export default function SurveyClient({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <Heading level={"h2"}>Questions ({questionCount})</Heading>
-            {!showAddQuestionForm && !editingQuestionId && (
+            {isDraft && !showAddQuestionForm && !editingQuestionId && (
               <Button onClick={() => setShowAddQuestionForm(true)}>
                 <Plus className="size-4" />
                 Add Question
@@ -197,9 +250,12 @@ export default function SurveyClient({
               questions={questions}
               surveyId={initialSurvey.id}
               onReorder={handleReorder}
-              onEdit={handleEditQuestion}
+              onEdit={isDraft ? handleEditQuestion : undefined}
+              onDelete={isDraft ? handleDeleteQuestion : undefined}
               editingQuestionId={editingQuestionId}
+              deletingQuestionId={deletingQuestionId}
               onError={handleReorderError}
+              isDraft={isDraft}
             />
           )}
         </div>

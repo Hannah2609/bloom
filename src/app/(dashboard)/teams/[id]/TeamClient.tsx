@@ -26,6 +26,7 @@ import { UserSurveyCard } from "@/components/dashboard/cards/UserSurveyCard";
 interface TeamClientProps {
   team: TeamWithMembers;
   isAdminOrManager: boolean;
+  isAdmin: boolean;
   activeSurveys: SurveyListItem[];
   completedSurveyIds: string[];
 }
@@ -33,6 +34,7 @@ interface TeamClientProps {
 export default function TeamClient({
   team,
   isAdminOrManager,
+  isAdmin,
   activeSurveys,
   completedSurveyIds,
 }: TeamClientProps) {
@@ -116,6 +118,7 @@ export default function TeamClient({
                       key={survey.id}
                       survey={survey}
                       hasCompleted={completedSurveyIds.includes(survey.id)}
+                      isAdmin={isAdmin}
                     />
                   ))}
                 </div>

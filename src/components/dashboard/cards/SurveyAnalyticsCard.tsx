@@ -8,7 +8,12 @@ import {
 import { Badge } from "@/components/ui/badge/badge";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Calendar, Users, MessageSquare, BarChart3 } from "lucide-react";
+import {
+  Calendar,
+  Users,
+  MessageSquare,
+  ChartNoAxesCombined,
+} from "lucide-react";
 
 interface SurveyAnalyticsCardProps {
   survey: SurveyListItem;
@@ -36,7 +41,7 @@ export function SurveyAnalyticsCard({ survey }: SurveyAnalyticsCardProps) {
       <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden group h-80">
         {/* Background icon */}
         <div className="absolute -right-8 -top-8 opacity-[0.05] group-hover:opacity-[0.08] transition-opacity">
-          <BarChart3 className="size-48" strokeWidth={1.5} />
+          <ChartNoAxesCombined className="size-48" strokeWidth={1.5} />
         </div>
 
         <CardHeader className="relative">

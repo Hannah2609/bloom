@@ -72,6 +72,16 @@ export async function getAllSurveys(
       startDate: true,
       endDate: true,
       createdAt: true,
+      teams: {
+        select: {
+          teamId: true,
+          team: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
       _count: {
         select: {
           questions: true,
@@ -95,6 +105,10 @@ export async function getAllSurveys(
     createdAt: survey.createdAt.toISOString(),
     questionCount: survey._count.questions,
     responseCount: survey._count.responses,
+    teams: survey.teams.map((st) => ({
+      teamId: st.teamId,
+      teamName: st.team.name,
+    })),
   }));
 }
 
@@ -520,6 +534,61 @@ export async function updateQuestion(
       required: data.required,
     },
   });
+}
+
+/**
+ * Delete a question from a survey
+ */
+export async function deleteQuestion(
+  questionId: string,
+  surveyId: string,
+  companyId: string
+) {
+  // Verify survey exists and belongs to company
+  const survey = await prisma.survey.findFirst({
+    where: {
+      id: surveyId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!survey) {
+    throw new Error("Survey not found");
+  }
+
+  // Verify question exists and belongs to survey
+  const question = await prisma.question.findFirst({
+    where: {
+      id: questionId,
+      surveyId,
+    },
+  });
+
+  if (!question) {
+    throw new Error("Question not found");
+  }
+
+  // Delete the question
+  await prisma.question.delete({
+    where: { id: questionId },
+  });
+
+  // Reorder remaining questions to fill gaps
+  const remainingQuestions = await prisma.question.findMany({
+    where: { surveyId },
+    orderBy: { order: "asc" },
+  });
+
+  // Update orders to be sequential (1, 2, 3, ...)
+  await prisma.$transaction(
+    remainingQuestions.map((q, index) =>
+      prisma.question.update({
+        where: { id: q.id },
+        data: { order: index + 1 },
+      })
+    )
+  );
 }
 
 /**

@@ -4,20 +4,32 @@ import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card/card";
 import { HappinessSlider } from "./HappinessSlider";
-import { Smile } from "lucide-react";
+import { HatGlasses } from "lucide-react";
+import { notifyHappinessSubmitted } from "@/lib/sprout";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { WaterSproutDialog } from "../sprout/WaterSproutDialog";
 
 interface HappinessCardProps {
-  userId: string;
-  companyId: string;
+  hasPendingSurveys: boolean;
+  hasSubmittedHappiness: boolean;
 }
 
-export function HappinessCard({ userId, companyId }: HappinessCardProps) {
+export function HappinessCard({
+  hasPendingSurveys,
+  hasSubmittedHappiness,
+}: HappinessCardProps) {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showWaterSproutDialog, setShowWaterSproutDialog] = useState(false);
 
   useEffect(() => {
     checkSubmissionStatus();
@@ -49,7 +61,12 @@ export function HappinessCard({ userId, companyId }: HappinessCardProps) {
         throw new Error(error.error || "Failed to submit");
       }
 
+      // Show thank you modal
+      setShowWaterSproutDialog(true);
       setHasSubmitted(true);
+
+      // Notify sprout status update
+      notifyHappinessSubmitted();
     } catch (error) {
       console.error("Error submitting happiness score:", error);
       throw error; // Re-throw to let HappinessSlider handle it
@@ -57,19 +74,48 @@ export function HappinessCard({ userId, companyId }: HappinessCardProps) {
   };
 
   if (isLoading) return null;
-  if (hasSubmitted) return null; // Hide card after submission
+
+  // Handle modal close
+  const handleModalClose = () => {
+    setShowWaterSproutDialog(false);
+  };
 
   return (
-    <Card className="border-primary/20 bg-black to-black! text-white">
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Smile className="h-5 w-5 text-primary" />
-          <CardTitle>How happy have you been this week?</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <HappinessSlider onSubmit={handleSubmit} />
-      </CardContent>
-    </Card>
+    <>
+      <WaterSproutDialog
+        open={showWaterSproutDialog}
+        onOpenChange={handleModalClose}
+        hasPendingSurveys={hasPendingSurveys}
+        hasSubmittedHappiness={true} // Always true after submission
+      />
+      {!hasSubmitted && (
+        <Card className="border-none bg-secondary-100 to-secondary-100! dark:bg-secondary-950/50 dark:to-secondary-950/50!">
+          <CardHeader>
+            <div className="flex flex-col items-center gap-2">
+              {/* <Smile className="h-10 w-10 text-primary" /> */}
+              <CardTitle className="text-2xl font-semibold">
+                Your weekly happiness check-in
+              </CardTitle>
+
+              <CardDescription className="flex items-center gap-2">
+                How happy have you been this week rating 1-5?
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HatGlasses className="h-6 w-6 rounded-full bg-primary-300 p-1 dark:text-primary-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    All your answers are anonymous and will not be shared with
+                    anyone.
+                  </TooltipContent>
+                </Tooltip>
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <HappinessSlider onSubmit={handleSubmit} />
+          </CardContent>
+        </Card>
+      )}
+    </>
   );
 }

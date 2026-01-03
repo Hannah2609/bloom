@@ -10,6 +10,10 @@ export type SurveyListItem = {
   createdAt: string;
   questionCount: number;
   responseCount: number;
+  teams: {
+    teamId: string;
+    teamName: string;
+  }[];
 };
 
 // Survey detail type for displaying full survey with questions and teams

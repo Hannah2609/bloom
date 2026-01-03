@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session/session";
-import { reorderQuestions } from "@/lib/queries/surveys";
+import { reorderQuestions, getSurveyById } from "@/lib/queries/surveys";
 import { reorderQuestionsSchema } from "@/lib/validation/validation";
 
 export async function PATCH(
@@ -22,6 +22,19 @@ export async function PATCH(
     }
 
     const surveyId = (await params).id;
+
+    // Check if survey is in DRAFT status
+    const survey = await getSurveyById(surveyId, session.user.companyId);
+    if (!survey) {
+      return NextResponse.json({ error: "Survey not found" }, { status: 404 });
+    }
+    if (survey.status !== "DRAFT") {
+      return NextResponse.json(
+        { error: "Cannot modify questions for surveys that are not in draft" },
+        { status: 400 }
+      );
+    }
+
     const body = await req.json();
     const validatedData = reorderQuestionsSchema.parse(body);
 

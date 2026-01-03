@@ -21,10 +21,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog/alert-dialog";
 import { PageLayout } from "@/components/dashboard/layout/pageLayout";
+import { notifySurveySubmitted } from "@/lib/sprout";
+import { WaterSproutDialog } from "@/components/dashboard/sprout/WaterSproutDialog";
+import { SurveyListItem } from "@/types/survey";
 
 interface TakeSurveyClientProps {
   survey: SurveyDetail;
   isAdmin?: boolean;
+  activeSurveys: SurveyListItem[];
+  completedSurveyIds: string[];
+  hasSubmittedHappiness: boolean;
 }
 
 type AnswersState = Record<string, number>;
@@ -32,12 +38,23 @@ type AnswersState = Record<string, number>;
 export default function TakeSurveyClient({
   survey,
   isAdmin = false,
+  activeSurveys,
+  completedSurveyIds: initialCompletedSurveyIds,
+  hasSubmittedHappiness,
 }: TakeSurveyClientProps) {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswersState>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showWaterSproutDialog, setShowWaterSproutDialog] = useState(false);
+  const [completedSurveyIds, setCompletedSurveyIds] = useState(
+    initialCompletedSurveyIds
+  );
+
+  // Calculate pending surveys based on current state
+  const hasPendingSurveys =
+    activeSurveys.filter((s) => !completedSurveyIds.includes(s.id)).length > 0;
 
   const questions = survey.questions;
   const currentQuestion = questions[currentQuestionIndex];
@@ -114,7 +131,20 @@ export default function TakeSurveyClient({
       }
 
       toast.success("Survey submitted successfully!");
-      router.push("/home");
+
+      // Update completed surveys state - add this survey to completed list
+      setCompletedSurveyIds((prev) => {
+        if (prev.includes(survey.id)) {
+          return prev; // Already completed
+        }
+        return [...prev, survey.id];
+      });
+
+      // Show thank you / water sprout modal
+      setShowWaterSproutDialog(true);
+
+      // Notify sprout status update
+      notifySurveySubmitted(survey.id);
     } catch (error) {
       console.error("Error submitting survey:", error);
       toast.error(
@@ -124,8 +154,20 @@ export default function TakeSurveyClient({
     }
   };
 
+  const handleModalClose = () => {
+    setShowWaterSproutDialog(false);
+    // Redirect to home after modal closes
+    router.push("/home");
+  };
+
   return (
     <PageLayout>
+      <WaterSproutDialog
+        open={showWaterSproutDialog}
+        onOpenChange={handleModalClose}
+        hasPendingSurveys={hasPendingSurveys}
+        hasSubmittedHappiness={hasSubmittedHappiness}
+      />
       <div className="space-y-8 max-w-5xl mx-auto">
         {/* Admin Preview Banner */}
         {isAdmin && (
