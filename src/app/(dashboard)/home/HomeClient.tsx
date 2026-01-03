@@ -8,6 +8,7 @@ import { UserSurveyCard } from "@/components/dashboard/cards/UserSurveyCard";
 import { getHours } from "date-fns";
 import { HappinessCard } from "@/components/dashboard/happiness/HappinessCard";
 import { Sprout } from "@/components/dashboard/sprout/Sprout";
+import { WeeklyHappinessCard } from "@/components/dashboard/cards/WeeklyHappinessCard";
 import { useState, useEffect } from "react";
 
 interface HomeClientProps {
@@ -109,6 +110,13 @@ export default function HomeClient({
             hasPendingSurveys={hasPendingSurveys}
             hasSubmittedHappiness={hasSubmittedHappiness}
           />
+        </div>
+      )}
+
+      {/* Weekly Happiness Analytics Card - Admin only */}
+      {user.role === "ADMIN" && (
+        <div className="mt-6">
+          <WeeklyHappinessCard initialWeeks={12} />
         </div>
       )}
 

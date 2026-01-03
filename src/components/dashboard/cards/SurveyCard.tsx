@@ -31,7 +31,7 @@ export function SurveyCard({ survey }: SurveyCardProps) {
 
   return (
     <Link href={`/create-surveys/${survey.id}`}>
-      <Card className="group cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden">
+      <Card className="group cursor-pointer transition-all justify-between h-full  hover:shadow-lg hover:border-primary/50 relative overflow-hidden">
         <CardHeader className="relative">
           <div className="flex items-start justify-between">
             <CardTitle className="line-clamp-2 text-xl font-semibold leading-tight flex-1">

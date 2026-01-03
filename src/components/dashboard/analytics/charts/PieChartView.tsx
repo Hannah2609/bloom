@@ -8,12 +8,13 @@ import {
 } from "@/components/ui/chart/chart";
 import type { QuestionAnalytics } from "@/types/analytics";
 
+// Brug CSS variabler fra Tailwind palette
 const COLORS = [
-  "#dc2626", // Rating 1 - Deeper Red
-  "#f59e0b", // Rating 2 - Amber
-  "#fbbf24", // Rating 3 - Warm Yellow
-  "#a3e635", // Rating 4 - Lime
-  "#22c55e", // Rating 5 - Emerald Green
+  "var(--color-analytics-red)", // Rating 1 - Deeper Red
+  "var(--color-analytics-amber)", // Rating 2 - Amber
+  "var(--color-analytics-yellow)", // Rating 3 - Warm Yellow
+  "var(--color-analytics-lime)", // Rating 4 - Lime
+  "var(--color-analytics-green)", // Rating 5 - Emerald Green
 ];
 
 const LABELS = {

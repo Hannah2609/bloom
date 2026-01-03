@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { UserSurveyCard } from "@/components/dashboard/cards/UserSurveyCard";
+import { TeamHappinessCard } from "@/components/dashboard/cards/TeamHappinessCard";
 
 interface TeamClientProps {
   team: TeamWithMembers;
@@ -100,7 +101,9 @@ export default function TeamClient({
               )}
             </div>
           </aside>
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 space-y-6">
+            <TeamHappinessCard teamId={team.id} teamName={team.name} />
+
             {activeSurveys.length > 0 ? (
               <div className="flex flex-col gap-4">
                 <div>
