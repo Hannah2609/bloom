@@ -33,7 +33,7 @@ export function SidebarUserFooter({
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton size="lg">
+            <SidebarMenuButton data-testid="sidebar-menu-button" size="lg">
               <Avatar className="h-8 w-8">
                 {avatar ? (
                   <div className="relative h-full w-full">
