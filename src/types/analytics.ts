@@ -24,3 +24,15 @@ export type SurveyAnalytics = {
   totalResponses: number;
   questions: QuestionAnalytics[];
 };
+
+export type WeeklyHappinessData = {
+  weekStart: string;
+  companyAverage: number;
+  teamAverages: {
+    teamId: string;
+    teamName: string;
+    average: number;
+    responseCount: number;
+  }[];
+  totalResponses: number;
+};

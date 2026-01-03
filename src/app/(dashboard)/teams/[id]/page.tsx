@@ -56,6 +56,7 @@ export default async function TeamPage({
     <TeamClient
       team={team}
       isAdminOrManager={isAdminOrManager}
+      isAdmin={isAdmin}
       activeSurveys={activeSurveys}
       completedSurveyIds={completedSurveyIds}
     />

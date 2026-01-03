@@ -8,19 +8,28 @@ import {
   CardTitle,
 } from "@/components/ui/card/card";
 import { Badge } from "@/components/ui/badge/badge";
+import { Button } from "@/components/ui/button/button";
 import Link from "next/link";
-import { Clock, ChartNoAxesCombined, CheckCircle2 } from "lucide-react";
+import {
+  Clock,
+  MessageCircleHeart,
+  CheckCircle2,
+  Eye,
+  ArrowRight,
+} from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
 interface UserSurveyCardProps {
   survey: SurveyListItem;
   hasCompleted?: boolean;
+  isAdmin?: boolean;
 }
 
 export function UserSurveyCard({
   survey,
   hasCompleted = false,
+  isAdmin = false,
 }: UserSurveyCardProps) {
   const handleClick = (e: React.MouseEvent) => {
     if (hasCompleted) {
@@ -31,9 +40,9 @@ export function UserSurveyCard({
 
   return (
     <Link href={`/take-surveys/${survey.id}`} onClick={handleClick}>
-      <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden h-full group">
+      <Card className="group cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden h-full group">
         <div className="absolute -right-8 -top-8 opacity-[0.08] group-hover:opacity-[0.1] transition-opacity">
-          <ChartNoAxesCombined
+          <MessageCircleHeart
             className="size-42 md:size-48"
             strokeWidth={1.5}
           />
@@ -75,14 +84,24 @@ export function UserSurveyCard({
             </span>
           </div>
 
-          {survey.endDate && (
-            <div className="border-t pt-5 flex items-center justify-between">
-              <span className="text-xs md:text-sm font-semibold">Closes:</span>
+          <div className="border-t pt-4 flex items-center justify-between">
+            {survey.endDate && (
               <span className="text-xs md:text-sm font-semibold">
-                {format(new Date(survey.endDate), "d MMM, yyyy")}
+                Closes: {format(new Date(survey.endDate), "d MMM, yyyy")}
               </span>
-            </div>
-          )}
+            )}
+            {isAdmin ? (
+              <Button size="sm" variant="secondary" className="gap-2">
+                <Eye className="size-4" />
+                See Preview
+              </Button>
+            ) : (
+              <Button size="sm" variant="default" className="gap-2">
+                Take Survey
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:size-5.5 group-hover:translate-x-2" />
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
     </Link>

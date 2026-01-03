@@ -84,6 +84,11 @@
   --chart-3: var(--primary-300);
   --chart-4: var(--secondary-300);
   --chart-5: var(--primary-100);
+  --analytics-red: #dc2626;
+  --analytics-amber: #f59e0b;
+  --analytics-yellow: #fbbf24;
+  --analytics-lime: #a3e635;
+  --analytics-green: #22c55e;
   --radius: 1rem;
   --sidebar: var(--base-100);
   --sidebar-foreground: var(--base-800);
@@ -119,6 +124,11 @@
   --chart-3: var(--primary-300);
   --chart-4: var(--secondary-300);
   --chart-5: var(--primary-100);
+  --analytics-red: #dc2626;
+  --analytics-amber: #f59e0b;
+  --analytics-yellow: #fbbf24;
+  --analytics-lime: #a3e635;
+  --analytics-green: #22c55e;
   --sidebar: var(--dark-base-950);
   --sidebar-foreground: var(--dark-base-200);
   --sidebar-primary: var(--primary-300);
@@ -206,6 +216,11 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-analytics-red: var(--analytics-red);
+  --color-analytics-amber: var(--analytics-amber);
+  --color-analytics-yellow: var(--analytics-yellow);
+  --color-analytics-lime: var(--analytics-lime);
+  --color-analytics-green: var(--analytics-green);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

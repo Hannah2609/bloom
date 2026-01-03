@@ -50,18 +50,21 @@ export function HappinessSlider({ onSubmit }: HappinessSliderProps) {
     if (score < 2) {
       return "text-destructive";
     } else if (score >= 2 && score < 4) {
-      return "text-secondary-300";
+      return "text-secondary-400 dark:text-secondary-200";
     } else {
-      return "text-primary";
+      return "text-primary-500 dark:text-primary";
     }
   };
 
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <div className="flex justify-between text-sm text-white">
-          <span>Not the best week:(</span>
-          <span>Very happy this week!</span>
+        <div className="flex justify-center pt-2">
+          <span
+            className={cn("text-3xl font-semibold", getTextColor(displayValue))}
+          >
+            {displayValue.toFixed(1)}
+          </span>
         </div>
         <Slider
           value={value}
@@ -72,13 +75,6 @@ export function HappinessSlider({ onSubmit }: HappinessSliderProps) {
           className="w-full"
           rangeClassName={getRangeClassName(displayValue)}
         />
-        <div className="flex justify-center pt-2">
-          <span
-            className={cn("text-3xl font-bold", getTextColor(displayValue))}
-          >
-            {displayValue.toFixed(1)}
-          </span>
-        </div>
       </div>
 
       <Button onClick={handleSubmit} disabled={isSubmitting} className="w-full">

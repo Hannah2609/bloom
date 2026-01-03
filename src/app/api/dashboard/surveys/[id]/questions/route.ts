@@ -4,6 +4,8 @@ import {
   createQuestion,
   getQuestionsBySurveyId,
   updateQuestion,
+  deleteQuestion,
+  getSurveyById,
 } from "@/lib/queries/surveys";
 import {
   updateQuestionSchema,
@@ -29,6 +31,19 @@ export async function POST(
     }
 
     const surveyId = (await params).id;
+
+    // Check if survey is in DRAFT status
+    const survey = await getSurveyById(surveyId, session.user.companyId);
+    if (!survey) {
+      return NextResponse.json({ error: "Survey not found" }, { status: 404 });
+    }
+    if (survey.status !== "DRAFT") {
+      return NextResponse.json(
+        { error: "Cannot modify questions for surveys that are not in draft" },
+        { status: 400 }
+      );
+    }
+
     const body = await req.json();
     const validatedData = createQuestionSchema.parse(body);
 
@@ -110,6 +125,19 @@ export async function PUT(
     }
 
     const surveyId = (await params).id;
+
+    // Check if survey is in DRAFT status
+    const survey = await getSurveyById(surveyId, session.user.companyId);
+    if (!survey) {
+      return NextResponse.json({ error: "Survey not found" }, { status: 404 });
+    }
+    if (survey.status !== "DRAFT") {
+      return NextResponse.json(
+        { error: "Cannot modify questions for surveys that are not in draft" },
+        { status: 400 }
+      );
+    }
+
     const body = await req.json();
     const validatedData = updateQuestionSchema.parse(body);
     const questionId = validatedData.questionId;
@@ -135,6 +163,68 @@ export async function PUT(
 
     return NextResponse.json(
       { error: "Failed to update question" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getSession();
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json(
+        { error: "Only admins can delete questions" },
+        { status: 403 }
+      );
+    }
+
+    const surveyId = (await params).id;
+
+    // Check if survey is in DRAFT status
+    const survey = await getSurveyById(surveyId, session.user.companyId);
+    if (!survey) {
+      return NextResponse.json({ error: "Survey not found" }, { status: 404 });
+    }
+    if (survey.status !== "DRAFT") {
+      return NextResponse.json(
+        { error: "Cannot modify questions for surveys that are not in draft" },
+        { status: 400 }
+      );
+    }
+
+    const { searchParams } = new URL(req.url);
+    const questionId = searchParams.get("questionId");
+
+    if (!questionId) {
+      return NextResponse.json(
+        { error: "Question ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // Delete question query function
+    await deleteQuestion(questionId, surveyId, session.user.companyId);
+
+    return NextResponse.json({
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error deleting question:", error);
+
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    return NextResponse.json(
+      { error: "Failed to delete question" },
       { status: 500 }
     );
   }

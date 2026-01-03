@@ -200,6 +200,96 @@ function getRandomRating() {
   return Math.floor(Math.random() * 5) + 1;
 }
 
+/**
+ * Get Monday of a given week (ISO week)
+ */
+function getWeekStart(date: Date): Date {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday
+  const monday = new Date(d.setDate(diff));
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
+
+/**
+ * Generate a random happiness score (1-10, representing 0.5-5.0 in 0.5 increments)
+ * With a slight bias towards higher scores (more realistic)
+ */
+function getRandomHappinessScore(): number {
+  // Weighted random: 70% chance of 3-5 (6-10), 20% chance of 2-3 (4-6), 10% chance of 1-2 (2-4)
+  const rand = Math.random();
+  if (rand < 0.7) {
+    // 70% chance: Good scores (6-10, representing 3.0-5.0)
+    return Math.floor(Math.random() * 5) + 6; // 6-10
+  } else if (rand < 0.9) {
+    // 20% chance: Medium scores (4-6, representing 2.0-3.0)
+    return Math.floor(Math.random() * 3) + 4; // 4-6
+  } else {
+    // 10% chance: Lower scores (2-4, representing 1.0-2.0)
+    return Math.floor(Math.random() * 3) + 2; // 2-4
+  }
+}
+
+async function seedHappinessScores(companyId: string, teamIds: string[]) {
+  console.log("😊 Seeding happiness scores...");
+
+  if (teamIds.length === 0) {
+    console.log("  ⚠️  No teams found. Skipping happiness scores...");
+    return;
+  }
+
+  // Generate scores for the last 12 weeks
+  const weeks = 12;
+  const scoresPerTeam = 5; // 5 scores per team per week
+  const allScores = [];
+
+  for (let weekOffset = weeks - 1; weekOffset >= 0; weekOffset--) {
+    const date = new Date();
+    date.setDate(date.getDate() - weekOffset * 7);
+    const weekStart = getWeekStart(date);
+
+    for (const teamId of teamIds) {
+      for (let i = 0; i < scoresPerTeam; i++) {
+        const score = getRandomHappinessScore();
+        const submittedAt = new Date(weekStart);
+        // Random time during the week (Monday to Sunday)
+        submittedAt.setDate(
+          submittedAt.getDate() + Math.floor(Math.random() * 7)
+        );
+        submittedAt.setHours(
+          Math.floor(Math.random() * 12) + 9, // 9-20
+          Math.floor(Math.random() * 60),
+          0,
+          0
+        );
+
+        allScores.push({
+          teamId,
+          companyId,
+          score,
+          weekStartDate: weekStart,
+          submittedAt,
+        });
+      }
+    }
+  }
+
+  // Insert all scores in batches
+  console.log(`  💾 Inserting ${allScores.length} happiness scores...`);
+
+  const batchSize = 100;
+  for (let i = 0; i < allScores.length; i += batchSize) {
+    const batch = allScores.slice(i, i + batchSize);
+    await prisma.happinessScore.createMany({
+      data: batch,
+      skipDuplicates: true, // Skip if duplicate (same team, week, etc.)
+    });
+  }
+
+  console.log(`  ✅ Inserted ${allScores.length} scores for ${weeks} weeks`);
+}
+
 async function seedSurveys(
   companyId: string,
   teamIds: string[],
@@ -423,6 +513,7 @@ async function main() {
     const teams = await seedTeams(company.id, users);
     const teamIds = teams.map((t) => t.id);
     await seedSurveys(company.id, teamIds, users);
+    await seedHappinessScores(company.id, teamIds);
 
     console.log("\n✨ Seed completed successfully!");
     console.log("\n📊 Summary:");
@@ -431,7 +522,10 @@ async function main() {
       `  • ${users.length} users (${coreUsers.length} in teams, ${additionalEmployees.length} without teams)`
     );
     console.log(`  • ${teams.length} teams`);
-    console.log(`  • 5 surveys (DRAFT, ACTIVE x2, CLOSED with 20 responses)`);
+    console.log(`  • 4 surveys (DRAFT, ACTIVE x2, CLOSED with 20 responses)`);
+    console.log(
+      `  • Happiness scores for ${teamIds.length} teams over 12 weeks`
+    );
   } catch (error) {
     console.error("\n❌ Seed error:", error);
     throw error;

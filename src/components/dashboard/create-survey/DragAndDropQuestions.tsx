@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Question } from "@/types/survey";
-import { EditQuestionCard } from "@/components/dashboard/cards/EditQuestionCard";
+import { QuestionCard } from "@/components/dashboard/cards/QuestionCard";
 import { toast } from "sonner";
 
 type DragAndDropQuestionsProps = {
@@ -10,8 +10,11 @@ type DragAndDropQuestionsProps = {
   surveyId: string;
   onReorder: (reorderedQuestions: Question[]) => void;
   onEdit?: (question: Question) => void;
+  onDelete?: (question: Question) => void;
   editingQuestionId?: string | null;
+  deletingQuestionId?: string | null;
   onError?: () => void;
+  isDraft?: boolean;
 };
 
 export function DragAndDropQuestions({
@@ -19,8 +22,11 @@ export function DragAndDropQuestions({
   surveyId,
   onReorder,
   onEdit,
+  onDelete,
   editingQuestionId,
+  deletingQuestionId,
   onError,
+  isDraft = true,
 }: DragAndDropQuestionsProps) {
   const [draggedQuestionId, setDraggedQuestionId] = useState<string | null>(
     null
@@ -121,18 +127,23 @@ export function DragAndDropQuestions({
           return (
             <div
               key={question.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, question.id)}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, index)}
-              onDragEnd={handleDragEnd}
+              draggable={isDraft}
+              onDragStart={
+                isDraft ? (e) => handleDragStart(e, question.id) : undefined
+              }
+              onDragOver={isDraft ? (e) => handleDragOver(e, index) : undefined}
+              onDragLeave={isDraft ? handleDragLeave : undefined}
+              onDrop={isDraft ? (e) => handleDrop(e, index) : undefined}
+              onDragEnd={isDraft ? handleDragEnd : undefined}
               className={isDragOver ? "opacity-50" : ""}
             >
-              <EditQuestionCard
+              <QuestionCard
                 question={question}
                 onEdit={onEdit}
+                onDelete={onDelete}
                 isDragging={isDragging}
+                isDeleting={deletingQuestionId === question.id}
+                isDraft={isDraft}
               />
             </div>
           );

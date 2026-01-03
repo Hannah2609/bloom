@@ -35,6 +35,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Prevent admins from submitting happiness scores
+    if (session.user.role === "ADMIN") {
+      return NextResponse.json(
+        { error: "Admins cannot submit happiness scores" },
+        { status: 403 }
+      );
+    }
+
     const { score } = await req.json();
 
     // Validate score (0.5-5.0)
