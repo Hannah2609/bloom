@@ -266,6 +266,16 @@ export async function getActiveSurveysForUser(
       startDate: true,
       endDate: true,
       createdAt: true,
+      teams: {
+        select: {
+          team: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
       _count: {
         select: {
           questions: true,
@@ -289,6 +299,10 @@ export async function getActiveSurveysForUser(
     createdAt: survey.createdAt.toISOString(),
     questionCount: survey._count.questions,
     responseCount: survey._count.responses,
+    teams: survey.teams.map((st) => ({
+      teamId: st.team.id,
+      teamName: st.team.name,
+    })),
   }));
 }
 
@@ -333,6 +347,16 @@ export async function getActiveSurveysForTeam(
       startDate: true,
       endDate: true,
       createdAt: true,
+      teams: {
+        select: {
+          team: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
       _count: {
         select: {
           questions: true,
@@ -356,6 +380,10 @@ export async function getActiveSurveysForTeam(
     createdAt: survey.createdAt.toISOString(),
     questionCount: survey._count.questions,
     responseCount: survey._count.responses,
+    teams: survey.teams.map((st) => ({
+      teamId: st.team.id,
+      teamName: st.team.name,
+    })),
   }));
 }
 

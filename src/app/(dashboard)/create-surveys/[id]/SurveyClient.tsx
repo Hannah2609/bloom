@@ -3,7 +3,7 @@
 import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { Heading } from "@/components/ui/heading/heading";
 import { Button } from "@/components/ui/button/button";
-import { ArrowLeft, Plus } from "lucide-react";
+import { AlertCircle, ArrowLeft, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge/badge";
 import { SurveyDetail, Question } from "@/types/survey";
@@ -176,6 +176,18 @@ export default function SurveyClient({
             </Button>
           </div>
         </div>
+
+        {!isDraft && (
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="size-5 text-amber-600" />
+              <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                Survey is either active or closed and cannot be edited. Put in
+                draft mode to edit.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Survey Info */}
         <div className="space-y-4">

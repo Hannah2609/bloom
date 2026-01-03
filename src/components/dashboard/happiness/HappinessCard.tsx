@@ -23,10 +23,7 @@ interface HappinessCardProps {
   hasSubmittedHappiness: boolean;
 }
 
-export function HappinessCard({
-  hasPendingSurveys,
-  hasSubmittedHappiness,
-}: HappinessCardProps) {
+export function HappinessCard({ hasPendingSurveys }: HappinessCardProps) {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showWaterSproutDialog, setShowWaterSproutDialog] = useState(false);

@@ -48,15 +48,13 @@ export function QuestionCard({
   return (
     <div
       className={`group border rounded-lg p-4 transition-all ${
-        isDragging
-          ? "opacity-50 bg-accent border-primary"
-          : "hover:bg-accent/50 hover:shadow-sm"
-      }`}
+        isDragging ? "opacity-50 bg-accent border-primary" : ""
+      } ${isDraft ? "hover:bg-accent/50 hover:shadow-sm" : ""}`}
     >
       <div className="flex items-start gap-4">
         {isDraft && (
           <div
-            className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors flex items-center pt-0.5"
+            className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors flex items-center pt-0.5 "
             aria-label="Drag to reorder"
           >
             <GripVertical className="size-5" />
