@@ -39,6 +39,8 @@ test.describe("Role-Based Access Control", () => {
 
     // Should successfully access admin page
     await expect(page).toHaveURL("/admin");
-    await expect(page.getByRole("heading", { name: /manage users/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /manage users/i })
+    ).toBeVisible();
   });
 });
