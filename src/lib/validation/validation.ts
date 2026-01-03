@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const Role = ["ADMIN", "MANAGER", "EMPLOYEE"] as const;
+const Role = ["ADMIN", "EMPLOYEE"] as const;
 
 export const signupSchema = z.object({
   firstName: z

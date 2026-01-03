@@ -42,7 +42,6 @@ export function RoleSelect({ user, onRoleChange }: RoleSelectProps) {
       </SelectTrigger>
       <SelectContent className="w-32">
         <SelectItem value="ADMIN">Admin</SelectItem>
-        <SelectItem value="MANAGER">Manager</SelectItem>
         <SelectItem value="EMPLOYEE">Employee</SelectItem>
       </SelectContent>
     </Select>

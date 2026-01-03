@@ -1,5 +1,5 @@
 // Role type from database
-export type Role = "ADMIN" | "MANAGER" | "EMPLOYEE";
+export type Role = "ADMIN" | "EMPLOYEE";
 
 // Basic user type from database
 export type User = {

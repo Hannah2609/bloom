@@ -46,16 +46,10 @@ export default async function TeamPage({
   const completedSurveyIds = completedResponses.map((r) => r.surveyId);
 
   const isAdmin = session.user.role === "ADMIN";
-  const isManager = team.members.some(
-    (member) => member.userId === session.user.id && member.role === "MANAGER"
-  );
-
-  const isAdminOrManager = isAdmin || isManager;
 
   return (
     <TeamClient
       team={team}
-      isAdminOrManager={isAdminOrManager}
       isAdmin={isAdmin}
       activeSurveys={activeSurveys}
       completedSurveyIds={completedSurveyIds}

@@ -33,7 +33,7 @@ const coreUsers = [
     lastName: "Hansen",
     email: "karen@dwarf.dk",
     password: "password123",
-    role: "MANAGER" as Role,
+    role: "EMPLOYEE" as Role,
   },
   {
     firstName: "Mads",
@@ -142,7 +142,7 @@ async function seedUsers(companyId: string) {
 
 async function seedTeams(
   companyId: string,
-  allUsers: { id: string; role: Role }[]
+  allUsers: { id: string; role: string }[]
 ) {
   console.log("👥 Seeding teams...");
 
@@ -169,8 +169,11 @@ async function seedTeams(
       });
     }
 
-    // Add only core users to teams
-    for (const user of coreTeamMembers) {
+    // Add only non-admin core users to teams (admins can see all teams but don't need to be members)
+    const nonAdminMembers = coreTeamMembers.filter(
+      (user) => user.role !== "ADMIN"
+    );
+    for (const user of nonAdminMembers) {
       await prisma.teamMember.upsert({
         where: {
           teamId_userId: {
@@ -182,13 +185,13 @@ async function seedTeams(
         create: {
           teamId: team.id,
           userId: user.id,
-          role: user.role,
+          role: user.role as Role,
         },
       });
     }
 
     createdTeams.push(team);
-    console.log(`  ✓ ${team.name} (${coreTeamMembers.length} members)`);
+    console.log(`  ✓ ${team.name} (${nonAdminMembers.length} members)`);
   }
 
   console.log(`✅ Teams: ${teams.length}`);

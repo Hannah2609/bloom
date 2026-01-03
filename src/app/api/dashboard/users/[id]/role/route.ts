@@ -26,7 +26,7 @@ export async function PATCH(
     const { role } = await request.json();
 
     // Validate role
-    if (!role || !["ADMIN", "MANAGER", "EMPLOYEE"].includes(role)) {
+    if (!role || !["ADMIN", "EMPLOYEE"].includes(role)) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 });
     }
 

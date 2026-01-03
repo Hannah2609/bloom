@@ -26,7 +26,6 @@ import { TeamHappinessCard } from "@/components/dashboard/cards/TeamHappinessCar
 
 interface TeamClientProps {
   team: TeamWithMembers;
-  isAdminOrManager: boolean;
   isAdmin: boolean;
   activeSurveys: SurveyListItem[];
   completedSurveyIds: string[];
@@ -34,7 +33,6 @@ interface TeamClientProps {
 
 export default function TeamClient({
   team,
-  isAdminOrManager,
   isAdmin,
   activeSurveys,
   completedSurveyIds,
@@ -52,7 +50,7 @@ export default function TeamClient({
             <div className="space-y-4 rounded-lg border bg-sidebar p-4 lg:sticky lg:top-4">
               <div className="flex items-center justify-between">
                 <Heading level="h2">Members</Heading>
-                {isAdminOrManager && (
+                {isAdmin && (
                   <Button
                     size="sm"
                     variant="ghost"
@@ -90,7 +88,7 @@ export default function TeamClient({
                           {member.user.email}
                         </p>
                       </div>
-                      {isAdminOrManager && (
+                      {isAdmin && (
                         <Button size="icon" variant="ghost" className="size-8">
                           <TrashIcon className="size-4" />
                         </Button>
@@ -137,7 +135,7 @@ export default function TeamClient({
         </div>
       </PageLayout>
 
-      {isAdminOrManager && (
+      {isAdmin && (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetContent side="right" className="w-full sm:max-w-md">
             <SheetHeader>

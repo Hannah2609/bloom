@@ -105,7 +105,6 @@ export function ManageUsersTable({
           <SelectContent className="w-40">
             <SelectItem value="all">All Roles</SelectItem>
             <SelectItem value="ADMIN">Admin</SelectItem>
-            <SelectItem value="MANAGER">Manager</SelectItem>
             <SelectItem value="EMPLOYEE">Employee</SelectItem>
           </SelectContent>
         </Select>
