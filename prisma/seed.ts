@@ -231,10 +231,7 @@ function getRandomHappinessScore(): number {
   }
 }
 
-async function seedHappinessScores(
-  companyId: string,
-  teamIds: string[]
-) {
+async function seedHappinessScores(companyId: string, teamIds: string[]) {
   console.log("😊 Seeding happiness scores...");
 
   if (teamIds.length === 0) {
@@ -257,7 +254,9 @@ async function seedHappinessScores(
         const score = getRandomHappinessScore();
         const submittedAt = new Date(weekStart);
         // Random time during the week (Monday to Sunday)
-        submittedAt.setDate(submittedAt.getDate() + Math.floor(Math.random() * 7));
+        submittedAt.setDate(
+          submittedAt.getDate() + Math.floor(Math.random() * 7)
+        );
         submittedAt.setHours(
           Math.floor(Math.random() * 12) + 9, // 9-20
           Math.floor(Math.random() * 60),
@@ -278,7 +277,7 @@ async function seedHappinessScores(
 
   // Insert all scores in batches
   console.log(`  💾 Inserting ${allScores.length} happiness scores...`);
-  
+
   const batchSize = 100;
   for (let i = 0; i < allScores.length; i += batchSize) {
     const batch = allScores.slice(i, i + batchSize);
@@ -524,7 +523,9 @@ async function main() {
     );
     console.log(`  • ${teams.length} teams`);
     console.log(`  • 4 surveys (DRAFT, ACTIVE x2, CLOSED with 20 responses)`);
-    console.log(`  • Happiness scores for ${teamIds.length} teams over 12 weeks`);
+    console.log(
+      `  • Happiness scores for ${teamIds.length} teams over 12 weeks`
+    );
   } catch (error) {
     console.error("\n❌ Seed error:", error);
     throw error;

@@ -21,4 +21,3 @@ export function notifySurveySubmitted(surveyId: string) {
 export function notifyHappinessSubmitted() {
   window.dispatchEvent(new CustomEvent("feedback-submitted"));
 }
-
