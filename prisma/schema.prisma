@@ -27,7 +27,7 @@ model User {
   deletedAt            DateTime?
   resetToken           String? // Password reset token
   resetExpires         DateTime? // Token expiration timestamp
-  company              Company                    @relation(fields: [companyId], references: [id])
+  company              Company                    @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId            String
   memberships          TeamMember[]
   surveyResponses      SurveyResponse[]
@@ -70,7 +70,7 @@ model Team {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   deletedAt       DateTime?
-  company         Company          @relation(fields: [companyId], references: [id])
+  company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId       String
   members         TeamMember[]
   surveys         SurveyTeam[]
@@ -88,9 +88,9 @@ model TeamMember {
   role     Role      @default(EMPLOYEE)
   joinedAt DateTime  @default(now())
   leftAt   DateTime?
-  team     Team      @relation(fields: [teamId], references: [id])
+  team     Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId   String
-  user     User      @relation(fields: [userId], references: [id])
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
 
   @@unique([teamId, userId])
@@ -114,7 +114,7 @@ model Survey {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   deletedAt   DateTime?
-  company     Company          @relation(fields: [companyId], references: [id])
+  company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId   String
   questions   Question[]
   responses   SurveyResponse[]
@@ -151,20 +151,20 @@ model Question {
 enum AnswerType {
   SATISFACTION // "Ikke tilfreds" → "Meget tilfreds"
   AGREEMENT // "Uenig" → "Enig"
-  SCALE // "1" → "10"
+  SCALE // "1" → "5"
 }
 
 // **Answer Model**
-// Single rating answer (1-10) to a question
+// Single rating answer (1-5) to a question
 // - Belongs to ONE response
 // - Belongs to ONE question
-// - Rating value is always between 1-10
+// - Rating value is always between 1-5
 // - Unique constraint: one answer per question per response
 model Answer {
   id          String         @id @default(uuid())
-  ratingValue Int // 1-10 scale
+  ratingValue Int // 1-5 scale
   createdAt   DateTime       @default(now())
-  question    Question       @relation(fields: [questionId], references: [id])
+  question    Question       @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId  String
   response    SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
   responseId  String
@@ -182,9 +182,9 @@ model Answer {
 model SurveyResponse {
   id          String   @id @default(uuid())
   submittedAt DateTime @default(now())
-  survey      Survey   @relation(fields: [surveyId], references: [id])
+  survey      Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   surveyId    String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   teamId      String? // For team aggregation (anonymous)
   answers     Answer[]
@@ -235,9 +235,9 @@ model HappinessScore {
   submittedAt   DateTime @default(now())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  team          Team     @relation(fields: [teamId], references: [id])
+  team          Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId        String
-  company       Company  @relation(fields: [companyId], references: [id])
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId     String
 
   @@index([companyId, weekStartDate])
