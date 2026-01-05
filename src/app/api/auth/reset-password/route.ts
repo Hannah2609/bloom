@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const user = await prisma.user.findFirst({
       where: {
         resetToken: validatedData.token,
-        resetExpires: {
+        resetTokenExpires: {
           gt: new Date(), // Check if expiration is greater than now
         },
       },
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       data: {
         password: hashedPassword,
         resetToken: null,
-        resetExpires: null,
+        resetTokenExpires: null,
       },
     });
 

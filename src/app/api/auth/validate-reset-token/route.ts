@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const user = await prisma.user.findFirst({
       where: {
         resetToken: token,
-        resetExpires: {
+        resetTokenExpires: {
           gt: new Date(), // Check if expiration is greater than now
         },
       },

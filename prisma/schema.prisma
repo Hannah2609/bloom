@@ -15,23 +15,28 @@ datasource db {
 // - Can be member of MULTIPLE teams (via TeamMember)
 // - Can submit survey responses
 model User {
-  id                   String                     @id @default(uuid())
-  firstName            String
-  lastName             String
-  email                String                     @unique
-  avatar               String?
-  password             String
-  role                 Role                       @default(EMPLOYEE)
-  createdAt            DateTime                   @default(now())
-  updatedAt            DateTime                   @updatedAt
-  deletedAt            DateTime?
-  resetToken           String? // Password reset token
-  resetExpires         DateTime? // Token expiration timestamp
-  company              Company                    @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  companyId            String
-  memberships          TeamMember[]
-  surveyResponses      SurveyResponse[]
-  happinessSubmissions HappinessScoreSubmission[]
+  id                       String                     @id @default(uuid())
+  firstName                String
+  lastName                 String
+  email                    String                     @unique
+  avatar                   String?
+  password                 String
+  role                     Role                       @default(EMPLOYEE)
+  // Email verification
+  verifiedAt               DateTime?
+  verificationToken        String?
+  verificationTokenExpires DateTime?
+  // Password reset
+  resetToken               String?
+  resetTokenExpires        DateTime?
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  deletedAt                DateTime?
+  company                  Company                    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId                String
+  memberships              TeamMember[]
+  surveyResponses          SurveyResponse[]
+  happinessSubmissions     HappinessScoreSubmission[]
 }
 
 enum Role {

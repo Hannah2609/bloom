@@ -87,6 +87,7 @@ async function seedUsers(companyId: string) {
   console.log("👤 Seeding users...");
 
   const createdUsers = [];
+  const verifiedAt = new Date();
 
   // Create core users
   for (const userData of coreUsers) {
@@ -98,11 +99,13 @@ async function seedUsers(companyId: string) {
         ...userData,
         password: hashedPassword,
         companyId,
+        verifiedAt,
       },
       create: {
         ...userData,
         password: hashedPassword,
         companyId,
+        verifiedAt,
       },
     });
 
@@ -121,12 +124,14 @@ async function seedUsers(companyId: string) {
         password: hashedPassword,
         role: "EMPLOYEE" as Role,
         companyId,
+        verifiedAt,
       },
       create: {
         ...userData,
         password: hashedPassword,
         role: "EMPLOYEE" as Role,
         companyId,
+        verifiedAt,
       },
     });
 
@@ -238,7 +243,7 @@ async function seedHappinessScores(companyId: string, teamIds: string[]) {
   console.log("😊 Seeding happiness scores...");
 
   if (teamIds.length === 0) {
-    console.log("  ⚠️  No teams found. Skipping happiness scores...");
+    console.log("  ⚠️ No teams found. Skipping happiness scores...");
     return;
   }
 
