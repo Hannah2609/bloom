@@ -68,10 +68,6 @@ export async function submitHappinessScore(
   // Get user's primary team
   const teamId = await getUserPrimaryTeam(userId);
 
-  if (!teamId) {
-    throw new Error("User must be in a team to submit happiness score");
-  }
-
   // Use transaction to ensure both operations succeed
   await prisma.$transaction([
     // 1. Track that user has submitted (for card visibility)
@@ -91,10 +87,10 @@ export async function submitHappinessScore(
       },
     }),
 
-    // 2. Store anonymous score (team level only - NO userId)
+    // 2. Store anonymous score (team level if in team, otherwise company level only)
     prisma.happinessScore.create({
       data: {
-        teamId,
+        ...(teamId && { teamId }),
         companyId,
         score: scoreInt,
         weekStartDate: weekStart,
@@ -115,7 +111,7 @@ export async function getHappinessAnalytics(
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - weeks * 7);
 
-  // Query ONLY team-level data - no userId ever exposed
+  // Query team-level and company-level data - no userId ever exposed
   const scores = await prisma.happinessScore.findMany({
     where: {
       companyId,
@@ -137,9 +133,14 @@ export async function getHappinessAnalytics(
     },
   });
 
-  // Aggregate by week and team
+  // Aggregate by week and team (only include scores with teams)
   const weeklyData = scores.reduce(
     (acc, score) => {
+      // Only aggregate scores that have a team (skip company-level only scores)
+      if (!score.teamId || !score.team) {
+        return acc;
+      }
+
       const weekKey = score.weekStartDate.toISOString().split("T")[0];
       const teamKey = score.teamId;
 
@@ -280,8 +281,6 @@ export async function getWeeklyHappinessAnalytics(
         periodKey = score.weekStartDate.toISOString().split("T")[0];
       }
 
-      const teamKey = score.teamId;
-
       if (!acc[periodKey]) {
         acc[periodKey] = {
           companyTotal: 0,
@@ -293,20 +292,23 @@ export async function getWeeklyHappinessAnalytics(
         };
       }
 
-      // Company-level aggregation
+      // Company-level aggregation (always - includes scores with and without teams)
       acc[periodKey].companyTotal += score.score / 2; // Convert 1-10 to 0.5-5.0
       acc[periodKey].companyCount += 1;
 
-      // Team-level aggregation
-      if (!acc[periodKey].teams[teamKey]) {
-        acc[periodKey].teams[teamKey] = {
-          teamName: score.team.name,
-          total: 0,
-          count: 0,
-        };
+      // Team-level aggregation (only if teamId exists and team relation is loaded)
+      if (score.teamId && "team" in score && score.team) {
+        const teamKey = score.teamId;
+        if (!acc[periodKey].teams[teamKey]) {
+          acc[periodKey].teams[teamKey] = {
+            teamName: score.team.name,
+            total: 0,
+            count: 0,
+          };
+        }
+        acc[periodKey].teams[teamKey].total += score.score / 2;
+        acc[periodKey].teams[teamKey].count += 1;
       }
-      acc[periodKey].teams[teamKey].total += score.score / 2;
-      acc[periodKey].teams[teamKey].count += 1;
 
       return acc;
     },
