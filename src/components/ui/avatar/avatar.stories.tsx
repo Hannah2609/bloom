@@ -42,4 +42,3 @@ export const Large: Story = {
     </Avatar>
   ),
 };
-
