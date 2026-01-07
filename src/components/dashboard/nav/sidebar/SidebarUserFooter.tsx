@@ -53,7 +53,7 @@ export function SidebarUserFooter({
               <span className="truncate pl-2 font-medium">
                 {firstName} {lastName}
               </span>
-              <EllipsisVertical className="ml-auto" />
+              <EllipsisVertical className="ml-auto group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" className="mb-1 w-48">

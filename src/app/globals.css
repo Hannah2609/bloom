@@ -61,9 +61,9 @@
   --secondary-950: oklch(0.2814 0.0677 99.79);
   --secondary-1000: oklch(0.1945 0.0466 99.08);
 
-  --background: var(--color-white);
+  --background: var(--base-100);
   --foreground: var(--base-800);
-  --card: var(--base-100);
+  --card: var(--color-white);
   --card-foreground: var(--base-800);
   --popover: var(--color-white);
   --popover-foreground: var(--base-800);
@@ -90,7 +90,7 @@
   --analytics-lime: #a3e635;
   --analytics-green: #22c55e;
   --radius: 1rem;
-  --sidebar: var(--base-100);
+  --sidebar: var(--color-white);
   --sidebar-foreground: var(--base-800);
   --sidebar-primary: var(--primary-300);
   --sidebar-primary-foreground: var(--color-black);
@@ -144,6 +144,8 @@
   --font-display: var(--display-family);
   --font-text: var(--text-family);
 
+  --color-white: #ffffff;
+  --color-black: #000000;
   --color-off-white: #ece9e3;
 
   --color-base-50: var(--base-50);

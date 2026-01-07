@@ -13,9 +13,9 @@ export default function DashboardLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <section className="bg-background h-screen md:h-[calc(100vh-1.5rem)] flex flex-col border md:my-3 md:mr-3 md:ml-1 md:rounded-lg dark:border-0">
+        <section className="bg-background">
           <Header />
-          <section className="flex-1 overflow-y-auto">{children}</section>
+          {children}
         </section>
       </SidebarInset>
     </SidebarProvider>

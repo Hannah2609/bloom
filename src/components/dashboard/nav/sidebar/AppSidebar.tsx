@@ -31,7 +31,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="pt-4">
+      <SidebarHeader>
         <SidebarCompanyHeader
           companyName={user?.company?.name}
           companyLogo={user?.company?.logo}
@@ -56,7 +56,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="pb-4">
+      <SidebarFooter>
         <SidebarUserFooter
           firstName={user?.firstName}
           lastName={user?.lastName}
