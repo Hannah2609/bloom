@@ -7,6 +7,7 @@ import {
   changePasswordSchema,
 } from "@/lib/validation/validation";
 import { compare, hash } from "bcryptjs";
+import { getUserInCompany, softDeleteUser } from "@/lib/queries/users";
 
 // Update user profile
 export async function PATCH(
@@ -185,27 +186,14 @@ export async function DELETE(
     }
 
     // Check if target user exists and belongs to same company
-    const targetUser = await prisma.user.findFirst({
-      where: {
-        id,
-        companyId: session.user.companyId,
-        deletedAt: null,
-      },
-    });
+    const targetUser = await getUserInCompany(id, session.user.companyId);
 
     if (!targetUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Soft delete user
-    await prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        deletedAt: new Date(),
-      },
-    });
+    await softDeleteUser(id);
 
     return NextResponse.json({ message: "User deleted successfully" });
   } catch (error) {

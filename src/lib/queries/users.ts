@@ -71,6 +71,33 @@ export async function getUserWithCompanyById(userId: string) {
 }
 
 /**
+ * Check if user exists in company (for authorization checks)
+ */
+export async function getUserInCompany(userId: string, companyId: string) {
+  return await prisma.user.findFirst({
+    where: {
+      id: userId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+}
+
+/**
+ * Soft delete a user
+ */
+export async function softDeleteUser(userId: string) {
+  return await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      deletedAt: new Date(),
+    },
+  });
+}
+
+/**
  * POST
  */
 /**
