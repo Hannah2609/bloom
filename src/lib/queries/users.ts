@@ -15,6 +15,7 @@ export async function getUserById(userId: string) {
     select: {
       id: true,
       deletedAt: true,
+      verifiedAt: true,
     },
   });
 }

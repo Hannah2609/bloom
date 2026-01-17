@@ -6,6 +6,7 @@ import { Prisma as PrismaError } from "@/generated/prisma/client"; //TODO
 import { getSession } from "@/lib/session/session";
 import { Role } from "@/types/user";
 import { createUser } from "@/lib/queries/users";
+import crypto from "crypto";
 
 export async function POST(req: Request) {
   try {
@@ -37,15 +38,34 @@ export async function POST(req: Request) {
       companyId: userCompanyId,
     });
 
+    // Generate verification token
+    const verificationToken = crypto.randomUUID();
+    const verificationTokenExpires = new Date(Date.now() + 3600000); // 1 hour
+
+    // Update user with verification token
+    const { prisma } = await import("@/lib/prisma");
+    await prisma.user.update({
+      where: { id: sanitizedUser.id },
+      data: {
+        verificationToken,
+        verificationTokenExpires,
+      },
+    });
+
     if (pendingCompany) {
       delete session.pendingCompany;
       await session.save();
     }
 
+    // Return relative path in development
+    const verificationPath = `/verify-email?token=${verificationToken}`;
+
     return NextResponse.json(
       {
         user: sanitizedUser,
         message: "User created successfully",
+        verificationLink:
+          process.env.NODE_ENV === "development" ? verificationPath : undefined,
       },
       { status: 201 }
     );

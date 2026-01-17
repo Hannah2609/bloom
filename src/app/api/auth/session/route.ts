@@ -20,11 +20,11 @@ export async function GET() {
       Date.now() - session.lastVerified > 5 * 60 * 1000;
 
     if (shouldVerify) {
-      // Verify user still exists and is not deleted
+      // Verify user still exists, is not deleted, and is verified
       const userExists = await getUserById(session.user.id);
 
-      // If user does not exist or is deleted, clear session
-      if (!userExists || userExists.deletedAt) {
+      // If user does not exist, is deleted, or is not verified, clear session
+      if (!userExists || userExists.deletedAt || !userExists.verifiedAt) {
         session.destroy();
         return NextResponse.json({
           isLoggedIn: false,

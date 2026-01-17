@@ -14,21 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart/chart";
-import { TrendingUp, Users } from "lucide-react";
+import { LineChartView } from "@/components/dashboard/analytics/charts/LineChartView";
+import { TrendingUp } from "lucide-react";
 import type { WeeklyHappinessData } from "@/types/analytics";
 import { format } from "date-fns";
 import {
@@ -36,16 +23,27 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useIsMobile } from "@/hooks/useMobile";
+import { useSession } from "@/contexts/SessionContext";
 
-// Brug CSS variabler fra Tailwind palette
-const getAnalyticsColor = (index: number): string => {
+/**
+ * Get ISO week number from a date
+ * ISO 8601: Week 1 is the first week with at least 4 days in the new year
+ */
+function getWeekNumber(date: Date): number {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+}
+
+const getTeamColor = (index: number): string => {
   const colors = [
-    "var(--color-analytics-red)",
-    "var(--color-analytics-amber)",
-    "var(--color-analytics-yellow)",
-    "var(--color-analytics-lime)",
-    "var(--color-analytics-green)",
+    "hsl(200, 90%, 70%)", // Lyseblå
+    "hsl(330, 80%, 75%)", // Lyserød
+    "hsl(270, 70%, 75%)", // Lilla
+    "hsl(30, 90%, 70%)",  // Orange
+    "hsl(150, 60%, 65%)", // Grøn
   ];
   return colors[index % colors.length];
 };
@@ -63,7 +61,7 @@ export function WeeklyHappinessCard({
   const [filter, setFilter] = useState<"company" | "all-teams">("company");
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [viewType, setViewType] = useState<"weekly" | "monthly">("weekly");
-  const isMobile = useIsMobile();
+  const { user } = useSession();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -119,7 +117,9 @@ export function WeeklyHappinessCard({
   const chartData: ChartDataPoint[] = data.map((week) => {
     const date = new Date(week.weekStart);
     const label =
-      viewType === "monthly" ? format(date, "MMM yyyy") : format(date, "MMM d");
+      viewType === "monthly"
+        ? format(date, "MMM yyyy")
+        : `Week ${getWeekNumber(date)}`;
 
     const base: ChartDataPoint = {
       week: label,
@@ -150,19 +150,28 @@ export function WeeklyHappinessCard({
     data.length > 1 ? data[data.length - 2]?.companyAverage || 0 : 0;
   const trend = currentAverage - previousAverage;
 
+  // Check if chartData has meaningful values (not all zeros)
+  const hasChartData = chartData.some(
+    (point) => point.company > 0 || Object.keys(point).some((key) => key !== 'week' && key !== 'weekStart' && typeof point[key] === 'number' && point[key] > 0)
+  );
+
+  // Check if there's actual data to display
+  const hasData = data.length > 0 && hasChartData;
+
   // Build chart config med CSS variabler
+  const companyName = user?.company?.name || "Company";
   const chartConfig: Record<string, { label: string; color: string }> = {
     company: {
-      label: "Company Average",
+      label: companyName,
       color: "var(--color-analytics-green)", // Green for company
     },
   };
 
-  // Tilføj teams med farver fra analytics paletten
+  // Add teams
   allTeams.forEach((team, index) => {
     chartConfig[team.name] = {
       label: team.name,
-      color: getAnalyticsColor(index),
+      color: getTeamColor(index),
     };
   });
 
@@ -181,17 +190,22 @@ export function WeeklyHappinessCard({
     );
   }
 
+  // Don't render if there's no data
+  if (!hasData) {
+    return null;
+  }
+
   return (
-    <Card className="to-secondary-50! dark:to-secondary-950/50!">
+    <Card className="to-secondary-50! dark:to-secondary-950/50! min-w-0">
       <CardHeader>
-        <div className="space-y-4">
+        <div className="space-y-4 min-w-0">
           <CardTitle className="text-xl font-semibold">
             {viewType === "monthly" ? "Monthly" : "Weekly"} Happiness Analytics
           </CardTitle>
           <div className="flex flex-col pt-4 md:pt-0  md:flex-row md:items-center gap-4 text-sm">
             <div className="flex items-center gap-2">
               <TrendingUp className="size-4 text-primary" />
-              <span className="text-muted-foreground">Current: </span>
+              <span className="text-muted-foreground">Current week: </span>
               <span className="font-bold text-lg">
                 {currentAverage.toFixed(2)}
               </span>
@@ -214,13 +228,6 @@ export function WeeklyHappinessCard({
                   </TooltipContent>
                 </Tooltip>
               )}
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="size-4 text-primary" />
-              <span className="text-muted-foreground">Total responses: </span>
-              <span className="font-semibold">
-                {data.reduce((sum, week) => sum + week.totalResponses, 0)}
-              </span>
             </div>
           </div>
 
@@ -271,7 +278,7 @@ export function WeeklyHappinessCard({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="company">Company</SelectItem>
+                <SelectItem value="company">{companyName}</SelectItem>
                 <SelectItem value="all-teams">All Teams</SelectItem>
               </SelectContent>
             </Select>
@@ -301,99 +308,14 @@ export function WeeklyHappinessCard({
       </CardHeader>
 
       <CardContent>
-        {data.length === 0 ? (
-          <div className="h-[350px] flex items-center justify-center">
-            <p className="text-muted-foreground">No data available</p>
-          </div>
-        ) : (
-          <ChartContainer config={chartConfig} className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={chartData}
-                margin={
-                  isMobile
-                    ? { top: 5, right: 5, bottom: 5, left: -15 }
-                    : { top: 5, right: 5, bottom: 5, left: 5 }
-                }
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis
-                  dataKey="week"
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  domain={[0, 5]}
-                  tick={{ fontSize: 12 }}
-                  width={isMobile ? 30 : 60}
-                  label={
-                    !isMobile
-                      ? {
-                          value: "Happiness Score",
-                          angle: -90,
-                          position: "insideLeft",
-                        }
-                      : undefined
-                  }
-                />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      formatter={(value) => [
-                        `${Number(value).toFixed(2)} / 5.0`,
-                        "",
-                      ]}
-                    />
-                  }
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="company"
-                  stroke={chartConfig.company.color}
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
-                {filter === "all-teams" &&
-                  (selectedTeam
-                    ? allTeams
-                        .filter((t) => t.id === selectedTeam)
-                        .map((team) => (
-                          <Line
-                            key={team.id}
-                            type="monotone"
-                            dataKey={team.name}
-                            stroke={
-                              chartConfig[team.name]?.color ||
-                              getAnalyticsColor(0)
-                            }
-                            strokeWidth={2}
-                            dot={{ r: 4 }}
-                            activeDot={{ r: 6 }}
-                          />
-                        ))
-                    : allTeams.map((team) => (
-                        <Line
-                          key={team.id}
-                          type="monotone"
-                          dataKey={team.name}
-                          stroke={
-                            chartConfig[team.name]?.color ||
-                            getAnalyticsColor(0)
-                          }
-                          strokeWidth={2}
-                          dot={{ r: 4 }}
-                          activeDot={{ r: 6 }}
-                        />
-                      )))}
-              </LineChart>
-            </ResponsiveContainer>
-          </ChartContainer>
-        )}
+        <LineChartView
+          data={chartData}
+          config={chartConfig}
+          showCompany={filter === "company"}
+          showTeams={filter === "all-teams" ? allTeams : []}
+          selectedTeamId={selectedTeam}
+          getTeamColor={getTeamColor}
+        />
       </CardContent>
     </Card>
   );

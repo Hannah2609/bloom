@@ -8,6 +8,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Collapsible,
@@ -28,6 +29,7 @@ interface SidebarTeamsMenuProps {
 
 export function SidebarTeamsMenu({ pathname }: SidebarTeamsMenuProps) {
   const [teams, setTeams] = useState<Team[]>([]);
+  const { isMobile, setOpenMobile } = useSidebar();
 
   useEffect(() => {
     fetch("/api/dashboard/teams")
@@ -47,6 +49,12 @@ export function SidebarTeamsMenu({ pathname }: SidebarTeamsMenuProps) {
     isActive(pathname, `/teams/${team.id}`)
   );
 
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <SidebarMenu>
       <Collapsible
@@ -62,7 +70,7 @@ export function SidebarTeamsMenu({ pathname }: SidebarTeamsMenuProps) {
               isActive={teamsItemActive}
               className="group"
             >
-              <Link href="/teams" className="pr-8">
+              <Link href="/teams" className="pr-8" onClick={handleLinkClick}>
                 <Users className={ICON_ACTIVE_CLASSES} />
                 <span className="pl-1 text-base group-data-[collapsible=icon]:hidden">
                   Teams
@@ -97,7 +105,7 @@ export function SidebarTeamsMenu({ pathname }: SidebarTeamsMenuProps) {
                         isActive={subItemActive}
                         className="group"
                       >
-                        <Link href={`/teams/${team.id}`}>
+                        <Link href={`/teams/${team.id}`} onClick={handleLinkClick}>
                           <span>{team.name}</span>
                         </Link>
                       </SidebarMenuSubButton>

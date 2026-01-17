@@ -27,6 +27,18 @@ export async function POST(req: Request) {
         { status: 401 }
       );
     }
+
+    // Check if email is verified
+    if (!user.verifiedAt) {
+      return NextResponse.json(
+        { 
+          error: "Please verify your email before logging in. Check your inbox for a verification link.",
+          requiresVerification: true
+        },
+        { status: 403 }
+      );
+    }
+
     // Verify password
     const isValidPassword = await bcrypt.compare(
       validatedData.password,

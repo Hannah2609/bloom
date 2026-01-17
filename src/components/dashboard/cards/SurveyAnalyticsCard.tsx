@@ -38,7 +38,7 @@ export function SurveyAnalyticsCard({ survey }: SurveyAnalyticsCardProps) {
 
   return (
     <Link href={`/survey-analytics/${survey.id}`}>
-      <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden group h-80">
+      <Card className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden group">
         {/* Background icon */}
         <div className="absolute -right-8 -top-8 opacity-[0.05] group-hover:opacity-[0.08] transition-opacity">
           <ChartNoAxesCombined className="size-48" strokeWidth={1.5} />
