@@ -41,6 +41,7 @@ export function ProfileAvatar({
 
       toast.dismiss();
       toast.success("Avatar updated!");
+      window.dispatchEvent(new Event("session-change"));
       router.refresh();
     } catch (error) {
       toast.dismiss();

@@ -129,6 +129,13 @@ export async function PATCH(
       },
     });
 
+    // Update session user data
+    session.user = {
+      ...session.user,
+      ...updatedUser,
+    };
+    await session.save();
+
     return NextResponse.json(
       {
         user: updatedUser,

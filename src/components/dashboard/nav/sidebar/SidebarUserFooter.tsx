@@ -29,10 +29,10 @@ export function SidebarUserFooter({
   onLogout,
 }: SidebarUserFooterProps) {
   return (
-    <SidebarMenu>
+    <SidebarMenu suppressHydrationWarning>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild suppressHydrationWarning>
             <SidebarMenuButton data-testid="sidebar-menu-button" size="lg">
               <Avatar className="h-8 w-8">
                 {avatar ? (
