@@ -31,9 +31,10 @@ export async function POST(req: Request) {
     // Check if email is verified
     if (!user.verifiedAt) {
       return NextResponse.json(
-        { 
-          error: "Please verify your email before logging in. Check your inbox for a verification link.",
-          requiresVerification: true
+        {
+          error:
+            "Please verify your email before logging in. Check your inbox for a verification link.",
+          requiresVerification: true,
         },
         { status: 403 }
       );

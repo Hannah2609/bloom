@@ -30,11 +30,13 @@ import { useSession } from "@/contexts/SessionContext";
  * ISO 8601: Week 1 is the first week with at least 4 days in the new year
  */
 function getWeekNumber(date: Date): number {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
 const getTeamColor = (index: number): string => {
@@ -42,7 +44,7 @@ const getTeamColor = (index: number): string => {
     "hsl(200, 90%, 70%)", // Lyseblå
     "hsl(330, 80%, 75%)", // Lyserød
     "hsl(270, 70%, 75%)", // Lilla
-    "hsl(30, 90%, 70%)",  // Orange
+    "hsl(30, 90%, 70%)", // Orange
     "hsl(150, 60%, 65%)", // Grøn
   ];
   return colors[index % colors.length];
@@ -152,7 +154,15 @@ export function WeeklyHappinessCard({
 
   // Check if chartData has meaningful values (not all zeros)
   const hasChartData = chartData.some(
-    (point) => point.company > 0 || Object.keys(point).some((key) => key !== 'week' && key !== 'weekStart' && typeof point[key] === 'number' && point[key] > 0)
+    (point) =>
+      point.company > 0 ||
+      Object.keys(point).some(
+        (key) =>
+          key !== "week" &&
+          key !== "weekStart" &&
+          typeof point[key] === "number" &&
+          point[key] > 0
+      )
   );
 
   // Check if there's actual data to display

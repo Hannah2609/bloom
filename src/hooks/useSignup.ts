@@ -9,9 +9,10 @@ export function useSignup() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const signup = async (data: SignupSchema): Promise<
-    | { success: true; verificationLink?: string }
-    | { success: false }
+  const signup = async (
+    data: SignupSchema
+  ): Promise<
+    { success: true; verificationLink?: string } | { success: false }
   > => {
     try {
       setIsSubmitting(true);

@@ -62,7 +62,9 @@ export function OverallHappinessCard() {
   return (
     <Card className="pb-0!">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Overall Happiness Score for {user?.company?.name}</CardTitle>
+        <CardTitle className="text-2xl text-center">
+          Overall Happiness Score for {user?.company?.name}
+        </CardTitle>
       </CardHeader>
       <CardContent className="">
         <RadialChartView score={score} maxScore={5.0} />
@@ -70,4 +72,3 @@ export function OverallHappinessCard() {
     </Card>
   );
 }
-

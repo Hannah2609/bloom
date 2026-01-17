@@ -105,7 +105,10 @@ export function SidebarTeamsMenu({ pathname }: SidebarTeamsMenuProps) {
                         isActive={subItemActive}
                         className="group"
                       >
-                        <Link href={`/teams/${team.id}`} onClick={handleLinkClick}>
+                        <Link
+                          href={`/teams/${team.id}`}
+                          onClick={handleLinkClick}
+                        >
                           <span>{team.name}</span>
                         </Link>
                       </SidebarMenuSubButton>

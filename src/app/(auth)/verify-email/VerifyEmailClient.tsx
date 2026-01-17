@@ -37,7 +37,9 @@ export default function VerifyEmailClient() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || "Invalid or expired verification token");
+          throw new Error(
+            data.error || "Invalid or expired verification token"
+          );
         }
 
         // Success - redirect to login with query parameter to show toast
@@ -70,4 +72,3 @@ export default function VerifyEmailClient() {
 
   return null;
 }
-

@@ -30,11 +30,13 @@ import {
  * ISO 8601: Week 1 is the first week with at least 4 days in the new year
  */
 function getWeekNumber(date: Date): number {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
 interface TeamHappinessCardProps {
@@ -198,7 +200,9 @@ export function TeamHappinessCard({
             </div>
             <div className="flex items-center gap-2">
               <Users className="size-4 text-primary" />
-              <span className="text-muted-foreground">Responses this week: </span>
+              <span className="text-muted-foreground">
+                Responses this week:{" "}
+              </span>
               <span className="font-semibold">{currentWeekResponses}</span>
             </div>
           </div>

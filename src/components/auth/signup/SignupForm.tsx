@@ -352,7 +352,10 @@ export default function SignupProfileForm({
         </div>
       </form>
 
-      <Dialog open={showVerificationMessage} onOpenChange={setShowVerificationMessage}>
+      <Dialog
+        open={showVerificationMessage}
+        onOpenChange={setShowVerificationMessage}
+      >
         <DialogContent className="sm:max-w-md p-8">
           <DialogHeader className="text-left mt-2">
             <DialogTitle>Verify your email</DialogTitle>

@@ -1,10 +1,7 @@
 "use client";
 
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
-import {
-  ChartContainer,
-  type ChartConfig,
-} from "@/components/ui/chart/chart";
+import { ChartContainer, type ChartConfig } from "@/components/ui/chart/chart";
 
 interface RadialChartViewProps {
   score: number;
@@ -107,4 +104,3 @@ export function RadialChartView({
     </ChartContainer>
   );
 }
-
