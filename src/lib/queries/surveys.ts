@@ -664,3 +664,32 @@ export async function reorderQuestions(
     )
   );
 }
+
+/**
+ * Delete a survey (soft delete)
+ */
+export async function deleteSurvey(
+  surveyId: string,
+  companyId: string
+): Promise<void> {
+  // Verify survey exists and belongs to company
+  const survey = await prisma.survey.findFirst({
+    where: {
+      id: surveyId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!survey) {
+    throw new Error("Survey not found");
+  }
+
+  // Soft delete survey
+  await prisma.survey.update({
+    where: { id: surveyId },
+    data: {
+      deletedAt: new Date(),
+    },
+  });
+}

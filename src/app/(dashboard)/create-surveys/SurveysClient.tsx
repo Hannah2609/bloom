@@ -49,7 +49,7 @@ export default function SurveysClient({ initialSurveys }: SurveysClientProps) {
               Create and edit surveys
             </p>
           </div>
-          <Button size="lg" onClick={() => setIsOpen(true)}>
+          <Button onClick={() => setIsOpen(true)}>
             <PlusIcon className="size-4" />
             Create Survey
           </Button>

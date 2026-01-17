@@ -3,7 +3,7 @@
 import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { Heading } from "@/components/ui/heading/heading";
 import { Button } from "@/components/ui/button/button";
-import { AlertCircle, ArrowLeft, Plus } from "lucide-react";
+import { AlertCircle, ArrowLeft, Plus, Settings, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge/badge";
 import { SurveyDetail, Question } from "@/types/survey";
@@ -11,6 +11,22 @@ import { useState } from "react";
 import { AddQuestionForm } from "@/components/dashboard/create-survey/AddQuestionForm";
 import { DragAndDropQuestions } from "@/components/dashboard/create-survey/DragAndDropQuestions";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown/dropdownMenu";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog/alert-dialog";
 
 interface SurveyClientProps {
   survey: SurveyDetail;
@@ -21,6 +37,7 @@ export default function SurveyClient({
 }: SurveyClientProps) {
   const router = useRouter();
   const [showAddQuestionForm, setShowAddQuestionForm] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(
     null
   );
@@ -132,6 +149,31 @@ export default function SurveyClient({
     setEditingQuestionId(null);
   };
 
+  const handleDeleteSurvey = async () => {
+    try {
+      const response = await fetch(
+        `/api/dashboard/surveys/${initialSurvey.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to delete survey");
+      }
+
+      toast.success(`${initialSurvey.title} has been deleted`);
+      setShowDeleteAlert(false);
+      router.push("/create-surveys");
+      router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete survey"
+      );
+    }
+  };
+
   const [originalQuestions, setOriginalQuestions] = useState<Question[]>([]);
 
   const handleReorder = (reorderedQuestions: Question[]) => {
@@ -177,13 +219,13 @@ export default function SurveyClient({
           </div>
         </div>
 
-        {!isDraft && (
+        {!isDraft && initialSurvey.responseCount > 0 && (
           <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
             <div className="flex items-center gap-2">
               <AlertCircle className="size-5 text-amber-600" />
               <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                Survey is either active or closed and cannot be edited. Put in
-                draft mode to edit.
+                Survey is either active or closed and have{" "}
+                {initialSurvey.responseCount} responses, so it cannot be edited.
               </p>
             </div>
           </div>
@@ -191,13 +233,31 @@ export default function SurveyClient({
 
         {/* Survey Info */}
         <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <Heading level={"h1"}>{initialSurvey.title}</Heading>
-            {initialSurvey.isGlobal ? (
-              <Badge>Global Survey</Badge>
-            ) : (
-              <Badge>{initialSurvey.teams.length} Team(s)</Badge>
-            )}
+          <div className="flex justify-between">
+            <div className="flex items-center gap-4">
+              <Heading level={"h1"}>{initialSurvey.title}</Heading>
+              {initialSurvey.isGlobal ? (
+                <Badge>Global Survey</Badge>
+              ) : (
+                <Badge>{initialSurvey.teams.length} Team(s)</Badge>
+              )}
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Settings className="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setShowDeleteAlert(true)}
+                >
+                  <Trash className="size-4 mr-2" />
+                  Delete Survey
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {initialSurvey.description && (
@@ -272,6 +332,36 @@ export default function SurveyClient({
           )}
         </div>
       </div>
+
+      <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl">
+              Are you sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete{" "}
+              <strong>{initialSurvey.title}</strong>?
+              {initialSurvey.responseCount > 0 && (
+                <span className="block text-amber-600 dark:text-amber-400">
+                  This survey has {initialSurvey.responseCount} response(s) that
+                  will also be deleted.
+                </span>
+              )}
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteSurvey}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Delete survey
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageLayout>
   );
 }
