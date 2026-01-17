@@ -17,13 +17,29 @@ import {
 } from "@/components/ui/sheet";
 import { TeamWithMembers } from "@/types/team";
 import { SurveyListItem } from "@/types/survey";
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { PlusIcon, Settings, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { UserSurveyCard } from "@/components/dashboard/cards/UserSurveyCard";
 import { TeamHappinessCard } from "@/components/dashboard/cards/TeamHappinessCard";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown/dropdownMenu";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog/alert-dialog";
 
 interface TeamClientProps {
   team: TeamWithMembers;
@@ -39,7 +55,35 @@ export default function TeamClient({
   completedSurveyIds,
 }: TeamClientProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const router = useRouter();
+
+  const handleDeleteTeam = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/dashboard/teams/${team.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to delete team");
+      }
+
+      toast.success(`${team.name} has been deleted`);
+      setShowDeleteAlert(false);
+      router.push("/teams");
+      router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete team"
+      );
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteAlert(false);
+    }
+  };
 
   const handleRemoveMember = async (memberId: string) => {
     try {
@@ -66,7 +110,25 @@ export default function TeamClient({
   return (
     <>
       <PageLayout>
-        <Heading level="h1">{team.name}</Heading>
+        <div className="flex items-center justify-between">
+          <Heading level="h1">{team.name}</Heading>
+          {isAdmin && (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="hover:cursor-pointer">
+                <Settings className="size-5" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setShowDeleteAlert(true)}
+                >
+                  <TrashIcon className="size-4 text-destructive" />
+                  Delete Team
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
 
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-4">
           <aside className="lg:col-span-1">
@@ -164,23 +226,51 @@ export default function TeamClient({
       </PageLayout>
 
       {isAdmin && (
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetContent side="right" className="w-full sm:max-w-md">
-            <SheetHeader>
-              <SheetTitle>Add Members</SheetTitle>
-              <SheetDescription>
-                Search for users in your company to add to {team.name}
-              </SheetDescription>
-            </SheetHeader>
-            <AddTeamMemberForm
-              teamId={team.id}
-              onSuccess={() => {
-                setIsOpen(false);
-                router.refresh();
-              }}
-            />
-          </SheetContent>
-        </Sheet>
+        <>
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetContent side="right" className="w-full sm:max-w-md">
+              <SheetHeader>
+                <SheetTitle>Add Members</SheetTitle>
+                <SheetDescription>
+                  Search for users in your company to add to {team.name}
+                </SheetDescription>
+              </SheetHeader>
+              <AddTeamMemberForm
+                teamId={team.id}
+                onSuccess={() => {
+                  setIsOpen(false);
+                  router.refresh();
+                }}
+              />
+            </SheetContent>
+          </Sheet>
+          <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-xl">
+                  Are you sure?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete <strong>{team.name}</strong>?
+                  All members will be removed and the team will no longer be
+                  visible. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isDeleting}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteTeam}
+                  disabled={isDeleting}
+                  className="bg-destructive hover:bg-destructive/90"
+                >
+                  {isDeleting ? "Deleting..." : "Delete team"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
       )}
     </>
   );

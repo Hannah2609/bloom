@@ -436,6 +436,38 @@ export async function addTeamMembers(
 }
 
 /**
+ * DELETE
+ */
+/**
+ * Delete a team (soft delete)
+ */
+export async function deleteTeam(
+  companyId: string,
+  teamId: string
+): Promise<void> {
+  // Verify team exists and belongs to company
+  const team = await prisma.team.findFirst({
+    where: {
+      id: teamId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!team) {
+    throw new Error("Team not found");
+  }
+
+  // Soft delete team
+  await prisma.team.update({
+    where: { id: teamId },
+    data: {
+      deletedAt: new Date(),
+    },
+  });
+}
+
+/**
  * Remove a member from a team (soft delete by setting leftAt)
  */
 export async function removeTeamMember(
