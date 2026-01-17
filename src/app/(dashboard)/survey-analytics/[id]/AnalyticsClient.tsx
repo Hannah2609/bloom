@@ -35,7 +35,7 @@ export default function AnalyticsClient({ analytics }: AnalyticsClientProps) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.push("/create-surveys")}
+            onClick={() => router.push("/survey-analytics")}
           >
             <ArrowLeft className="size-4 mr-2" />
             Back to analytics overview

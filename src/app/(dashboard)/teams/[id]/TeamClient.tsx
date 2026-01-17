@@ -23,6 +23,7 @@ import { useState } from "react";
 import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { UserSurveyCard } from "@/components/dashboard/cards/UserSurveyCard";
 import { TeamHappinessCard } from "@/components/dashboard/cards/TeamHappinessCard";
+import { toast } from "sonner";
 
 interface TeamClientProps {
   team: TeamWithMembers;
@@ -39,6 +40,28 @@ export default function TeamClient({
 }: TeamClientProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+
+  const handleRemoveMember = async (memberId: string) => {
+    try {
+      const response = await fetch(`/api/dashboard/teams/${team.id}/members`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ memberId }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to remove member");
+      }
+
+      toast.success("Member removed from team");
+      router.refresh();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to remove member"
+      );
+    }
+  };
 
   return (
     <>
@@ -89,7 +112,12 @@ export default function TeamClient({
                         </p>
                       </div>
                       {isAdmin && (
-                        <Button size="icon" variant="ghost" className="size-8">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="size-8"
+                          onClick={() => handleRemoveMember(member.id)}
+                        >
                           <TrashIcon className="size-4" />
                         </Button>
                       )}
