@@ -297,7 +297,10 @@ export default function SurveyClient({
           <div className="flex items-center justify-between">
             <Heading level={"h2"}>Questions ({questionCount})</Heading>
             {isDraft && !showAddQuestionForm && !editingQuestionId && (
-              <Button onClick={() => setShowAddQuestionForm(true)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowAddQuestionForm(true)}
+              >
                 <Plus className="size-4" />
                 Add Question
               </Button>
