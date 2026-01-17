@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { SurveyListItem, SurveyDetail } from "@/types/survey";
+import { SurveyListItem, SurveyDetail, UpdateSurveyData } from "@/types/survey";
 
 /**
  * Update survey statuses based on current date
@@ -9,6 +9,21 @@ async function syncSurveyStatuses(companyId: string) {
   const now = new Date();
 
   try {
+    // Move ACTIVE surveys back to DRAFT if startDate is in the future
+    await prisma.survey.updateMany({
+      where: {
+        companyId,
+        status: "ACTIVE",
+        startDate: {
+          gt: now,
+        },
+        deletedAt: null,
+      },
+      data: {
+        status: "DRAFT",
+      },
+    });
+
     // Activate surveys that have reached start date
     await prisma.survey.updateMany({
       where: {
@@ -464,6 +479,85 @@ export async function createSurvey(
   });
 
   return survey;
+}
+
+/**
+ * Update survey information (title, description, dates, teams)
+ * Only allowed for DRAFT or ACTIVE with 0 responses
+ */
+export async function updateSurvey(
+  surveyId: string,
+  companyId: string,
+  data: UpdateSurveyData
+) {
+  // Verify survey exists and belongs to company
+  const survey = await prisma.survey.findFirst({
+    where: {
+      id: surveyId,
+      companyId,
+      deletedAt: null,
+    },
+    include: {
+      _count: {
+        select: { responses: true },
+      },
+    },
+  });
+
+  if (!survey) {
+    throw new Error("Survey not found");
+  }
+
+  // Only allow editing DRAFT or ACTIVE with no responses
+  if (
+    survey.status === "CLOSED" ||
+    (survey.status === "ACTIVE" && survey._count.responses > 0)
+  ) {
+    throw new Error("Cannot edit survey - it is closed or has responses");
+  }
+
+  // Delete existing team associations
+  await prisma.surveyTeam.deleteMany({
+    where: { surveyId },
+  });
+
+  const updatedSurvey = await prisma.survey.update({
+    where: { id: surveyId },
+    data: {
+      title: data.title,
+      description: data.description,
+      isGlobal: data.isGlobal,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      // Create new team associations if teams are specified
+      ...(data.teamIds && data.teamIds.length > 0
+        ? {
+            teams: {
+              create: data.teamIds.map((teamId) => ({
+                teamId,
+              })),
+            },
+          }
+        : {}),
+    },
+    include: {
+      teams: {
+        include: {
+          team: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Sync statuses after updating dates
+  await syncSurveyStatuses(companyId);
+
+  return updatedSurvey;
 }
 
 /**

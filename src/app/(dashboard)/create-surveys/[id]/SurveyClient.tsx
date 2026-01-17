@@ -3,7 +3,7 @@
 import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { Heading } from "@/components/ui/heading/heading";
 import { Button } from "@/components/ui/button/button";
-import { AlertCircle, ArrowLeft, Plus, Settings, Trash } from "lucide-react";
+import { AlertCircle, ArrowLeft, Edit, Plus, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge/badge";
 import { SurveyDetail, Question } from "@/types/survey";
@@ -11,12 +11,6 @@ import { useState } from "react";
 import { AddQuestionForm } from "@/components/dashboard/create-survey/AddQuestionForm";
 import { DragAndDropQuestions } from "@/components/dashboard/create-survey/DragAndDropQuestions";
 import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown/dropdownMenu";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -27,6 +21,13 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog/alert-dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { EditSurveyForm } from "@/components/dashboard/forms/EditSurveyForm";
 
 interface SurveyClientProps {
   survey: SurveyDetail;
@@ -38,6 +39,7 @@ export default function SurveyClient({
   const router = useRouter();
   const [showAddQuestionForm, setShowAddQuestionForm] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [showEditSheet, setShowEditSheet] = useState(false);
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(
     null
   );
@@ -201,6 +203,9 @@ export default function SurveyClient({
     : null;
 
   const isDraft = initialSurvey.status === "DRAFT";
+  const canEdit =
+    isDraft ||
+    (initialSurvey.status === "ACTIVE" && initialSurvey.responseCount === 0);
 
   return (
     <PageLayout>
@@ -242,22 +247,21 @@ export default function SurveyClient({
                 <Badge>{initialSurvey.teams.length} Team(s)</Badge>
               )}
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Settings className="size-5" />
+            <div className="flex items-center gap-2">
+              {canEdit && (
+                <Button onClick={() => setShowEditSheet(true)}>
+                  <Edit className="size-4" />
+                  Edit Survey
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  className="text-destructive"
-                  onClick={() => setShowDeleteAlert(true)}
-                >
-                  <Trash className="size-4 mr-2" />
-                  Delete Survey
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              )}
+              <Button
+                variant="destructive"
+                size="icon"
+                onClick={() => setShowDeleteAlert(true)}
+              >
+                <Trash className="size-4" />
+              </Button>
+            </div>
           </div>
 
           {initialSurvey.description && (
@@ -362,6 +366,21 @@ export default function SurveyClient({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Sheet open={showEditSheet} onOpenChange={setShowEditSheet}>
+        <SheetContent className="min-w-[600px] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Edit Survey</SheetTitle>
+          </SheetHeader>
+          <EditSurveyForm
+            survey={initialSurvey}
+            onSuccess={() => {
+              setShowEditSheet(false);
+              router.refresh();
+            }}
+          />
+        </SheetContent>
+      </Sheet>
     </PageLayout>
   );
 }
