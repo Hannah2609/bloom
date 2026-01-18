@@ -37,7 +37,7 @@ export default function TeamsClient({ teams, isAdmin }: TeamsClientProps) {
         <div className="mb-8 flex items-center justify-between">
           <Heading level="h1">Teams</Heading>
           {isAdmin && (
-            <Button size="lg" onClick={() => setIsOpen(true)}>
+            <Button onClick={() => setIsOpen(true)}>
               <PlusIcon className="size-4" />
               Create new team
             </Button>

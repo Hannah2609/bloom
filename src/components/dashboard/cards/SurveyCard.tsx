@@ -113,17 +113,6 @@ export function SurveyCard({ survey }: SurveyCardProps) {
                 </div>
               )}
             </div>
-
-            {survey.status === "DRAFT" && (
-              <Button
-                size="sm"
-                variant="secondary"
-                className="gap-2 pointer-events-none"
-              >
-                <Pencil className="size-4" />
-                Edit Survey
-              </Button>
-            )}
           </div>
         </CardContent>
       </Card>

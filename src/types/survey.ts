@@ -79,3 +79,12 @@ export type Answer = {
   responseId: string;
   createdAt: Date;
 };
+
+export type UpdateSurveyData = {
+  title: string;
+  description?: string;
+  isGlobal: boolean;
+  teamIds?: string[];
+  startDate?: Date;
+  endDate?: Date;
+};
