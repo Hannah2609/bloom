@@ -99,6 +99,29 @@ export const createSurveySchema = z
     }
   );
 
+export const editSurveySchema = z
+  .object({
+    title: z.string().min(1, "Survey title is required"),
+    description: z.string().optional(),
+    isGlobal: z.boolean(),
+    teamIds: z.array(z.string()).optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // If not global, must have at least one team
+      if (!data.isGlobal && (!data.teamIds || data.teamIds.length === 0)) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Please select at least one team or make survey global",
+      path: ["teamIds"],
+    }
+  );
+
 export const createQuestionSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
@@ -189,6 +212,7 @@ export type SetPendingCompanySchema = z.infer<typeof setPendingCompanySchema>;
 export type EmailSchema = z.infer<typeof emailSchema>;
 export type CreateTeamSchema = z.infer<typeof createTeamSchema>;
 export type CreateSurveySchema = z.infer<typeof createSurveySchema>;
+export type EditSurveySchema = z.infer<typeof editSurveySchema>;
 export type EditProfileNameSchema = z.infer<typeof editProfileNameSchema>;
 export type EditProfileAvatarSchema = z.infer<typeof editProfileAvatarSchema>;
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;

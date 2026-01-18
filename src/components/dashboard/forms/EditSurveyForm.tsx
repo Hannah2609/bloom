@@ -9,11 +9,9 @@ import {
 import { Button } from "@/components/ui/button/button";
 import { Input } from "@/components/ui/forms/input";
 import { Switch } from "@/components/ui/switch/switch";
-import { ArrowRight, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { createSurveySchema } from "@/lib/validation/validation";
-import { z } from "zod";
 import { toast } from "sonner";
 import {
   Tooltip,
@@ -22,38 +20,55 @@ import {
 } from "@/components/ui/tooltip";
 import TeamSearch, { Team } from "./TeamSearch";
 import { useRouter } from "next/navigation";
+import {
+  editSurveySchema,
+  type EditSurveySchema,
+} from "@/lib/validation/validation";
 
-type CreateSurveyFormProps = {
-  onSuccess?: () => void; // Callback to refresh surveys list after creation
+type EditSurveyFormProps = {
+  survey: {
+    id: string;
+    title: string;
+    description: string | null;
+    startDate: string | null;
+    endDate: string | null;
+    isGlobal: boolean;
+    teams: { team: { id: string; name: string } }[];
+  };
+  onSuccess?: () => void;
 };
 
-type CreateSurveyFormData = z.infer<typeof createSurveySchema>;
-
-export function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
+export function EditSurveyForm({ survey, onSuccess }: EditSurveyFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
+  const [selectedTeams, setSelectedTeams] = useState<Team[]>(
+    survey.teams.map((t) => ({ id: t.team.id, name: t.team.name }))
+  );
   const router = useRouter();
 
-  const form = useForm<CreateSurveyFormData>({
-    resolver: zodResolver(createSurveySchema),
+  const form = useForm<EditSurveySchema>({
+    resolver: zodResolver(editSurveySchema),
     defaultValues: {
-      title: "",
-      description: "",
-      startDate: "",
-      endDate: "",
-      isGlobal: false,
-      teamIds: [],
+      title: survey.title,
+      description: survey.description || "",
+      startDate: survey.startDate
+        ? new Date(survey.startDate).toISOString().split("T")[0]
+        : "",
+      endDate: survey.endDate
+        ? new Date(survey.endDate).toISOString().split("T")[0]
+        : "",
+      isGlobal: survey.isGlobal,
+      teamIds: survey.teams.map((t) => t.team.id),
     },
   });
 
-  const submit = async (data: CreateSurveyFormData) => {
+  const submit = async (data: EditSurveySchema) => {
     try {
       setIsSubmitting(true);
-      toast.loading("Creating survey...");
+      toast.loading("Updating survey...");
 
-      // Create survey
-      const response = await fetch("/api/dashboard/surveys", {
-        method: "POST",
+      // Update survey
+      const response = await fetch(`/api/dashboard/surveys/${survey.id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
@@ -61,26 +76,22 @@ export function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to create survey");
+        throw new Error(result.error || "Failed to update survey");
       }
 
       toast.dismiss();
-      toast.success(`Survey created! Redirecting...`, { duration: 2000 });
+      toast.success("Survey updated successfully!", { duration: 2000 });
 
-      form.reset();
-      setSelectedTeams([]);
-
-      // Refresh surveys list
+      // Call success callback to close dialog and refresh
       if (onSuccess) {
         onSuccess();
       }
 
-      // Redirect to survey detail page to add questions
-      router.push(`/create-surveys/${result.survey.id}`);
+      router.refresh();
     } catch (error) {
       toast.dismiss();
       toast.error(
-        error instanceof Error ? error.message : "Failed to create survey",
+        error instanceof Error ? error.message : "Failed to update survey",
         {
           duration: 4000,
         }
@@ -95,7 +106,7 @@ export function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(submit)}
-          className="w-full space-y-6 py-8"
+          className="w-full space-y-6 py-4"
         >
           <FormField
             control={form.control}
@@ -178,7 +189,7 @@ export function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
 
           <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
             <div className="flex items-start gap-2">
-              <Info className="inline-block size-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+              <Info className="size-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
               <div className="text-sm text-blue-900 dark:text-blue-100">
                 <p className="font-medium mb-1">
                   Survey status changes automatically based on dates:
@@ -205,17 +216,7 @@ export function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
               name="startDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Start Date
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="inline-block size-4 ml-1 cursor-pointer" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>You can always set dates later</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </FormLabel>
+                  <FormLabel>Start Date</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
@@ -237,15 +238,8 @@ export function CreateSurveyForm({ onSuccess }: CreateSurveyFormProps) {
           </div>
 
           <div className="pt-4">
-            <Button variant="outline" type="submit" className="w-full mb-4">
-              Add survey questions
-              <ArrowRight className="size-4" />
-            </Button>
-
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting
-                ? "Creating..."
-                : "Create survey, add questions later"}
+              {isSubmitting ? "Updating..." : "Update survey"}
             </Button>
           </div>
         </form>

@@ -436,6 +436,81 @@ export async function addTeamMembers(
 }
 
 /**
+ * DELETE
+ */
+/**
+ * Delete a team (soft delete)
+ */
+export async function deleteTeam(
+  companyId: string,
+  teamId: string
+): Promise<void> {
+  // Verify team exists and belongs to company
+  const team = await prisma.team.findFirst({
+    where: {
+      id: teamId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!team) {
+    throw new Error("Team not found");
+  }
+
+  // Soft delete team
+  await prisma.team.update({
+    where: { id: teamId },
+    data: {
+      deletedAt: new Date(),
+    },
+  });
+}
+
+/**
+ * Remove a member from a team (soft delete by setting leftAt)
+ */
+export async function removeTeamMember(
+  companyId: string,
+  teamId: string,
+  memberId: string
+): Promise<void> {
+  // Verify team exists and belongs to company
+  const team = await prisma.team.findFirst({
+    where: {
+      id: teamId,
+      companyId,
+      deletedAt: null,
+    },
+  });
+
+  if (!team) {
+    throw new Error("Team not found");
+  }
+
+  // Find the team member
+  const member = await prisma.teamMember.findFirst({
+    where: {
+      id: memberId,
+      teamId,
+      leftAt: null, // Only active members
+    },
+  });
+
+  if (!member) {
+    throw new Error("Member not found");
+  }
+
+  // Set leftAt to current timestamp (soft delete)
+  await prisma.teamMember.update({
+    where: { id: memberId },
+    data: {
+      leftAt: new Date(),
+    },
+  });
+}
+
+/**
  * UTILITY
  */
 /**
