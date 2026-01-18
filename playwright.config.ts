@@ -1,9 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import dotenv from "dotenv";
-import path from "path";
-
-// Load test environment
-dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
+import "dotenv/config";
 
 export default defineConfig({
   testDir: "./tests",
@@ -16,6 +12,11 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
+
+    // Enable Chrome DevTools Protocol for Lighthouse
+    launchOptions: {
+      args: ["--remote-debugging-port=9222"],
+    },
   },
 
   projects: [
@@ -29,5 +30,8 @@ export default defineConfig({
     command: "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
+    env: {
+      NODE_ENV: "test",
+    },
   },
 });
