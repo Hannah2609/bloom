@@ -5,25 +5,18 @@ import { PageLayout } from "@/components/dashboard/layout/pageLayout";
 import { User } from "@/types/user";
 import { SurveyListItem } from "@/types/survey";
 import { UserSurveyCard } from "@/components/dashboard/cards/UserSurveyCard";
-import { getHours } from "date-fns";
 import { HappinessCard } from "@/components/dashboard/happiness/HappinessCard";
 import { Sprout } from "@/components/dashboard/sprout/Sprout";
 import { WeeklyHappinessCard } from "@/components/dashboard/cards/WeeklyHappinessCard";
 import { OverallHappinessCard } from "@/components/dashboard/cards/OverallHappinessCard";
 import { useState, useEffect } from "react";
+import { getGreeting } from "@/lib/utils";
 
 interface HomeClientProps {
   user: User;
   activeSurveys: SurveyListItem[];
   completedSurveyIds: string[];
 }
-
-const getGreeting = () => {
-  const hour = getHours(new Date());
-  if (hour >= 5 && hour < 12) return "Good morning";
-  if (hour >= 12 && hour < 18) return "Good afternoon";
-  return "Good evening";
-};
 
 export default function HomeClient({
   user,

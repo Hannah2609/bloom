@@ -1,6 +1,34 @@
 import { prisma } from "@/lib/prisma";
 
 /**
+ * Calculate rating distribution with percentages
+ */
+export function calculateDistribution(
+  ratingValues: number[]
+): { rating: number; count: number; percentage: number }[] {
+  return [1, 2, 3, 4, 5].map((rating) => {
+    const count = ratingValues.filter((value) => value === rating).length;
+    const percentage =
+      ratingValues.length > 0 ? (count / ratingValues.length) * 100 : 0;
+
+    return {
+      rating,
+      count,
+      percentage,
+    };
+  });
+}
+
+/**
+ * Calculate average rating
+ */
+export function calculateAverage(ratingValues: number[]): number {
+  if (ratingValues.length === 0) return 0;
+  const total = ratingValues.reduce((sum, value) => sum + value, 0);
+  return total / ratingValues.length;
+}
+
+/**
  * Submit survey response with answers
  */
 export async function submitSurveyResponse(data: {
@@ -135,26 +163,7 @@ export async function getSurveyAnalytics(surveyId: string, companyId: string) {
   // Aggregate data per question
   const questionAnalytics = survey.questions.map((question) => {
     const questionAnswers = answers.filter((a) => a.questionId === question.id);
-
-    // Distribution (1-5) with percentages
-    const distribution = [1, 2, 3, 4, 5].map((rating) => {
-      const count = questionAnswers.filter(
-        (a) => a.ratingValue === rating
-      ).length;
-      const percentage =
-        questionAnswers.length > 0 ? (count / questionAnswers.length) * 100 : 0;
-
-      return {
-        rating,
-        count,
-        percentage,
-      };
-    });
-
-    // Average
-    const total = questionAnswers.reduce((sum, a) => sum + a.ratingValue, 0);
-    const average =
-      questionAnswers.length > 0 ? total / questionAnswers.length : 0;
+    const ratingValues = questionAnswers.map((a) => a.ratingValue);
 
     return {
       questionId: question.id,
@@ -163,8 +172,8 @@ export async function getSurveyAnalytics(surveyId: string, companyId: string) {
       answerType: question.answerType,
       order: question.order,
       responseCount: questionAnswers.length,
-      average,
-      distribution,
+      average: calculateAverage(ratingValues),
+      distribution: calculateDistribution(ratingValues),
     };
   });
 
