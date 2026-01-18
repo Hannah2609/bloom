@@ -204,7 +204,7 @@ export default function SignupProfileForm({
         onSubmit={form.handleSubmit(async (values) => {
           const result = await signup(values);
           if (result?.success) {
-            setVerificationLink(result.verificationLink);
+            setVerificationLink(result.verificationLink ?? null);
             setShowVerificationMessage(true);
             form.reset();
           }
