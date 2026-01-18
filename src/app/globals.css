@@ -129,7 +129,7 @@
   --analytics-yellow: #fbbf24;
   --analytics-lime: #a3e635;
   --analytics-green: #22c55e;
-  --sidebar: var(--dark-base-950);
+  --sidebar: var(--dark-base-800);
   --sidebar-foreground: var(--dark-base-200);
   --sidebar-primary: var(--primary-300);
   --sidebar-primary-foreground: var(--color-black);
