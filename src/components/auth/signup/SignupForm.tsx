@@ -23,6 +23,13 @@ import { toast } from "sonner";
 import { Heading } from "@/components/ui/heading/heading";
 import Link from "next/link";
 import { ArrowRight, Loader2Icon } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog/dialog";
 
 type PendingCompanyInfo = {
   id: string;
@@ -43,6 +50,8 @@ export default function SignupProfileForm({
   const { signup, isSubmitting } = useSignup();
   const [emailChecked, setEmailChecked] = useState(!!pendingCompany);
   const [checkingEmail, setCheckingEmail] = useState(false);
+  const [verificationLink, setVerificationLink] = useState<string | null>(null);
+  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
 
   const emailForm = useForm<{ email: string }>({
     resolver: zodResolver(emailSchema),
@@ -193,8 +202,10 @@ export default function SignupProfileForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (values) => {
-          const success = await signup(values);
-          if (success) {
+          const result = await signup(values);
+          if (result?.success) {
+            setVerificationLink(result.verificationLink ?? null);
+            setShowVerificationMessage(true);
             form.reset();
           }
         })}
@@ -340,6 +351,39 @@ export default function SignupProfileForm({
           </Button>
         </div>
       </form>
+
+      <Dialog
+        open={showVerificationMessage}
+        onOpenChange={setShowVerificationMessage}
+      >
+        <DialogContent className="sm:max-w-md p-8">
+          <DialogHeader className="text-left mt-2">
+            <DialogTitle>Verify your email</DialogTitle>
+            <DialogDescription>
+              Please check your email for a verification link.
+            </DialogDescription>
+          </DialogHeader>
+
+          {verificationLink && (
+            <div className="mt-4 space-y-3 rounded-lg border border-green-500/20 bg-green-500/10 p-4">
+              <p className="text-sm font-medium text-green-600">
+                Development mode: Click button to verify email
+              </p>
+              <Button
+                type="button"
+                onClick={() => {
+                  setShowVerificationMessage(false);
+                  router.push(verificationLink);
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                Go to Verify Email
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Form>
   );
 }

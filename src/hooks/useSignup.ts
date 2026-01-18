@@ -9,7 +9,11 @@ export function useSignup() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const signup = async (data: SignupSchema) => {
+  const signup = async (
+    data: SignupSchema
+  ): Promise<
+    { success: true; verificationLink?: string } | { success: false }
+  > => {
     try {
       setIsSubmitting(true);
       toast.loading("Creating your account...");
@@ -27,12 +31,20 @@ export function useSignup() {
       }
 
       toast.dismiss();
-      toast.success("Account created! Please log in to continue.", {
-        duration: 4000,
-      });
+      toast.success(
+        "Account created! Please check your email for a verification link.",
+        {
+          duration: 5000,
+        }
+      );
+
+      // Store verification link for display in signup form
+      if (result.verificationLink) {
+        return { success: true, verificationLink: result.verificationLink };
+      }
 
       router.push("/login");
-      return true;
+      return { success: true };
     } catch (error) {
       toast.dismiss();
       toast.error(
@@ -42,7 +54,7 @@ export function useSignup() {
         }
       );
 
-      return false;
+      return { success: false };
     } finally {
       setIsSubmitting(false);
     }

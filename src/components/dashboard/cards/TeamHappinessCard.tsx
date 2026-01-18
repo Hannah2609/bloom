@@ -14,19 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart/chart";
+import { LineChartView } from "@/components/dashboard/analytics/charts/LineChartView";
+import type { ChartConfig } from "@/components/ui/chart/chart";
 import { TrendingUp, Users } from "lucide-react";
 import type { WeeklyHappinessData } from "@/types/analytics";
 import { format } from "date-fns";
@@ -35,7 +24,20 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useIsMobile } from "@/hooks/useMobile";
+
+/**
+ * Get ISO week number from a date
+ * ISO 8601: Week 1 is the first week with at least 4 days in the new year
+ */
+function getWeekNumber(date: Date): number {
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}
 
 interface TeamHappinessCardProps {
   teamId: string;
@@ -58,7 +60,6 @@ export function TeamHappinessCard({
   const [loading, setLoading] = useState(true);
   const [weeks, setWeeks] = useState(initialWeeks);
   const [viewType, setViewType] = useState<"weekly" | "monthly">("weekly");
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,7 +91,9 @@ export function TeamHappinessCard({
   const chartData: ChartDataPoint[] = data.map((week) => {
     const date = new Date(week.weekStart);
     const label =
-      viewType === "monthly" ? format(date, "MMM yyyy") : format(date, "MMM d");
+      viewType === "monthly"
+        ? format(date, "MMM yyyy")
+        : `Week ${getWeekNumber(date)}`;
 
     // Find team average for this week
     const teamData = week.teamAverages.find((t) => t.teamId === teamId);
@@ -116,15 +119,21 @@ export function TeamHappinessCard({
       : 0;
   const trend = currentAverage - previousAverage;
 
-  const totalResponses = data.reduce(
-    (sum, week) =>
-      sum +
-      (week.teamAverages.find((t) => t.teamId === teamId)?.responseCount || 0),
-    0
-  );
+  // Get responses for the current week (most recent week)
+  const currentWeekResponses =
+    data.length > 0
+      ? data[data.length - 1]?.teamAverages.find((t) => t.teamId === teamId)
+          ?.responseCount || 0
+      : 0;
+
+  // Check if chartData has meaningful values (not all zeros)
+  const hasChartData = chartData.some((point) => point.team > 0);
+
+  // Check if there's actual data to display
+  const hasData = data.length > 0 && hasChartData;
 
   // Chart config
-  const chartConfig = {
+  const chartConfig: ChartConfig = {
     team: {
       label: teamName,
       color: "var(--color-analytics-green)",
@@ -146,6 +155,11 @@ export function TeamHappinessCard({
         </CardContent>
       </Card>
     );
+  }
+
+  // Don't render if there's no data
+  if (!hasData) {
+    return null;
   }
 
   return (
@@ -186,8 +200,10 @@ export function TeamHappinessCard({
             </div>
             <div className="flex items-center gap-2">
               <Users className="size-4 text-primary" />
-              <span className="text-muted-foreground">Total responses: </span>
-              <span className="font-semibold">{totalResponses}</span>
+              <span className="text-muted-foreground">
+                Responses this week:{" "}
+              </span>
+              <span className="font-semibold">{currentWeekResponses}</span>
             </div>
           </div>
 
@@ -231,66 +247,12 @@ export function TeamHappinessCard({
       </CardHeader>
 
       <CardContent>
-        {data.length === 0 ? (
-          <div className="h-[350px] flex items-center justify-center">
-            <p className="text-muted-foreground">No data available</p>
-          </div>
-        ) : (
-          <ChartContainer config={chartConfig} className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={chartData}
-                margin={
-                  isMobile
-                    ? { top: 5, right: 5, bottom: 5, left: -15 }
-                    : { top: 5, right: 5, bottom: 5, left: 5 }
-                }
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis
-                  dataKey="week"
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  domain={[0, 5]}
-                  tick={{ fontSize: 12 }}
-                  width={isMobile ? 30 : 60}
-                  label={
-                    !isMobile
-                      ? {
-                          value: "Happiness Score",
-                          angle: -90,
-                          position: "insideLeft",
-                        }
-                      : undefined
-                  }
-                />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      formatter={(value) => [
-                        `${Number(value).toFixed(2)} / 5.0`,
-                        "",
-                      ]}
-                    />
-                  }
-                />
-                <Line
-                  type="monotone"
-                  dataKey="team"
-                  stroke={chartConfig.team.color}
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </ChartContainer>
-        )}
+        <LineChartView
+          data={chartData}
+          config={chartConfig}
+          showCompany={false}
+          showTeams={[]}
+        />
       </CardContent>
     </Card>
   );

@@ -17,9 +17,13 @@ import Link from "next/link";
 import { ArrowRight, Loader2Icon } from "lucide-react";
 import { Heading } from "@/components/ui/heading/heading";
 import { ResetPassword } from "../resetPassword/ResetPassword";
+import { VerifyEmail } from "../verifyEmail/VerifyEmail";
+import { useState } from "react";
 
 export const LoginForm = () => {
   const { login, isLoading } = useAuth();
+  const [showVerificationLink, setShowVerificationLink] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -29,8 +33,15 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = (data: LoginSchema) => {
-    login(data);
+  const onSubmit = async (data: LoginSchema) => {
+    const result = await login(data);
+    if (result?.requiresVerification) {
+      setShowVerificationLink(true);
+      setVerificationEmail(data.email);
+    } else {
+      setShowVerificationLink(false);
+      setVerificationEmail("");
+    }
   };
 
   return (
@@ -102,6 +113,12 @@ export const LoginForm = () => {
             </>
           )}
         </Button>
+
+        {showVerificationLink && (
+          <div className="text-muted-foreground flex justify-center text-center text-sm">
+            <VerifyEmail defaultEmail={verificationEmail} />
+          </div>
+        )}
 
         <div className="text-muted-foreground flex justify-center gap-2 text-center text-sm">
           <p>Don&apos;t have an account?</p>

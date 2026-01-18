@@ -9,6 +9,7 @@ import { getHours } from "date-fns";
 import { HappinessCard } from "@/components/dashboard/happiness/HappinessCard";
 import { Sprout } from "@/components/dashboard/sprout/Sprout";
 import { WeeklyHappinessCard } from "@/components/dashboard/cards/WeeklyHappinessCard";
+import { OverallHappinessCard } from "@/components/dashboard/cards/OverallHappinessCard";
 import { useState, useEffect } from "react";
 
 interface HomeClientProps {
@@ -113,18 +114,19 @@ export default function HomeClient({
         </div>
       )}
 
-      {/* Weekly Happiness Analytics Card - Admin only */}
+      {/* Happiness Analytics Cards - Admin only */}
       {user.role === "ADMIN" && (
-        <div className="mt-6">
+        <div className="mt-6 grid gap-6 lg:grid-cols-2 w-full min-w-0">
+          <OverallHappinessCard />
           <WeeklyHappinessCard initialWeeks={12} />
         </div>
       )}
 
-      <div className="mt-10">
+      <div className="mt-10 w-full">
         {initialActiveSurveys.length === 0 ? (
           <p className="text-muted-foreground">No active surveys</p>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2 w-full">
             {initialActiveSurveys.map((survey) => (
               <UserSurveyCard
                 key={survey.id}

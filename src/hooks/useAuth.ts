@@ -12,7 +12,7 @@ export function useAuth() {
 
   // LOGIN
   const login = useCallback(
-    async (data: LoginSchema) => {
+    async (data: LoginSchema): Promise<{ requiresVerification?: boolean }> => {
       // Clear any existing timeout
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -31,6 +31,17 @@ export function useAuth() {
         const result = await response.json();
 
         if (!response.ok) {
+          // Handle verification requirement separately
+          if (result.requiresVerification) {
+            toast.dismiss();
+            toast.error(
+              result.error || "Please verify your email before logging in",
+              {
+                duration: 4000,
+              }
+            );
+            return { requiresVerification: true };
+          }
           throw new Error(result.error || "Something went wrong");
         }
 
@@ -46,6 +57,7 @@ export function useAuth() {
         timeoutRef.current = setTimeout(() => {
           router.push("/home");
         }, 1000);
+        return {};
       } catch (error) {
         toast.dismiss();
         toast.error(
