@@ -208,7 +208,17 @@ export async function getWeeklyHappinessAnalytics(
     startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
   } else {
-    startDate.setDate(startDate.getDate() - weeks * 7);
+    // For weekly view, calculate the Monday of the week that is (weeks-1) weeks ago
+    // This ensures we get exactly 'weeks' number of weeks including the current week
+    const daysSinceMonday = (endDate.getDay() + 6) % 7; // 0 = Monday, 6 = Sunday
+    const mondayOfCurrentWeek = new Date(endDate);
+    mondayOfCurrentWeek.setDate(endDate.getDate() - daysSinceMonday);
+    mondayOfCurrentWeek.setHours(0, 0, 0, 0);
+
+    // Go back (weeks - 1) weeks to get the start of the range
+    startDate.setTime(
+      mondayOfCurrentWeek.getTime() - (weeks - 1) * 7 * 24 * 60 * 60 * 1000
+    );
   }
 
   // Build where clause
@@ -239,15 +249,33 @@ export async function getWeeklyHappinessAnalytics(
       lt: endMonthStart, // Less than first day of next month (includes current month)
     };
   } else {
+    // For weekly view, weekStartDate is always Monday
+    // Set endDate to Monday of current week (or later if we want to include future weeks)
+    const daysSinceMonday = (endDate.getDay() + 6) % 7; // 0 = Monday, 6 = Sunday
+    const mondayOfCurrentWeek = new Date(endDate);
+    mondayOfCurrentWeek.setDate(endDate.getDate() - daysSinceMonday);
+    mondayOfCurrentWeek.setHours(0, 0, 0, 0);
+
+    // Include current week's Monday in the range
     where.weekStartDate = {
       gte: startDate,
-      lte: endDate,
+      lte: mondayOfCurrentWeek,
     };
   }
 
   // Filter by team if specified
   if (teamId) {
     where.teamId = teamId;
+  }
+
+  // Get team name if teamId is specified (for filling missing weeks)
+  let teamName: string | undefined;
+  if (teamId) {
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      select: { name: true },
+    });
+    teamName = team?.name;
   }
 
   const scores = await prisma.happinessScore.findMany({
@@ -379,6 +407,49 @@ export async function getWeeklyHappinessAnalytics(
 
       // Move to next month
       currentMonth.setMonth(currentMonth.getMonth() + 1);
+    }
+
+    result = filledResult;
+  } else if (teamId) {
+    // For weekly view with teamId filter, fill in missing weeks with zero data
+    // This ensures we show all weeks in the range, even if the team has no data for some weeks
+    const filledResult = [];
+    const resultMap = new Map(result.map((r) => [r.weekStart, r]));
+
+    // Generate all weeks from startDate to mondayOfCurrentWeek
+    const daysSinceMonday = (endDate.getDay() + 6) % 7;
+    const mondayOfCurrentWeek = new Date(endDate);
+    mondayOfCurrentWeek.setDate(endDate.getDate() - daysSinceMonday);
+    mondayOfCurrentWeek.setHours(0, 0, 0, 0);
+
+    const currentWeek = new Date(startDate);
+
+    while (currentWeek <= mondayOfCurrentWeek) {
+      const weekKey = currentWeek.toISOString().split("T")[0];
+
+      if (resultMap.has(weekKey)) {
+        filledResult.push(resultMap.get(weekKey)!);
+      } else {
+        // Add empty week with zero data for the team
+        filledResult.push({
+          weekStart: weekKey,
+          companyAverage: 0,
+          teamAverages: teamName
+            ? [
+                {
+                  teamId,
+                  teamName,
+                  average: 0,
+                  responseCount: 0,
+                },
+              ]
+            : [],
+          totalResponses: 0,
+        });
+      }
+
+      // Move to next week (add 7 days)
+      currentWeek.setDate(currentWeek.getDate() + 7);
     }
 
     result = filledResult;

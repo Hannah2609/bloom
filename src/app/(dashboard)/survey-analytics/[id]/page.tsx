@@ -26,7 +26,7 @@ export default async function SurveyAnalyticsPage({
     analytics = await getSurveyAnalytics(id, session.user.companyId);
   } catch (error) {
     console.error("Error loading analytics:", error);
-    redirect("/create-surveys");
+    redirect("/manage-surveys");
   }
 
   return <AnalyticsClient analytics={analytics} />;

@@ -246,11 +246,12 @@ export async function searchUsersForTeam(
   });
   const existingUserIds = existingMembers.map((m) => m.userId);
 
-  // Search users in company (excluding existing members)
+  // Search users in company (excluding existing members and admins)
   const users = await prisma.user.findMany({
     where: {
       companyId,
       deletedAt: null,
+      role: { not: "ADMIN" }, // Exclude admins from team member search
       id: {
         notIn: existingUserIds,
       },

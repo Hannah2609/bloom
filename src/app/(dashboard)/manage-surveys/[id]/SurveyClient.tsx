@@ -167,7 +167,7 @@ export default function SurveyClient({
 
       toast.success(`${initialSurvey.title} has been deleted`);
       setShowDeleteAlert(false);
-      router.push("/create-surveys");
+      router.push("/manage-surveys");
       router.refresh();
     } catch (error) {
       toast.error(
@@ -216,7 +216,7 @@ export default function SurveyClient({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push("/create-surveys")}
+              onClick={() => router.push("/manage-surveys")}
             >
               <ArrowLeft className="size-4" />
               Back to Surveys

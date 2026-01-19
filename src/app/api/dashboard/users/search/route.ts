@@ -31,6 +31,10 @@ export async function GET(request: Request) {
       where: {
         companyId: session.user.companyId,
         deletedAt: null,
+        // Exclude admins when searching for team members
+        ...(excludeTeamId && {
+          role: { not: "ADMIN" },
+        }),
         ...(existingUserIds.length > 0 && {
           id: { notIn: existingUserIds },
         }),
