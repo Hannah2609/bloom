@@ -113,12 +113,12 @@ export default function HomeClient({
           </p>
           <Heading level="h1">{user.firstName}</Heading>
         </div>
-        {!isLoadingSproutStatus && user.role !== "ADMIN" && (
+        {/* {!isLoadingSproutStatus && user.role !== "ADMIN" && (
           <Sprout
             hasPendingSurveys={hasPendingSurveys}
             hasSubmittedHappiness={hasSubmittedHappiness}
           />
-        )}
+        )} */}
       </div>
 
       {/* Bento Grid Layout */}
@@ -160,9 +160,21 @@ export default function HomeClient({
           ))}
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-8 grid-auto-rows gap-4">
-          {/* Card 1 - Sprout (if needed) */}
-          <div className="col-span-2 row-span-2">
+        <div className="mt-6 grid grid-cols-8 auto-rows-min gap-4">
+          {/* Overall Happiness Card */}
+          <div className="col-span-8 lg:col-span-5 lg:row-span-2 order-2 lg:order-1">
+            {hasSubmittedHappiness ? (
+              <OverallHappinessCard />
+            ) : (
+              <HappinessCard
+                hasPendingSurveys={hasPendingSurveys}
+                hasSubmittedHappiness={hasSubmittedHappiness}
+              />
+            )}
+          </div>
+
+          {/* Sprout Card */}
+          <div className="col-span-8 lg:col-span-3 lg:row-span-2 lg:col-start-6 order-1 lg:order-2">
             {!isLoadingSproutStatus && (
               <Sprout
                 hasPendingSurveys={hasPendingSurveys}
@@ -171,48 +183,12 @@ export default function HomeClient({
             )}
           </div>
 
-          {/* Card 2 - Happiness Card */}
-          <div className="col-span-3 row-span-2 col-start-3">
-            <HappinessCard
-              hasPendingSurveys={hasPendingSurveys}
-              hasSubmittedHappiness={hasSubmittedHappiness}
-            />
-          </div>
-
-          {/* Card 3 - Placeholder */}
-          <div className="col-span-3 row-span-2 col-start-6">
-            <div className="h-full w-full rounded-lg border bg-card p-6">
-              <p className="text-muted-foreground">Card 3</p>
-            </div>
-          </div>
-
-          {/* Card 4 - Large card */}
-          <div className="col-span-5 row-span-3 row-start-3">
-            <div className="h-full w-full rounded-lg border bg-card p-6">
-              <p className="text-muted-foreground">Card 4 - Large</p>
-            </div>
-          </div>
-
-          {/* Card 5 - Placeholder */}
-          <div className="col-span-3 row-span-2 col-start-6 row-start-3">
-            <div className="h-full w-full rounded-lg border bg-card p-6">
-              <p className="text-muted-foreground">Card 5</p>
-            </div>
-          </div>
-
-          {/* Card 6 - Placeholder */}
-          <div className="col-span-3 row-span-2 col-start-6 row-start-5">
-            <div className="h-full w-full rounded-lg border bg-card p-6">
-              <p className="text-muted-foreground">Card 6</p>
-            </div>
-          </div>
-
           {/* Survey Cards - Dynamic rows */}
           {initialActiveSurveys.map((survey, index) => (
             <div
               key={survey.id}
-              className={`col-span-4 row-span-2 ${
-                index % 2 === 0 ? "col-start-1" : "col-start-5"
+              className={`col-span-8 lg:col-span-4 row-span-1 order-3 ${
+                index % 2 === 0 ? "lg:col-start-1" : "lg:col-start-5"
               }`}
             >
               <UserSurveyCard

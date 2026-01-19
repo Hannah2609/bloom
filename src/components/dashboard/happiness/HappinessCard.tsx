@@ -86,7 +86,7 @@ export function HappinessCard({ hasPendingSurveys }: HappinessCardProps) {
         hasSubmittedHappiness={true} // Always true after submission
       />
       {!hasSubmitted && (
-        <Card className="border-none bg-secondary-100 to-secondary-100! dark:bg-secondary-950/50 dark:to-secondary-950/50!">
+        <Card className="border-none bg-blue-100 dark:bg-blue-950/50">
           <CardHeader>
             <div className="flex flex-col items-center gap-2">
               {/* <Smile className="h-10 w-10 text-primary" /> */}
