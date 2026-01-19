@@ -6,6 +6,7 @@ import {
   SidebarMenu,
   SidebarFooter,
   SidebarHeader,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useSession } from "@/contexts/SessionContext";
 import { useAuth } from "@/hooks/useAuth";

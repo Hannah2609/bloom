@@ -141,6 +141,7 @@ export function AddQuestionForm({
           Answer Type <span className="text-destructive">*</span>
         </Label>
         <RadioGroup
+          className="lg:grid lg:grid-cols-3"
           value={formData.answerType}
           onValueChange={(value) =>
             setFormData({ ...formData, answerType: value as AnswerType })
@@ -149,7 +150,7 @@ export function AddQuestionForm({
           {ANSWER_TYPE_OPTIONS.map((option) => (
             <div
               key={option.value}
-              className="flex items-start space-x-3 space-y-0 rounded-lg border p-4 hover:bg-accent transition-colors"
+              className="flex items-start space-x-3 space-y-0 rounded-lg border p-4 hover:bg-accent bg-card transition-colors"
             >
               <RadioGroupItem value={option.value} id={option.value} />
               <div className="flex-1">
@@ -157,10 +158,12 @@ export function AddQuestionForm({
                   htmlFor={option.value}
                   className="font-medium cursor-pointer"
                 >
-                  {option.label}:
-                  <p className="text-sm text-muted-foreground">
-                    {option.description}
-                  </p>
+                  <div className="flex flex-col items-left">
+                    {option.label}
+                    <p className="text-xs text-muted-foreground">
+                      {option.description}
+                    </p>
+                  </div>
                 </Label>
               </div>
             </div>
@@ -168,7 +171,7 @@ export function AddQuestionForm({
         </RadioGroup>
       </div>
 
-      <div className="flex items-center justify-between rounded-lg border p-4">
+      <div className="flex items-center justify-between rounded-lg border p-4 bg-card">
         <div className="space-y-0.5">
           <Label htmlFor="required" className="cursor-pointer">
             Required Question

@@ -12,7 +12,7 @@ export function Badge({ children, icon, className }: BadgeProps) {
     <div
       data-slot="badge"
       className={cn(
-        "bg-primary-100 dark:bg-background text-muted-foreground dark:text-primary flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
+        "bg-blue-100/80 dark:bg-background text-blue-800 dark:text-blue-300 flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium",
         className
       )}
     >

@@ -51,6 +51,7 @@ export function LineChartView({
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 12 }}
+          tickFormatter={(value) => value.replace(/^Week\s+/i, "")}
         />
         <YAxis
           tickLine={false}
@@ -95,7 +96,7 @@ export function LineChartView({
                 return (
                   <div className="flex items-center gap-2">
                     <div
-                      className="h-2.5 w-2.5 shrink-0 rounded-[2px]"
+                      className="h-2.5 w-2.5 shrink-0 rounded-full"
                       style={{ backgroundColor: color }}
                     />
                     <span className="text-muted-foreground">

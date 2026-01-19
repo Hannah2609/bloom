@@ -4,7 +4,7 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card/card";
-import { ArrowRight, UsersIcon } from "lucide-react";
+import { ArrowRight, ArrowUpRight, UsersIcon } from "lucide-react";
 import { Heading } from "@/components/ui/heading/heading";
 import { Badge } from "@/components/ui/badge/badge";
 import Link from "next/link";
@@ -17,18 +17,21 @@ interface TeamsCardProps {
 export function TeamsCard({ team }: TeamsCardProps) {
   return (
     <Link href={`/teams/${team.id}`}>
-      <Card className="group hover:border-primary-300 dark:hover:border-base-700 cursor-pointer">
+      <Card className="group relative hover:border-primary-300 dark:hover:border-base-700 cursor-pointer">
         <CardHeader className="flex items-center justify-between">
           <CardTitle>
-            <Heading level="h2">{team.name}</Heading>
+            <p className="text-sm font-medium text-muted-foreground">Team</p>
+            <Heading level="h2" className="text-2xl font-semibold">
+              {team.name}
+            </Heading>
           </CardTitle>
         </CardHeader>
-        <CardFooter className="flex items-center justify-between pt-12">
+        <CardFooter className="flex items-center justify-between pt-4">
           <Badge icon={<UsersIcon className="size-3" />}>
             {team.memberCount} members
           </Badge>
-          <div className="flex items-center gap-2">
-            <ArrowRight className="text-muted-foreground size-5 transition-transform duration-300 group-hover:size-5.5 group-hover:translate-x-2" />
+          <div className="flex group-hover:bg-primary/80 absolute bottom-6 right-6 bg-primary p-2 items-center rounded-full group-hover:translate-x-1  transition-all">
+            <ArrowRight className="size-5 text-foreground dark:text-card" />
           </div>
         </CardFooter>
       </Card>

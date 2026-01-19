@@ -9,8 +9,25 @@ import { HappinessCard } from "@/components/dashboard/happiness/HappinessCard";
 import { Sprout } from "@/components/dashboard/sprout/Sprout";
 import { WeeklyHappinessCard } from "@/components/dashboard/cards/WeeklyHappinessCard";
 import { OverallHappinessCard } from "@/components/dashboard/cards/OverallHappinessCard";
-import { useState, useEffect } from "react";
+import { EmployeesInfoCard } from "@/components/dashboard/cards/EmployeesInfoCard";
+import { useState, useEffect, useCallback } from "react";
 import { getGreeting } from "@/lib/utils";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { CreateSurveyForm } from "@/components/dashboard/forms/CreateSurveyForm";
+import { Badge } from "@/components/ui/badge/badge";
+import { useRouter } from "next/navigation";
+import {
+  CreateSurveyShortcut,
+  AnalyticsShortcut,
+  TeamsShortcut,
+  UsersShortcut,
+} from "@/components/ui/shortcuts/shortcuts";
 
 interface HomeClientProps {
   user: User;
@@ -28,6 +45,8 @@ export default function HomeClient({
   const [completedSurveyIds, setCompletedSurveyIds] = useState(
     initialCompletedSurveyIds
   );
+  const [isCreateSurveyOpen, setIsCreateSurveyOpen] = useState(false);
+  const router = useRouter();
 
   // Calculate pending surveys from initial data
   const hasPendingSurveys =
@@ -36,7 +55,7 @@ export default function HomeClient({
     ).length > 0;
 
   // Check happiness submission status
-  const checkHappinessStatus = async () => {
+  const checkHappinessStatus = useCallback(async () => {
     try {
       const res = await fetch("/api/dashboard/happiness");
       if (res.ok) {
@@ -48,11 +67,11 @@ export default function HomeClient({
     } finally {
       setIsLoadingSproutStatus(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     checkHappinessStatus();
-  }, []);
+  }, [checkHappinessStatus]);
 
   // Listen for feedback submission to update state
   useEffect(() => {
@@ -78,7 +97,12 @@ export default function HomeClient({
     return () => {
       window.removeEventListener("feedback-submitted", handleFeedbackSubmitted);
     };
-  }, []);
+  }, [checkHappinessStatus]);
+
+  const handleSurveyCreated = () => {
+    setIsCreateSurveyOpen(false);
+    router.refresh();
+  };
 
   return (
     <PageLayout>
@@ -97,40 +121,127 @@ export default function HomeClient({
         )}
       </div>
 
-      {/* Happiness Card */}
-      {user.role !== "ADMIN" && (
-        <div className="mt-6">
-          <HappinessCard
-            hasPendingSurveys={hasPendingSurveys}
-            hasSubmittedHappiness={hasSubmittedHappiness}
-          />
-        </div>
-      )}
+      {/* Bento Grid Layout */}
+      {user.role === "ADMIN" ? (
+        <div className="mt-6 grid grid-cols-8 auto-rows-min gap-4">
+          <div className="col-span-8 row-span-1 grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <CreateSurveyShortcut onClick={() => setIsCreateSurveyOpen(true)} />
+            <AnalyticsShortcut />
+            <TeamsShortcut />
+            <UsersShortcut />
+          </div>
 
-      {/* Happiness Analytics Cards - Admin only */}
-      {user.role === "ADMIN" && (
-        <div className="mt-6 grid gap-6 lg:grid-cols-2 w-full min-w-0">
-          <OverallHappinessCard />
-          <WeeklyHappinessCard initialWeeks={12} />
-        </div>
-      )}
+          <div className="col-span-8 lg:col-span-5 lg:row-span-3 lg:row-start-2">
+            <WeeklyHappinessCard initialWeeks={12} />
+          </div>
 
-      <div className="mt-10 w-full">
-        {initialActiveSurveys.length === 0 ? (
-          <p className="text-muted-foreground">No active surveys</p>
-        ) : (
-          <div className="grid gap-6 lg:grid-cols-2 w-full">
-            {initialActiveSurveys.map((survey) => (
+          <div className="col-span-8 lg:col-span-3 lg:row-span-1 lg:col-start-6 lg:row-start-2">
+            <OverallHappinessCard />
+          </div>
+
+          <div className="col-span-8 lg:col-span-3 lg:row-span-2 lg:col-start-6 lg:row-start-3">
+            <EmployeesInfoCard />
+          </div>
+
+          {/* Survey Cards - Dynamic rows */}
+          {initialActiveSurveys.map((survey, index) => (
+            <div
+              key={survey.id}
+              className={`col-span-8 lg:col-span-4 row-span-1 ${
+                index % 2 === 0 ? "lg:col-start-1" : "lg:col-start-5"
+              }`}
+            >
               <UserSurveyCard
-                key={survey.id}
                 survey={survey}
                 hasCompleted={completedSurveyIds.includes(survey.id)}
                 isAdmin={user.role === "ADMIN"}
               />
-            ))}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-6 grid grid-cols-8 grid-auto-rows gap-4">
+          {/* Card 1 - Sprout (if needed) */}
+          <div className="col-span-2 row-span-2">
+            {!isLoadingSproutStatus && (
+              <Sprout
+                hasPendingSurveys={hasPendingSurveys}
+                hasSubmittedHappiness={hasSubmittedHappiness}
+              />
+            )}
           </div>
-        )}
-      </div>
+
+          {/* Card 2 - Happiness Card */}
+          <div className="col-span-3 row-span-2 col-start-3">
+            <HappinessCard
+              hasPendingSurveys={hasPendingSurveys}
+              hasSubmittedHappiness={hasSubmittedHappiness}
+            />
+          </div>
+
+          {/* Card 3 - Placeholder */}
+          <div className="col-span-3 row-span-2 col-start-6">
+            <div className="h-full w-full rounded-lg border bg-card p-6">
+              <p className="text-muted-foreground">Card 3</p>
+            </div>
+          </div>
+
+          {/* Card 4 - Large card */}
+          <div className="col-span-5 row-span-3 row-start-3">
+            <div className="h-full w-full rounded-lg border bg-card p-6">
+              <p className="text-muted-foreground">Card 4 - Large</p>
+            </div>
+          </div>
+
+          {/* Card 5 - Placeholder */}
+          <div className="col-span-3 row-span-2 col-start-6 row-start-3">
+            <div className="h-full w-full rounded-lg border bg-card p-6">
+              <p className="text-muted-foreground">Card 5</p>
+            </div>
+          </div>
+
+          {/* Card 6 - Placeholder */}
+          <div className="col-span-3 row-span-2 col-start-6 row-start-5">
+            <div className="h-full w-full rounded-lg border bg-card p-6">
+              <p className="text-muted-foreground">Card 6</p>
+            </div>
+          </div>
+
+          {/* Survey Cards - Dynamic rows */}
+          {initialActiveSurveys.map((survey, index) => (
+            <div
+              key={survey.id}
+              className={`col-span-4 row-span-2 ${
+                index % 2 === 0 ? "col-start-1" : "col-start-5"
+              }`}
+            >
+              <UserSurveyCard
+                survey={survey}
+                hasCompleted={completedSurveyIds.includes(survey.id)}
+                isAdmin={user.role === "ADMIN"}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Create Survey Sheet */}
+      <Sheet open={isCreateSurveyOpen} onOpenChange={setIsCreateSurveyOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-lg">
+          <SheetHeader>
+            <SheetTitle>Create New Survey</SheetTitle>
+            <div className="flex justify-between items-baseline">
+              <SheetDescription>
+                Fill in the details to create a new survey
+              </SheetDescription>
+              <Badge>DRAFT</Badge>
+            </div>
+          </SheetHeader>
+          <div className="overflow-y-auto px-4">
+            <CreateSurveyForm onSuccess={handleSurveyCreated} />
+          </div>
+        </SheetContent>
+      </Sheet>
     </PageLayout>
   );
 }

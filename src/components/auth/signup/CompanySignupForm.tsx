@@ -98,7 +98,10 @@ export default function CompanySignupForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6 pt-30 mb-40"
+      >
         <div className="space-y-2">
           <Heading level="h3" variant="muted" className="text-lg! font-normal!">
             Company signup
