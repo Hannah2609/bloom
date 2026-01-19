@@ -40,7 +40,7 @@ export function OverallHappinessCard() {
 
   if (loading) {
     return (
-      <Card>
+      <Card className="md:h-full">
         <CardHeader>
           <CardTitle>Overall Happiness Score</CardTitle>
         </CardHeader>

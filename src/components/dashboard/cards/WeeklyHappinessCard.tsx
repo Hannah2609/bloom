@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LineChartView } from "@/components/dashboard/analytics/charts/LineChartView";
-import { TrendingUp } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import type { WeeklyHappinessData } from "@/types/analytics";
 import { format } from "date-fns";
 import {
@@ -209,13 +209,16 @@ export function WeeklyHappinessCard({
     <Card className="to-secondary-50! dark:to-secondary-950/50! min-w-0">
       <CardHeader>
         <div className="space-y-4 min-w-0">
-          <CardTitle className="text-xl font-semibold">
+          <CardTitle className="text-2xl font-semibold">
             {viewType === "monthly" ? "Monthly" : "Weekly"} Happiness Analytics
           </CardTitle>
-          <div className="flex flex-col pt-4 md:pt-0  md:flex-row md:items-center gap-4 text-sm">
+          <div className="flex flex-col pt-4 md:pt-0  xl:flex-row xl:items-start gap-4 text-sm justify-between">
             <div className="flex items-center gap-2">
-              <TrendingUp className="size-4 text-primary" />
-              <span className="text-muted-foreground">Current week: </span>
+              {trend > 0 ? (
+                <TrendingUp className="size-8 text-primary" />
+              ) : (
+                <TrendingDown className="size-8 text-primary" />
+              )}
               <span className="font-bold text-lg">
                 {currentAverage.toFixed(2)}
               </span>
@@ -239,80 +242,79 @@ export function WeeklyHappinessCard({
                 </Tooltip>
               )}
             </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2 justify-end">
-            <Select
-              value={viewType}
-              onValueChange={(value) =>
-                setViewType(value as "weekly" | "monthly")
-              }
-            >
-              <SelectTrigger className="h-9 w-[100px] text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={weeks.toString()}
-              onValueChange={(value) => setWeeks(parseInt(value))}
-            >
-              <SelectTrigger className="h-9 w-[100px] text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="4">
-                  {viewType === "monthly" ? "4 months" : "4 weeks"}
-                </SelectItem>
-                <SelectItem value="8">
-                  {viewType === "monthly" ? "8 months" : "8 weeks"}
-                </SelectItem>
-                <SelectItem value="12">
-                  {viewType === "monthly" ? "12 months" : "12 weeks"}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={filter}
-              onValueChange={(value) => {
-                setFilter(value as "company" | "all-teams");
-                setSelectedTeam(null);
-              }}
-            >
-              <SelectTrigger className="h-9 w-[110px] text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="company">{companyName}</SelectItem>
-                <SelectItem value="all-teams">All Teams</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {filter === "all-teams" && allTeams.length > 0 && (
+            <div className="flex flex-wrap gap-2 justify-end">
               <Select
-                value={selectedTeam || "all"}
+                value={viewType}
                 onValueChange={(value) =>
-                  setSelectedTeam(value === "all" ? null : value)
+                  setViewType(value as "weekly" | "monthly")
                 }
               >
-                <SelectTrigger className="h-9 w-[130px] text-xs">
-                  <SelectValue placeholder="Select team" />
+                <SelectTrigger className="h-9 w-[100px] text-xs">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Teams</SelectItem>
-                  {allTeams.map((team) => (
-                    <SelectItem key={team.id} value={team.id}>
-                      {team.name}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
                 </SelectContent>
               </Select>
-            )}
+
+              <Select
+                value={weeks.toString()}
+                onValueChange={(value) => setWeeks(parseInt(value))}
+              >
+                <SelectTrigger className="h-9 w-[100px] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="4">
+                    {viewType === "monthly" ? "4 months" : "4 weeks"}
+                  </SelectItem>
+                  <SelectItem value="8">
+                    {viewType === "monthly" ? "8 months" : "8 weeks"}
+                  </SelectItem>
+                  <SelectItem value="12">
+                    {viewType === "monthly" ? "12 months" : "12 weeks"}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={filter}
+                onValueChange={(value) => {
+                  setFilter(value as "company" | "all-teams");
+                  setSelectedTeam(null);
+                }}
+              >
+                <SelectTrigger className="h-9 w-[110px] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="company">{companyName}</SelectItem>
+                  <SelectItem value="all-teams">All Teams</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {filter === "all-teams" && allTeams.length > 0 && (
+                <Select
+                  value={selectedTeam || "all"}
+                  onValueChange={(value) =>
+                    setSelectedTeam(value === "all" ? null : value)
+                  }
+                >
+                  <SelectTrigger className="h-9 w-[130px] text-xs">
+                    <SelectValue placeholder="Select team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Teams</SelectItem>
+                    {allTeams.map((team) => (
+                      <SelectItem key={team.id} value={team.id}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>{" "}
           </div>
         </div>
       </CardHeader>

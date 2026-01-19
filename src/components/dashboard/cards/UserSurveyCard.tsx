@@ -43,7 +43,7 @@ export function UserSurveyCard({
       <Card className="group cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 relative overflow-hidden h-full group">
         <div className="absolute -right-8 -top-8 opacity-[0.08] group-hover:opacity-[0.1] transition-opacity">
           <MessageCircleHeart
-            className="size-42 md:size-48"
+            className="size-42 md:size-48 text-primary"
             strokeWidth={1.5}
           />
         </div>
@@ -60,38 +60,43 @@ export function UserSurveyCard({
         )}
 
         <CardHeader className="md:pb-3">
-          <div className="space-y-2 min-h-26">
-            <CardTitle className="line-clamp-2 text-xl md:text-2xl pr-24 font-medium">
-              {survey.title}
-            </CardTitle>
-            {survey.description && (
-              <p className="line-clamp-2 text-sm md:text-base text-foreground/80 leading-relaxed">
-                {survey.description}
-              </p>
-            )}
+          <div>
+            <div className="space-y-2">
+              <CardTitle className="line-clamp-2 text-xl md:text-2xl pr-24 font-medium">
+                {survey.title}
+              </CardTitle>
+              {survey.description && (
+                <p className="line-clamp-2 text-sm md:text-base text-foreground/80 leading-relaxed">
+                  {survey.description}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-2 text-sm text-primary-700 dark:text-primary-400 mt-4">
+              <Clock className="size-4" />
+              <span className="font-semibold">
+                {survey.questionCount} questions
+              </span>
+              <span>·</span>
+              <span className="font-medium">
+                ~{Math.ceil(survey.questionCount * 0.5)} min
+              </span>
+            </div>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-2 text-sm text-primary-700 dark:text-primary-400">
-            <Clock className="size-4" />
-            <span className="font-semibold">
-              {survey.questionCount} questions
-            </span>
-            <span>·</span>
-            <span className="font-medium">
-              ~{Math.ceil(survey.questionCount * 0.5)} min
-            </span>
-          </div>
-
-          <div className="border-t pt-4 flex items-center justify-between">
+        <CardContent className="space-y-4 mt-auto">
+          <div className=" flex items-center justify-between">
             {survey.endDate && (
               <span className="text-xs md:text-sm font-semibold">
                 Closes: {format(new Date(survey.endDate), "d MMM, yyyy")}
               </span>
             )}
             {isAdmin ? (
-              <Button size="sm" variant="secondary" className="gap-2">
+              <Button
+                size="sm"
+                variant="secondary"
+                className="gap-2 bg-blue-100 dark:bg-blue-900/80 dark:text-blue-400 text-blue-500 hover:bg-blue-200"
+              >
                 <Eye className="size-4" />
                 See Preview
               </Button>

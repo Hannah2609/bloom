@@ -68,6 +68,7 @@ export const LoginForm = () => {
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
+                  className="bg-transparent"
                   type="email"
                   autoComplete="email"
                   {...field}
@@ -90,6 +91,7 @@ export const LoginForm = () => {
               </div>
               <FormControl>
                 <PasswordInput
+                  className="bg-transparent"
                   autoComplete="current-password"
                   {...field}
                   disabled={isLoading}

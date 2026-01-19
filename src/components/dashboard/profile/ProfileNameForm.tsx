@@ -83,7 +83,9 @@ export function ProfileNameForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <Heading level="h3">Edit Profile</Heading>
+        <Heading level="h2" className="font-medium text-2xl">
+          Edit Profile
+        </Heading>
         {/* Name fields */}
         <div className="grid grid-cols-2 gap-4">
           <FormField

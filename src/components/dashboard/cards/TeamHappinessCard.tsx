@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { LineChartView } from "@/components/dashboard/analytics/charts/LineChartView";
 import type { ChartConfig } from "@/components/ui/chart/chart";
-import { TrendingUp, Users } from "lucide-react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 import type { WeeklyHappinessData } from "@/types/analytics";
 import { format } from "date-fns";
 import {
@@ -119,13 +119,6 @@ export function TeamHappinessCard({
       : 0;
   const trend = currentAverage - previousAverage;
 
-  // Get responses for the current week (most recent week)
-  const currentWeekResponses =
-    data.length > 0
-      ? data[data.length - 1]?.teamAverages.find((t) => t.teamId === teamId)
-          ?.responseCount || 0
-      : 0;
-
   // Check if chartData has meaningful values (not all zeros)
   const hasChartData = chartData.some((point) => point.team > 0);
 
@@ -163,17 +156,19 @@ export function TeamHappinessCard({
   }
 
   return (
-    <Card className="to-secondary-50! dark:to-secondary-950/50!">
+    <Card className="to-secondary-50! dark:to-secondary-950/50! min-w-0">
       <CardHeader>
-        <div className="space-y-4">
-          <CardTitle className="text-xl font-semibold">
+        <div className="space-y-4 min-w-0">
+          <CardTitle className="text-2xl font-semibold">
             {viewType === "monthly" ? "Monthly" : "Weekly"} Happiness Analytics
           </CardTitle>
-
-          <div className="flex flex-col pt-4 md:pt-0 md:flex-row md:items-center gap-4 text-sm">
+          <div className="flex flex-col pt-4 md:pt-0 xl:flex-row xl:items-start gap-4 text-sm justify-between">
             <div className="flex items-center gap-2">
-              <TrendingUp className="size-4 text-primary" />
-              <span className="text-muted-foreground">Current: </span>
+              {trend > 0 ? (
+                <TrendingUp className="size-8 text-primary" />
+              ) : (
+                <TrendingDown className="size-8 text-primary" />
+              )}
               <span className="font-bold text-lg">
                 {currentAverage.toFixed(2)}
               </span>
@@ -198,50 +193,43 @@ export function TeamHappinessCard({
                 </Tooltip>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <Users className="size-4 text-primary" />
-              <span className="text-muted-foreground">
-                Responses this week:{" "}
-              </span>
-              <span className="font-semibold">{currentWeekResponses}</span>
+
+            <div className="flex flex-wrap gap-2 justify-end">
+              <Select
+                value={viewType}
+                onValueChange={(value) =>
+                  setViewType(value as "weekly" | "monthly")
+                }
+              >
+                <SelectTrigger className="h-9 w-[100px] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={weeks.toString()}
+                onValueChange={(value) => setWeeks(parseInt(value))}
+              >
+                <SelectTrigger className="h-9 w-[100px] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="4">
+                    {viewType === "monthly" ? "4 months" : "4 weeks"}
+                  </SelectItem>
+                  <SelectItem value="8">
+                    {viewType === "monthly" ? "8 months" : "8 weeks"}
+                  </SelectItem>
+                  <SelectItem value="12">
+                    {viewType === "monthly" ? "12 months" : "12 weeks"}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2 justify-end">
-            <Select
-              value={viewType}
-              onValueChange={(value) =>
-                setViewType(value as "weekly" | "monthly")
-              }
-            >
-              <SelectTrigger className="h-9 w-[100px] text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={weeks.toString()}
-              onValueChange={(value) => setWeeks(parseInt(value))}
-            >
-              <SelectTrigger className="h-9 w-[100px] text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="4">
-                  {viewType === "monthly" ? "4 months" : "4 weeks"}
-                </SelectItem>
-                <SelectItem value="8">
-                  {viewType === "monthly" ? "8 months" : "8 weeks"}
-                </SelectItem>
-                <SelectItem value="12">
-                  {viewType === "monthly" ? "12 months" : "12 weeks"}
-                </SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
       </CardHeader>

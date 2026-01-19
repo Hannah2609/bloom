@@ -161,6 +161,7 @@ export default function SignupProfileForm({
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
+                    className="bg-transparent"
                     type="email"
                     placeholder="john.doe@example.com"
                     autoComplete="email"
@@ -229,7 +230,7 @@ export default function SignupProfileForm({
         </div>
 
         {pendingCompany && (
-          <div className="border-primary/40 bg-primary/5 rounded-lg border p-4 text-left text-sm">
+          <div className="border-blue-300 bg-blue-50 rounded-lg border p-4 text-left text-sm">
             <p className="font-medium">
               {pendingCompany.role === ("ADMIN" as Role)
                 ? `Admin signup for ${pendingCompany.name}`
@@ -249,6 +250,7 @@ export default function SignupProfileForm({
               <FormLabel>First name</FormLabel>
               <FormControl>
                 <Input
+                  className="bg-transparent"
                   type="text"
                   placeholder="John"
                   autoComplete="first-name"
@@ -269,6 +271,7 @@ export default function SignupProfileForm({
               <FormLabel>Last name</FormLabel>
               <FormControl>
                 <Input
+                  className="bg-transparent"
                   type="text"
                   placeholder="Doe"
                   autoComplete="last-name"
@@ -291,6 +294,7 @@ export default function SignupProfileForm({
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
+                    className="bg-transparent"
                     type="email"
                     placeholder="john.doe@example.com"
                     autoComplete="email"
@@ -324,6 +328,7 @@ export default function SignupProfileForm({
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <PasswordInput
+                  className="bg-transparent"
                   placeholder="********"
                   autoComplete="new-password"
                   disabled={isSubmitting}

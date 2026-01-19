@@ -132,9 +132,11 @@ export default function TeamClient({
 
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-4">
           <aside className="lg:col-span-1">
-            <div className="space-y-4 rounded-lg border bg-sidebar p-4 lg:sticky lg:top-4">
+            <div className="space-y-4 rounded-xl bg-sidebar p-4 lg:sticky lg:top-4">
               <div className="flex items-center justify-between">
-                <Heading level="h2">Members</Heading>
+                <Heading level="h2" className="text-lg font-medium">
+                  Members
+                </Heading>
                 {isAdmin && (
                   <Button
                     size="sm"
