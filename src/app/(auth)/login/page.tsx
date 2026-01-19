@@ -39,7 +39,7 @@ function Page() {
             <Image
               width={800}
               height={600}
-              src="/placeholder.webp"
+              src="/preview.png"
               alt="Image"
               className="absolute inset-0 h-full w-full rounded-4xl object-cover dark:brightness-[0.2] dark:grayscale"
             />
@@ -57,7 +57,7 @@ function Page() {
           <Image
             width={800}
             height={600}
-            src="/placeholder.webp"
+            src="/preview.png"
             alt="Image"
             className="absolute inset-0 h-full w-full rounded-4xl object-cover dark:brightness-[0.2] dark:grayscale"
           />
