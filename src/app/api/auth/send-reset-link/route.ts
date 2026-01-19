@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // Return relative path in development (easier for client-side routing)
+    // Return relative path in development or production for now (easier for client-side routing)
     const resetPath = `/reset-password?token=${resetToken}`;
 
     return NextResponse.json(
@@ -54,7 +54,10 @@ export async function POST(request: Request) {
         message:
           "If an account exists with this email, you will receive a password reset link shortly.",
         resetLink:
-          process.env.NODE_ENV === "development" ? resetPath : undefined,
+          process.env.NODE_ENV === "development" ||
+          process.env.NODE_ENV === "production"
+            ? resetPath
+            : undefined,
       },
       { status: 200 }
     );

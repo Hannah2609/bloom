@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       await session.save();
     }
 
-    // Return relative path in development
+    // Return relative path in development or production for now
     const verificationPath = `/verify-email?token=${verificationToken}`;
 
     return NextResponse.json(
@@ -65,7 +65,10 @@ export async function POST(req: Request) {
         user: sanitizedUser,
         message: "User created successfully",
         verificationLink:
-          process.env.NODE_ENV === "development" ? verificationPath : undefined,
+          process.env.NODE_ENV === "development" ||
+          process.env.NODE_ENV === "production"
+            ? verificationPath
+            : undefined,
       },
       { status: 201 }
     );
