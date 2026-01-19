@@ -155,7 +155,7 @@ export default function TeamClient({
                   {team.members.map((member) => (
                     <li
                       key={member.id}
-                      className="flex items-center gap-3 rounded-md p-2 hover:bg-muted/50"
+                      className="flex items-center gap-3 rounded-md p-2"
                     >
                       <Avatar className="size-8">
                         {member.user.avatar ? (
@@ -192,7 +192,9 @@ export default function TeamClient({
             </div>
           </aside>
           <div className="lg:col-span-3 space-y-6">
-            <TeamHappinessCard teamId={team.id} teamName={team.name} />
+            {isAdmin && (
+              <TeamHappinessCard teamId={team.id} teamName={team.name} />
+            )}
 
             {activeSurveys.length > 0 ? (
               <div className="flex flex-col gap-4">

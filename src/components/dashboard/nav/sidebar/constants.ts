@@ -25,8 +25,8 @@ export const ADMIN_ITEMS: MenuItem[] = [
     icon: Settings,
   },
   {
-    title: "Create surveys",
-    url: "/create-surveys",
+    title: "Manage surveys",
+    url: "/manage-surveys",
     icon: LucideEdit,
   },
   {

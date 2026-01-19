@@ -61,7 +61,7 @@ test.describe("Lighthouse - Authenticated Pages", () => {
   });
 
   test("Create surveys page", async ({ page }) => {
-    await page.goto("http://localhost:3000/create-surveys");
+    await page.goto("http://localhost:3000/manage-surveys");
     await playAudit({
       page,
       thresholds,

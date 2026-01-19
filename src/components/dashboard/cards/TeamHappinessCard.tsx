@@ -107,15 +107,23 @@ export function TeamHappinessCard({
   });
 
   // Calculate current average + trend
+  // Only use weeks with actual data (responseCount > 0) for calculations
+  const weeksWithData = data.filter((week) => {
+    const teamData = week.teamAverages.find((t) => t.teamId === teamId);
+    return teamData && teamData.responseCount > 0;
+  });
+
   const currentAverage =
-    data.length > 0
-      ? data[data.length - 1]?.teamAverages.find((t) => t.teamId === teamId)
-          ?.average || 0
+    weeksWithData.length > 0
+      ? weeksWithData[weeksWithData.length - 1]?.teamAverages.find(
+          (t) => t.teamId === teamId
+        )?.average || 0
       : 0;
   const previousAverage =
-    data.length > 1
-      ? data[data.length - 2]?.teamAverages.find((t) => t.teamId === teamId)
-          ?.average || 0
+    weeksWithData.length > 1
+      ? weeksWithData[weeksWithData.length - 2]?.teamAverages.find(
+          (t) => t.teamId === teamId
+        )?.average || 0
       : 0;
   const trend = currentAverage - previousAverage;
 
