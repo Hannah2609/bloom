@@ -134,7 +134,7 @@ export default function SignupProfileForm({
           onSubmit={emailForm.handleSubmit((values) =>
             checkEmailDomain(values.email)
           )}
-          className="space-y-6"
+          className="space-y-6 max-w-md mx-auto"
         >
           <div className="space-y-2">
             <Heading
@@ -161,7 +161,7 @@ export default function SignupProfileForm({
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    className="bg-transparent"
+                    className="bg-card"
                     type="email"
                     placeholder="john.doe@example.com"
                     autoComplete="email"
@@ -210,7 +210,7 @@ export default function SignupProfileForm({
             form.reset();
           }
         })}
-        className="space-y-6"
+        className="space-y-6 max-w-md mx-auto"
       >
         <div className="space-y-2">
           <Heading className="text-2xl! font-bold!">
@@ -250,7 +250,7 @@ export default function SignupProfileForm({
               <FormLabel>First name</FormLabel>
               <FormControl>
                 <Input
-                  className="bg-transparent"
+                  className="bg-card"
                   type="text"
                   placeholder="John"
                   autoComplete="first-name"
@@ -271,7 +271,7 @@ export default function SignupProfileForm({
               <FormLabel>Last name</FormLabel>
               <FormControl>
                 <Input
-                  className="bg-transparent"
+                  className="bg-card"
                   type="text"
                   placeholder="Doe"
                   autoComplete="last-name"
@@ -294,7 +294,7 @@ export default function SignupProfileForm({
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    className="bg-transparent"
+                    className="bg-card"
                     type="email"
                     placeholder="john.doe@example.com"
                     autoComplete="email"
@@ -328,7 +328,7 @@ export default function SignupProfileForm({
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <PasswordInput
-                  className="bg-transparent"
+                  className="bg-card"
                   placeholder="********"
                   autoComplete="new-password"
                   disabled={isSubmitting}
